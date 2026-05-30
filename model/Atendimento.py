@@ -1,3 +1,11 @@
+from datetime import date, time
+from model.Clinica import Clinica
+from model.Paciente import Paciente
+from model.Profissional import Profissional
+from model.Procedimento import Procedimento
+from model.TipoAtendimento import TipoAtendimento
+
+
 class Atendimento:
     def __init__(self, clinica: Clinica, paciente: Paciente, profissional: Profissional,
                  data: str, hora_inicio: str, hora_fim: str,
