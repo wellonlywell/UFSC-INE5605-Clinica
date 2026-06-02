@@ -1,9 +1,9 @@
 #class feita pelo Marcos
 
-
 from model.Pagamento import Pagamento
 from model.Paciente import Paciente
-
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class PagamentoDinheiro(Pagamento):
     def __init__(self, data_pgto, atendimento, paciente: Paciente, valor_pago: float, quantia_entregue: float):
@@ -21,9 +21,9 @@ class PagamentoDinheiro(Pagamento):
         try:
             v_float = float(valor)
         except (ValueError, TypeError):
-            raise ValueError("Erro: A quantia entregue em dinheiro deve ser um número.")
+            raise DadoInvalidoException("Erro: A quantia entregue em dinheiro deve ser um número.")
         if v_float < self.valor_pago:
-            raise ValueError(f"Erro: Quantia entregue (R$ {v_float:.2f}) é menor que o valor a ser pago (R$ {self.valor_pago:.2f}).")
+            raise DadoInvalidoException(f"Erro: Quantia entregue (R$ {v_float:.2f}) é menor que o valor a ser pago (R$ {self.valor_pago:.2f}).")
         self.__quantia_entregue = v_float
 
 

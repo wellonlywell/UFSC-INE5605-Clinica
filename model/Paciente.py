@@ -1,7 +1,11 @@
+# class feita por Well
+
 from datetime import date
 from model.Pessoa import Pessoa
 from model.CorRaca import CorRaca
 from typing import Optional
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Paciente(Pessoa):
     def __init__(self, nome_civil: str, celular: str, cpf: str,
@@ -27,11 +31,11 @@ class Paciente(Pessoa):
                 dia, mes, ano = map(int, valor.split('/'))
                 self.__data_nascimento = date(ano, mes, dia)
             except Exception:
-                raise ValueError("Data inválida. Use DD/MM/AAAA.")
+                raise DadoInvalidoException("Data inválida. Use DD/MM/AAAA.")
         elif isinstance(valor, date):
             self.__data_nascimento = valor
         else:
-            raise ValueError("Data inválida.")
+            raise DadoInvalidoException("Data inválida.")
 
     # Idade e Maioridade
     @property
@@ -56,7 +60,7 @@ class Paciente(Pessoa):
     def responsavel(self, valor):
         from model.Responsavel import Responsavel
         if valor is not None and not isinstance(valor, Responsavel):
-            raise ValueError("Responsável inválido.")
+            raise DadoInvalidoException("Responsável inválido.")
         self.__responsavel = valor
 
     # Representação

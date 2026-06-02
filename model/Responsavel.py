@@ -1,7 +1,10 @@
+# class feita por Well
+
 from model.Pessoa import Pessoa
 from model.CorRaca import CorRaca
 from typing import Optional
-
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Responsavel(Pessoa):
   def __init__(self, nome_civil: str, celular: str, cpf: str,
@@ -20,7 +23,7 @@ class Responsavel(Pessoa):
   @parentesco.setter
   def parentesco(self, valor: str):
     if not isinstance(valor, str) or not valor.strip():
-      raise ValueError("Parentesco não pode ser vazio.")
+      raise DadoInvalidoException("Parentesco não pode ser vazio.")
     self.__parentesco = valor.strip()
 
   def get_info(self) -> str:

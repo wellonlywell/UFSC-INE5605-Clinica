@@ -1,6 +1,7 @@
 from datetime import time
 from model.Profissional import Profissional
-
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Clinica:
     def __init__(self, cnpj: str, nome: str, cidade: str,
@@ -22,10 +23,10 @@ class Clinica:
     @cnpj.setter
     def cnpj(self, valor: str):
         if not isinstance(valor, str):
-            raise ValueError("Erro: CNPJ deve ser uma string.")
+            raise DadoInvalidoException("Erro: CNPJ deve ser uma string.")
         cnpj_limpo = "".join(c for c in valor if c.isdigit())
         if len(cnpj_limpo) != 14:
-            raise ValueError("Erro: CNPJ deve ter 14 dígitos.")
+            raise DadoInvalidoException("Erro: CNPJ deve ter 14 dígitos.")
         self.__cnpj = valor
 
 
@@ -37,7 +38,7 @@ class Clinica:
     @nome.setter
     def nome(self, valor: str):
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("Erro: Nome da clínica não pode ser vazio.")
+            raise DadoInvalidoException("Erro: Nome da clínica não pode ser vazio.")
         self.__nome = valor.strip()
 
 
@@ -50,7 +51,7 @@ class Clinica:
     @cidade.setter
     def cidade(self, valor: str):
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("Erro: Cidade não pode ser vazia.")
+            raise DadoInvalidoException("Erro: Cidade não pode ser vazia.")
         self.__cidade = valor.strip()
 
 
@@ -62,7 +63,7 @@ class Clinica:
     @descricao.setter
     def descricao(self, valor: str):
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("Erro: Descrição não pode ser vazia.")
+            raise DadoInvalidoException("Erro: Descrição não pode ser vazia.")
         self.__descricao = valor.strip()
 
 
@@ -78,11 +79,11 @@ class Clinica:
                 h, m = map(int, valor.split(':'))
                 self.__horario_abertura = time(h, m)
             except Exception:
-                raise ValueError("Erro: Horário inválido. Use HH:MM.")
+                raise DadoInvalidoException("Erro: Horário inválido. Use HH:MM.")
         elif isinstance(valor, time):
             self.__horario_abertura = valor
         else:
-            raise ValueError("Erro: Horário inválido.")
+            raise DadoInvalidoException("Erro: Horário inválido.")
 
 
     @property
@@ -97,13 +98,14 @@ class Clinica:
                 h, m = map(int, valor.split(':'))
                 t = time(h, m)
             except Exception:
-                raise ValueError("Erro: Horário inválido. Use HH:MM.")
+                raise DadoInvalidoException("Erro: Horário inválido. Use HH:MM.")
         elif isinstance(valor, time):
             t = valor
         else:
-            raise ValueError("Erro: Horário inválido.")
+            raise DadoInvalidoException("Erro: Horário inválido.")
+        # Validação cruzada: fechamento deve ser após abertura
         if hasattr(self, '_Clinica__horario_abertura') and t <= self.__horario_abertura:
-            raise ValueError("Erro: Horário de fechamento deve ser posterior ao de abertura.")
+            raise DadoInvalidoException("Erro: Horário de fechamento deve ser posterior ao de abertura.")
         self.__horario_fechamento = t
 
 
@@ -116,16 +118,16 @@ class Clinica:
     def adicionar_profissional(self, profissional: Profissional):
         """AGREGAÇÃO: adiciona profissional à clínica. Ele pode existir sem ela."""
         if not isinstance(profissional, Profissional):
-            raise ValueError("Erro: Profissional inválido.")
+            raise DadoInvalidoException("Erro: Profissional inválido.")
         if profissional in self.__profissionais:
-            raise ValueError("Erro: Profissional já cadastrado nesta clínica.")
+            raise DadoInvalidoException("Erro: Profissional já cadastrado nesta clínica.")
         self.__profissionais.append(profissional)
 
 
     def remover_profissional(self, profissional: Profissional):
         """AGREGAÇÃO: remove da clínica, mas profissional continua existindo no sistema."""
         if profissional not in self.__profissionais:
-            raise ValueError("Erro: Profissional não encontrado nesta clínica.")
+            raise DadoInvalidoException("Erro: Profissional não encontrado nesta clínica.")
         self.__profissionais.remove(profissional)
 
 
@@ -138,7 +140,7 @@ class Clinica:
         n_profs = len(self.__profissionais)
         return (f"Clínica: {self.__nome}\n"
                 f"CNPJ: {self.__cnpj}\n"
-                f"Endereço: {self.__localizacao} - {self.__cidade}\n"
+                f"Cidade: {self.__cidade}\n"
                 f"Descrição: {self.__descricao}\n"
                 f"Funcionamento: {self.__horario_abertura.strftime('%H:%M')} às {self.__horario_fechamento.strftime('%H:%M')}\n"
                 f"Profissionais cadastrados: {n_profs}")

@@ -1,10 +1,10 @@
 # class feita por Marcos
 
-
 from abc import ABC, abstractmethod
 from datetime import date
 from model.Paciente import Paciente
-
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e classes abstratas
     def __init__(self, data_pgto, atendimento, paciente: Paciente, valor_pago: float):
@@ -26,17 +26,11 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
                 dia, mes, ano = map(int, valor.split('/'))
                 d = date(ano, mes, dia)
             except Exception:
-                raise ValueError("Erro: Data inválida. Use DD/MM/AAAA.")
+                raise DadoInvalidoException("Erro: Data inválida. Use DD/MM/AAAA.")
         elif isinstance(valor, date):
             d = valor
         else:
-            raise ValueError("Erro: Data inválida.")
-        # Regra 3 do enunciado: pagamento deve ser até a data do atendimento
-        if hasattr(self, '_Pagamento__atendimento') and d > self.__atendimento.data:
-            raise ValueError(
-                f"Erro: Data do pagamento ({d.strftime('%d/%m/%Y')}) não pode ser posterior "
-                f"à data do atendimento ({self.__atendimento.data.strftime('%d/%m/%Y')})."
-            )
+            raise DadoInvalidoException("Erro: Data inválida.")
         self.__data = d
 
 
@@ -48,7 +42,7 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
     @atendimento.setter
     def atendimento(self, valor):
         if not valor or not hasattr(valor, 'valor'):
-            raise ValueError("Erro: Atendimento inválido.")
+            raise DadoInvalidoException("Erro: Atendimento inválido.")
         self.__atendimento = valor
 
 
@@ -60,7 +54,7 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
     @paciente.setter
     def paciente(self, valor):
         if not isinstance(valor, Paciente):
-            raise ValueError("Erro: Paciente inválido.")
+            raise DadoInvalidoException("Erro: Paciente inválido.")
         self.__paciente = valor
 
 
@@ -74,9 +68,9 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
         try:
             v = float(valor)
         except (ValueError, TypeError):
-            raise ValueError("Erro: Valor pago deve ser um número.")
+            raise DadoInvalidoException("Erro: Valor pago deve ser um número.")
         if v <= 0:
-            raise ValueError("Erro: Valor pago deve ser maior que zero.")
+            raise DadoInvalidoException("Erro: Valor pago deve ser maior que zero.")
         self.__valor_pago = v
 
 

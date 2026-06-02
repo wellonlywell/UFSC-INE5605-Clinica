@@ -1,3 +1,5 @@
+# class feita por Well
+
 from enum import Enum
 
 class CorRaca(Enum):

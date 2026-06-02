@@ -1,9 +1,9 @@
 #class feita pelo Marcos
 
-
 from model.Pagamento import Pagamento
 from model.Paciente import Paciente
-
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class PagamentoPix(Pagamento):
     def __init__(self, data_pgto, atendimento, paciente: Paciente, valor_pago: float, cpf_pagador: str):
@@ -19,10 +19,10 @@ class PagamentoPix(Pagamento):
     @cpf_pagador.setter
     def cpf_pagador(self, valor: str):
         if not isinstance(valor, str):
-            raise ValueError("Erro: CPF do pagador deve ser uma string.")
+            raise DadoInvalidoException("Erro: CPF do pagador deve ser uma string.")
         digitos = "".join(c for c in valor if c.isdigit())
         if len(digitos) != 11:
-            raise ValueError("Erro: CPF do pagador deve ter 11 dígitos.")
+            raise DadoInvalidoException("Erro: CPF do pagador deve ter 11 dígitos.")
         self.__cpf_pagador = valor
 
 

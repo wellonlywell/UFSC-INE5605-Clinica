@@ -1,6 +1,10 @@
+# class feita por Well
+
 from model.Pessoa import Pessoa
 from model.CorRaca import CorRaca
 from typing import Optional
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Profissional(Pessoa):
     def __init__(self, nome_civil: str, celular: str, cpf: str,
@@ -20,7 +24,7 @@ class Profissional(Pessoa):
     @especialidade.setter
     def especialidade(self, valor: str):
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("Especialidade não pode ser vazia.")
+            raise DadoInvalidoException("Especialidade não pode ser vazia.")
         self.__especialidade = valor.strip()
 
     @property
@@ -30,7 +34,7 @@ class Profissional(Pessoa):
     @registro.setter
     def registro(self, valor: str):
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("Registro profissional não pode ser vazio.")
+            raise DadoInvalidoException("Registro profissional não pode ser vazio.")
         self.__registro = valor.strip()
 
     def get_info(self) -> str:

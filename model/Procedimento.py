@@ -1,4 +1,8 @@
+# class feita por Well
+
 from model.Profissional import Profissional
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Procedimento:
     def __init__(self, descricao: str, custo: float, profissional: Profissional):
@@ -13,7 +17,7 @@ class Procedimento:
     @descricao.setter
     def descricao(self, valor: str):
         if not isinstance(valor, str) or not valor.strip():
-            raise ValueError("Descrição não pode ser vazia.")
+            raise DadoInvalidoException("Descrição não pode ser vazia.")
         self.__descricao = valor.strip()
 
     @property
@@ -25,9 +29,9 @@ class Procedimento:
         try:
             v = float(valor)
         except (ValueError, TypeError):
-            raise ValueError("Custo deve ser um número.")
+            raise DadoInvalidoException("Custo deve ser um número.")
         if v < 0:
-            raise ValueError("Custo não pode ser negativo.")
+            raise DadoInvalidoException("Custo não pode ser negativo.")
         self.__custo = v
 
     @property
@@ -37,7 +41,7 @@ class Procedimento:
     @profissional.setter
     def profissional(self, valor):
         if not isinstance(valor, Profissional):
-            raise ValueError("Profissional inválido.")
+            raise DadoInvalidoException("Profissional inválido.")
         self.__profissional = valor
 
     def __str__(self) -> str:
