@@ -1,7 +1,6 @@
-# class feita por Well
+# fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
 
 class TelaProfissional:
-  # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
     """Mostra o menu de opções da pessoa Profissional."""
     print("-------- MENU PROFISSIONAIS ----------")
@@ -28,11 +27,10 @@ class TelaProfissional:
     nome_civil = input("Nome Civil: ").strip()
     nome_social = input("Nome Social (Deixe vazio se não houver): ").strip()
     celular = input("Celular (Ex: 48999998888): ").strip()
-    data_nascimento = input("Data de Nascimento (DD/MM/AAAA): ").strip()
-    registro_profissional = input("Registro Profissional (Ex: CRM/SC 12345, COREN 6789): ").strip()
+    # DATA DE NASCIMENTO REMOVIDA DAQUI
+    registro = input("Registro Profissional (Ex: CRM/SC 12345, COREN 6789): ").strip()
     especialidade = input("Especialidade Médica/Área (Ex: Clínico Geral, Pediatra): ").strip()
 
-    # Validação simples de S/N para PCD
     while True:
       pcd_input = input("É Pessoa com Deficiência (PCD)? (S/N): ").strip().upper()
       if pcd_input in ['S', 'N']:
@@ -40,10 +38,7 @@ class TelaProfissional:
         break
       print("Por favor, responda apenas com S ou N.")
 
-    # Autodeclaração de Cor/Raça
     print("\nCor ou raça (autodeclaração — categorias IBGE):")
-    print("Nota: Dados coletados para fins de indicadores de equidade em saúde.")
-    print("Como você se autodeclara?")
     print("( 1 ) Branca    ( 2 ) Preta     ( 3 ) Parda")
     print("( 4 ) Amarela   ( 5 ) Indígena  ( 6 ) Prefiro não responder")
 
@@ -53,10 +48,7 @@ class TelaProfissional:
         break
       print("Opção inválida! Digite um número de 1 a 6.")
 
-    # Identidade de gênero aberta
     print("\n--- Identidade de Gênero ---")
-    print("Como você se identifica em relação ao seu gênero atual?")
-    print("Exemplos: Mulher Cis/Trans, Homem Cis/Trans, Pessoa não-binária, Gênero fluido, Agênero, etc")
     identidade_genero = input("Sua resposta (Ou pressione ENTER para 'Prefiro não responder'): ").strip()
 
     return {
@@ -64,8 +56,7 @@ class TelaProfissional:
       "nome_civil": nome_civil,
       "nome_social": nome_social if nome_social else None,
       "celular": celular,
-      "data_nascimento": data_nascimento,
-      "registro_profissional": registro_profissional,
+      "registro": registro,
       "especialidade": especialidade,
       "pcd": pcd,
       "cor_raca_opcao": cor_opcao,
@@ -73,19 +64,13 @@ class TelaProfissional:
     }
 
   def mostra_profissional(self, profissional):
-    """Exibe os dados extraídos diretamente do objeto Profissional (Erros de digitação corrigidos)."""
-    print(f"Registro Profissional: {profissional.registro_profissional}")
+    """Exibe os dados extraídos diretamente do objeto Profissional."""
+    # CORRIGIDO: Agora puxa .registro e não tem mais print de data
+    print(f"Registro Profissional: {profissional.registro}")
     print(f"Especialidade: {profissional.especialidade}")
     print(f"Nome: {profissional.nome}")
     print(f"CPF: {profissional.cpf}")
     print(f"Celular: {profissional.celular}")
-
-    if hasattr(profissional.data_nascimento, 'strftime'):
-      data_str = profissional.data_nascimento.strftime('%d/%m/%Y')
-    else:
-      data_str = profissional.data_nascimento
-
-    print(f"Nascimento: {data_str}")
     print(f"PCD: {'Sim' if profissional.pcd else 'Não'}")
 
     if profissional.cor_raca:
@@ -101,5 +86,4 @@ class TelaProfissional:
     return cpf
 
   def mostra_mensagem(self, mensagem: str):
-    """Mostra qualquer mensagem de sucesso ou erro no terminal."""
     print(f"\n[Aviso]: {mensagem}")
