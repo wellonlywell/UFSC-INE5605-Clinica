@@ -1,4 +1,6 @@
-class TelaPaciente():
+# class feita por Well
+
+class TelaPaciente:
   # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
     """Mostra o menu de opções da pessoa Paciente."""
@@ -8,6 +10,7 @@ class TelaPaciente():
     print("3 - Listar Pacientes")
     print("4 - Excluir Paciente")
     print("0 - Retornar")
+    print("----------------------------------")
 
     while True:
       try:
@@ -27,16 +30,31 @@ class TelaPaciente():
     celular = input("Celular (Ex: 48999998888): ").strip()
     data_nascimento = input("Data de Nascimento (DD/MM/AAAA): ").strip()
 
+    # Validação simples de S/N para PCD
+    while True:
+      pcd_input = input("É Pessoa com Deficiência (PCD)? (S/N): ").strip().upper()
+      if pcd_input in ['S', 'N']:
+        pcd = (pcd_input == 'S')
+        break
+      print("Por favor, responda apenas com S ou N.")
 
-    pcd_input = input("É Pessoa com Deficiência (PCD)? (S/N): ").strip().upper()
-    pcd = True if pcd_input == 'S' else False
+    # Autodeclaração de Cor/Raça
+    print("\nCor ou raça (autodeclaração — categorias IBGE):")
+    print("Nota: Dados coletados para fins de indicadores de equidade em saúde.")
+    print("Como você se autodeclara?")
+    print("( 1 ) Branca    ( 2 ) Preta     ( 3 ) Parda")
+    print("( 4 ) Amarela   ( 5 ) Indígena  ( 6 ) Prefiro não responder")
 
-    print("\nCores/Raças disponíveis:")
-    print("1 - Branca | 2 - Preta | 3 - Parda | 4 - Amarela | 5 - Indígena | 6 - Não Informado")
+    while True:
+      cor_opcao = input("Escolha uma opção (1 a 6): ").strip()
+      if cor_opcao in ["1", "2", "3", "4", "5", "6"]:
+        break
+      print("Opção inválida! Digite um número de 1 a 6.")
 
     # Identidade de gênero aberta
-    print("\nComo você se identifica em relação ao seu gênero?")
-    print("Exemplos: Mulher Cis/Trans, Homem Cis/Trans, Pessoa não-binária, Gênero fluido, etc")
+    print("\n--- Identidade de Gênero ---")
+    print("Como você se identifica em relação ao seu gênero atual?")
+    print("Exemplos: Mulher Cis/Trans, Homem Cis/Trans, Pessoa não-binária, Gênero fluido, Agênero, etc")
     identidade_genero = input("Sua resposta (Ou pressione ENTER para 'Prefiro não responder'): ").strip()
 
     return {
@@ -50,17 +68,26 @@ class TelaPaciente():
       "identidade_genero": identidade_genero if identidade_genero else "Prefiro não responder"
     }
 
-  def mostra_paciente(self, dados_paciente: dict):
-    """Exibe os dados de um único paciente na tela."""
-    print(f"CPF: {dados_paciente['cpf']}")
-    print(f"Nome: {dados_paciente['nome']}")
-    print(f"Celular: {dados_paciente['celular']}")
-    print(f"Idade: {dados_paciente['idade']} anos (Nascimento: {dados_paciente['data_nascimento']})")
-    print(f"PCD: {'Sim' if dados_paciente['pcd'] else 'Não'}")
-    print(f"Cor/Raça: {dados_paciente['cor_raca']}")
-    print(f"Gênero: {dados_paciente['identidade_genero']}")
-    if dados_paciente['nome_responsavel']:
-      print(f"Responsável Legal: {dados_paciente['nome_responsavel']}")
+  def mostra_paciente(self, paciente):
+    """Exibe os dados extraídos diretamente do objeto Paciente."""
+    print(f"CPF: {paciente.cpf}")
+    print(f"Nome: {paciente.nome}")
+    print(f"Celular: {paciente.celular}")
+
+    if hasattr(paciente.data_nascimento, 'strftime'):
+      data_str = paciente.data_nascimento.strftime('%d/%m/%Y')
+    else:
+      data_str = paciente.data_nascimento
+
+    print(f"Idade: {paciente.idade} anos (Nascimento: {data_str})")
+    print(f"PCD: {'Sim' if paciente.pcd else 'Não'}")
+
+    if paciente.cor_raca:
+      print(f"Cor/Raça: {paciente.cor_raca.value}")
+    if paciente.identidade_genero:
+      print(f"Gênero: {paciente.identidade_genero}")
+    if paciente.responsavel:
+      print(f"Responsável Legal: {paciente.responsavel.nome}")
     print("-" * 40)
 
   def seleciona_paciente(self) -> str:
