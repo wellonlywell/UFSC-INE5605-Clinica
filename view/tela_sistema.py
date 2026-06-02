@@ -25,5 +25,5 @@ class TelaSistema:
         print("Por favor, digite um número inteiro válido.")
 
   def mostra_mensagem(self, mensagem: str):
-    """Mostra mensagens gerais do sistema."""
+    """Mostra mensagens gerais do SisTema."""
     print(f"\n[Sistema]: {mensagem}")

@@ -1,4 +1,3 @@
-# class feita por Well
 
 class TelaTipoAtendimento:
   # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado

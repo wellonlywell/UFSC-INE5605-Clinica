@@ -13,7 +13,10 @@ class Profissional(Pessoa):
                  pcd: bool = False,
                  cor_raca: Optional[CorRaca] = None,
                  identidade_genero: Optional[str] = None):
+
+        # Passando apenas os atributos que a Pessoa possui
         super().__init__(nome_civil, celular, cpf, nome_social, pcd, cor_raca, identidade_genero)
+
         self.especialidade = especialidade
         self.registro = registro
 
