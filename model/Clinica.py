@@ -3,7 +3,7 @@ from model.Profissional import Profissional
 
 
 class Clinica:
-    def __init__(self, cnpj: str, nome: str, localizacao: str, cidade: str,
+    def __init__(self, cnpj: str, nome: str, cidade: str,
                  descricao: str, horario_abertura: str, horario_fechamento: str):
         self.cnpj = cnpj
         self.nome = nome
