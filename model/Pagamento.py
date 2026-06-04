@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from datetime import date
-from model.Paciente import Paciente
+from model.paciente import Paciente
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
