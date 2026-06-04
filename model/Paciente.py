@@ -2,7 +2,7 @@
 
 from datetime import date
 from model.Pessoa import Pessoa
-from model.CorRaca import CorRaca
+from model.cor_raca import CorRaca
 from typing import Optional
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
