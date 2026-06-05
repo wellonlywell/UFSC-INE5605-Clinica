@@ -154,9 +154,9 @@ class Atendimento:
         return list(self.__procedimentos)
 
 
-    def adicionar_procedimento(self, descricao: str, custo: float, profissional: Profissional):
+    def adicionar_procedimento(self, id: int, descricao: str, custo: float, profissional: Profissional):
         """COMPOSIÇÃO: Procedimento é criado aqui dentro, não existe fora do Atendimento."""
-        novo_procedimento = Procedimento(descricao, custo, profissional)
+        novo_procedimento = Procedimento(id, descricao, custo, profissional)
         self.__procedimentos.append(novo_procedimento)
 
 
