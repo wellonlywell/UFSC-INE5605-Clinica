@@ -1,6 +1,6 @@
 # class feita por Well
 
-from model.profissional import Profissional
+from model.Profissional import Profissional
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
@@ -56,6 +56,6 @@ class Procedimento:
         self.__profissional = valor
 
     def __str__(self) -> str:
-        return (f"Procedimento: {self.__descricao}\n"
+        return (f"ID: {self.__id} | Procedimento: {self.__descricao}\n"
                 f"Custo: R$ {self.__custo:.2f}\n"
                 f"Responsável: {self.__profissional.nome}")
