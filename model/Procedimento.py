@@ -5,11 +5,22 @@ from model.profissional import Profissional
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Procedimento:
-    def __init__(self, descricao: str, custo: float, profissional: Profissional):
+    def __init__(self, id: int, descricao: str, custo: float, profissional: Profissional):
+        self.id = id
         self.descricao = descricao
         self.custo = custo
         self.profissional = profissional
 
+    @property
+    def id(self) -> int:
+        return self.__id    
+    
+    @id.setter
+    def id(self, valor):
+        if not isinstance(valor, int) or valor <= 0:
+            raise DadoInvalidoException("ID deve ser um inteiro positivo.")
+        self.__id = valor   
+        
     @property
     def descricao(self) -> str:
         return self.__descricao
