@@ -1,3 +1,9 @@
+from model.Profissional import Profissional
+from model.CorRaca import CorRaca
+from view.tela_profissional import TelaProfissional
+from exceptions.dado_invalido_exception import DadoInvalidoException
+
+
 class ControladorProfissional():
 
   def __init__(self, controlador_sistema):

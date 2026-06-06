@@ -1,17 +1,17 @@
-from model.clinica import Clinica
+from model.Clinica import Clinica
 from view.tela_clinica import TelaClinica
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 
 class ControladorClinica:
-   
+
     def __init__(self, controlador_sistema):
         self.__clinicas = []
         self.__tela_clinica = TelaClinica()
         self.__controlador_sistema = controlador_sistema
 
     def abre_tela(self):
-                while True:
+        while True:
             opcao = self.__tela_clinica.tela_opcoes()
 
             if opcao == 1:
@@ -24,7 +24,7 @@ class ControladorClinica:
                 self.excluir_clinica()
             elif opcao == 0:
                 # Sai do loop e retorna para o menu principal
-                break
+                break        
 
     def incluir_clinica(self):
         """Pede dados à tela, cria o objeto Clinica e adiciona na lista."""

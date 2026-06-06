@@ -1,11 +1,12 @@
 from datetime import date, time
-from model.clinica import Clinica
-from model.paciente import Paciente
-from model.profissional import Profissional
-from model.procedimento import Procedimento
-from model.tipoAtendimento import TipoAtendimento
+from model.Clinica import Clinica
+from model.Paciente import Paciente
+from model.Profissional import Profissional
+from model.Procedimento import Procedimento
+from model.TipoAtendimento import TipoAtendimento
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
-from exceptions.dado_invalido_exception import DadoInvalidoException
+from exceptions.dado_invalido_exception import DadoInvalidoException# Exceptions customizadas, validações de dado movidas para a pasta exceptions
+
 
 
 class Atendimento:

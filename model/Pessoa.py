@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Optional
-from model.cor_raca import CorRaca
+from model.CorRaca import CorRaca
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
