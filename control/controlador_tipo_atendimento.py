@@ -2,11 +2,87 @@ from model.TipoAtendimento import TipoAtendimento
 from view.tela_tipo_atendimento import TelaTipoAtendimento
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
-class ControladorTipoAtendimento():
 
-  def __init__(self, controlador_sistema):
-    self.__tipos_atendimento = []
-    self.__tela_tipo_atendimento = TelaTipoAtendimento()
-    self.__controlador_sistema = controlador_sistema
+class ControladorTipoAtendimento:
 
-pass
+    def __init__(self, controlador_sistema):
+        self.__tipos_atendimento = []
+        self.__tela_tipo_atendimento = TelaTipoAtendimento()
+        self.__controlador_sistema = controlador_sistema
+        self.__proximo_id = 1
+
+    def abre_tela(self):
+        while True:
+            opcao = self.__tela_tipo_atendimento.tela_opcoes()
+            if opcao == 1:
+                self.incluir_tipo_atendimento()
+            elif opcao == 2:
+                self.alterar_tipo_atendimento()
+            elif opcao == 3:
+                self.listar_tipos_atendimento()
+            elif opcao == 4:
+                self.excluir_tipo_atendimento()
+            elif opcao == 0:
+                break
+
+    def incluir_tipo_atendimento(self):
+        dados = self.__tela_tipo_atendimento.pega_dados_tipo_atendimento()
+        try:
+            novo = TipoAtendimento(id=self.__proximo_id, descricao=dados["descricao"])
+            self.__tipos_atendimento.append(novo)
+            self.__proximo_id += 1
+            self.__tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento cadastrado com sucesso!")
+        except DadoInvalidoException as e:
+            self.__tela_tipo_atendimento.mostra_mensagem(f"Erro nos dados: {e}")
+
+    def alterar_tipo_atendimento(self):
+        if not self.__tipos_atendimento:
+            self.__tela_tipo_atendimento.mostra_mensagem("Nenhum tipo de atendimento cadastrado.")
+            return
+        self.listar_tipos_atendimento()
+        id_buscado = self.__tela_tipo_atendimento.seleciona_tipo_atendimento()
+        tipo = self.buscar_por_id(id_buscado)
+        if tipo is None:
+            self.__tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento não encontrado.")
+            return
+        dados = self.__tela_tipo_atendimento.pega_dados_tipo_atendimento()
+        try:
+            tipo.descricao = dados["descricao"]
+            self.__tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento alterado com sucesso!")
+        except DadoInvalidoException as e:
+            self.__tela_tipo_atendimento.mostra_mensagem(f"Erro nos dados: {e}")
+
+    def excluir_tipo_atendimento(self):
+        if not self.__tipos_atendimento:
+            self.__tela_tipo_atendimento.mostra_mensagem("Nenhum tipo de atendimento cadastrado.")
+            return
+        self.listar_tipos_atendimento()
+        id_buscado = self.__tela_tipo_atendimento.seleciona_tipo_atendimento()
+        tipo = self.buscar_por_id(id_buscado)
+        if tipo is None:
+            self.__tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento não encontrado.")
+            return
+        self.__tipos_atendimento.remove(tipo)
+        self.__tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento removido com sucesso!")
+
+    def listar_tipos_atendimento(self):
+        if not self.__tipos_atendimento:
+            self.__tela_tipo_atendimento.mostra_mensagem("Nenhum tipo de atendimento cadastrado.")
+            return
+        for tipo in self.__tipos_atendimento:
+            self.__tela_tipo_atendimento.mostra_tipo_atendimento(tipo)
+
+    def buscar_por_id(self, id: int):
+        for tipo in self.__tipos_atendimento:
+            if tipo.id == id:
+                return tipo
+        return None
+
+    def buscar_por_descricao(self, descricao: str):
+        for tipo in self.__tipos_atendimento:
+            if tipo.descricao.lower() == descricao.lower():
+                return tipo
+        return None
+
+    def get_tipos_atendimento(self) -> list:
+        return list(self.__tipos_atendimento)
