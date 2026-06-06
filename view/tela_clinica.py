@@ -25,19 +25,27 @@ class TelaClinica:
     print("\n----- INSERIR DADOS DA CLÍNICA -----")
     nome = input("Nome Fantasia: ").strip()
     cnpj = input("CNPJ (apenas números): ").strip()
-    endereco = input("Endereço Completo: ").strip()
+    cidade = input("Cidade: ").strip()
+    descricao = input("Descrição: ").strip()
+    horario_abertura = input("Horário de Abertura (HH:MM): ").strip()
+    horario_fechamento = input("Horário de Fechamento (HH:MM): ").strip()
 
     return {
       "nome": nome,
       "cnpj": cnpj,
-      "endereco": endereco
-    }
+      "cidade": cidade,
+      "descricao": descricao,
+      "horario_abertura": horario_abertura,
+      "horario_fechamento": horario_fechamento   }
 
   def mostra_clinica(self, clinica):
     """Exibe as informações de uma clínica cadastrada."""
     print(f"CNPJ: {clinica.cnpj}")
     print(f"Nome: {clinica.nome}")
-    print(f"Endereço: {clinica.endereco}")
+    print(f"Cidade: {clinica.cidade}")
+    print(f"Descrição: {clinica.descricao}")
+    print(f"Horário de Abertura: {clinica.horario_abertura.strftime('%H:%M')}")
+    print(f"Horário de Fechamento: {clinica.horario_fechamento.strftime('%H:%M')}")
     print("-" * 40)
 
   def seleciona_clinica(self) -> str:

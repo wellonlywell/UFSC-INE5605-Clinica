@@ -33,7 +33,10 @@ class ControladorClinica:
             nova_clinica = Clinica(
                 nome=dados["nome"],
                 cnpj=dados["cnpj"],
-                cidade=dados["cidade"]
+                cidade=dados["cidade"],
+                descricao=dados["descricao"],
+                horario_abertura=dados["horario_abertura"],
+                horario_fechamento=dados["horario_fechamento"]
             )
             # Verifica se já existe uma clínica com o mesmo CNPJ
             if self.buscar_por_cnpj(dados["cnpj"]) is not None:
