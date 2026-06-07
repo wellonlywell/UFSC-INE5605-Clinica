@@ -3,10 +3,10 @@ class TelaPaciente:
   # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
     """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
-    print("-------- MENU PACIENTES ----------")
+    print("\n-------- MENU PACIENTES ----------")
     print("1 - Incluir: cadastrar novo paciente")
     print("2 - Alterar: editar paciente já cadastrado")
-    print("3 - Listar: exibir lista de pacientes cadastrados")
+    print("3 - Listar: exibir lista de todas pessoas pacientes cadastrados")
     print("4 - Excluir: remover um paciente do sistema")
     print("0 - Retornar ao Menu Principal")
     print("----------------------------------")

@@ -3,10 +3,10 @@ class TelaResponsavel:
   # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
     """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
-    print("-------- MENU RESPONSÁVEIS ----------")
+    print("\n-------- MENU RESPONSÁVEIS ----------")
     print("1 - Incluir: cadastrar novo responsável")
     print("2 - Alterar: editar responsável já cadastrado")
-    print("3 - Listar: exibir lista de responsáveis cadastrados")
+    print("3 - Listar: exibir lista de todas pessoas responsáveis cadastradas")
     print("4 - Excluir: remover um responsável do sistema")
     print("0 - Retornar")
     print("-------------------------------------")

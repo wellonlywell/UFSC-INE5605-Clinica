@@ -3,10 +3,10 @@
 class TelaProfissional:
   def tela_opcoes(self):
     """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
-    print("-------- MENU PROFISSIONAIS ----------")
+    print("\n-------- MENU PROFISSIONAIS ----------")
     print("1 - Incluir: cadastrar novo profissional")
     print("2 - Alterar: editar profissional já cadastrado")
-    print("3 - Listar: exibir lista de profissionais cadastrados")
+    print("3 - Listar: exibir lista de todas pessoas profissionais cadastradas")
     print("4 - Excluir: remover um profissional do sistema")
     print("0 - Retornar ao Menu Principal")
     print("--------------------------------------")
@@ -30,7 +30,7 @@ class TelaProfissional:
 
     # Dados específicos para profissionais de saúde
     print("\n--- DADOS PROFISSIONAIS ---")
-    registro = input("\nRegistro Profissional (Ex: CRM/SC 12345, COREN 6789): ").strip()
+    registro = input("Registro Profissional (Ex: CRM/SC 12345, COREN 6789): ").strip()
     especialidade = input("Especialidade Médica/Área (Ex: Clínico Geral, Pediatra): ").strip()
 
     # Validação simples de S/N para PCD

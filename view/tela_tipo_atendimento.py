@@ -24,8 +24,7 @@ class TelaTipoAtendimento:
                 print(f"\n[Erro]: {e}\n")
 
   def pega_dados_tipo_atendimento(self, operacao="INSERIR"):
-        print(f"\n----- {operacao} DADOS DO TIPO DE ATENDIMENTO -----")
-        # Mensagem clara baseada na ação do usuário
+        print(f"\n----- {operacao} DADOS DO TIPO DE ATENDIMENTO -----")        
         if operacao == "ALTERAR":
             print("Digite a nova descrição para substituir a atual:")
         else:

@@ -7,10 +7,10 @@ class TelaPagamento:
   def tela_opcoes(self):
     """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("-------- MENU PAGAMENTOS ----------")
-    print("1 - Incluir: Registrar Pagamento")
-    print("2 - Alterar: Corrigir/Alterar Data de Pagamento")
-    print("3 - Listar: Listar Histórico de Pagamentos")
-    print("4 - Excluir: Estornar/Cancelar Pagamento")
+    print("1 - Incluir: registrar pagamento")
+    print("2 - Alterar: corrigir/atualizar data de pagamento")
+    print("3 - Listar: exibir lista de todos os histórico de pagamentos")
+    print("4 - Excluir: estornar/cancelar pagamento")
     print("0 - Retornar ao Menu Principal")
     print("-----------------------------------")
 
