@@ -1,6 +1,5 @@
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
-
 class TelaAtendimento:
 
     def tela_opcoes(self):
@@ -26,7 +25,13 @@ class TelaAtendimento:
                 print(f"[Erro]: {e}")
 
     def pega_dados_atendimento(self):
-      
+        """
+        Coleta os dados para criar um atendimento.
+
+        CORREÇÃO: A versão HEAD desta função retornava a chave "id_tipo" (int),
+        mas o controlador usa buscar_por_descricao() e esperava a chave
+        "descricao_tipo" (str). Unificamos para "descricao_tipo".
+        """
         print("\n----- INSERIR DADOS DO AGENDAMENTO -----")
         try:
             cnpj_clinica    = input("CNPJ da Clínica (apenas números): ").strip()
@@ -51,7 +56,7 @@ class TelaAtendimento:
             raise DadoInvalidoException("Valor deve ser numérico.")
 
     def pega_dados_alteracao(self):
-  
+        """Pede apenas os campos alteráveis de um atendimento existente."""
         print("\n----- ALTERAR AGENDAMENTO -----")
         try:
             return {
@@ -64,7 +69,15 @@ class TelaAtendimento:
             raise DadoInvalidoException("O valor deve ser numérico.")
 
     def mostra_atendimento(self, atendimento):
-      
+        """
+        Exibe o resumo do atendimento.
+
+        CORREÇÃO: A versão HEAD acessava atributos que não existem no model,
+        como atendimento.id, data_hora_str, tipo_atendimento.nome, status,
+        proc.nome e proc.valor.
+        Agora usamos apenas o que realmente existe: .tipo.descricao, .profissional.registro,
+        .procedimentos, proc.descricao e proc.custo.
+        """
         print(f"Data/Hora: {atendimento.data.strftime('%d/%m/%Y')} "
               f"das {atendimento.hora_inicio.strftime('%H:%M')} "
               f"às {atendimento.hora_fim.strftime('%H:%M')}")
