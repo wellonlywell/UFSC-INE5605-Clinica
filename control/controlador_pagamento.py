@@ -3,6 +3,7 @@ from model.PagamentoPix import PagamentoPix
 from model.PagamentoCartao import PagamentoCartao
 from view.tela_pagamento import TelaPagamento
 from exceptions.dado_invalido_exception import DadoInvalidoException
+from exceptions.regra_negocio_exception import RegraNegocioException
 
 
 class ControladorPagamento:
@@ -24,6 +25,8 @@ class ControladorPagamento:
             elif opcao == 2:
                 self.listar_pagamentos()
             elif opcao == 3:
+                self.alterar_pagamento()
+            elif opcao == 4:
                 self.excluir_pagamento()
             elif opcao == 0:
                 break
@@ -34,8 +37,7 @@ class ControladorPagamento:
         
         """
         ctrl_atendimento = self.__controlador_sistema.controlador_atendimento
-        ctrl_paciente = self.__controlador_sistema.controlador_paciente
-
+        
         atendimentos = ctrl_atendimento.get_atendimentos()
         if not atendimentos:
             self.__tela.mostra_mensagem("Nenhum atendimento cadastrado para pagar.")
@@ -101,8 +103,8 @@ class ControladorPagamento:
             print("\n" + pagamento.emitir_comprovante())
             self.__tela.mostra_mensagem("Pagamento registrado com sucesso!")
 
-        except DadoInvalidoException as e:
-            self.__tela.mostra_mensagem(f"Erro nos dados: {e}")
+        except (DadoInvalidoException, RegraNegocioException) as e:
+            self.__tela.mostra_mensagem(f"Não foi possível registrar o pagamento: {e}")
 
     def listar_pagamentos(self):
         if not self.__pagamentos:
@@ -110,6 +112,29 @@ class ControladorPagamento:
             return
         for i, pag in enumerate(self.__pagamentos):
             print(f"\n[{i}] {pag.emitir_comprovante()}")
+
+    def alterar_pagamento(self):
+        """Alteração: Modifica a data de um pagamento existente."""
+        if not self.__pagamentos:
+            self.__tela.mostra_mensagem("Nenhum pagamento registrado no sistema.")
+            return
+
+        self.listar_pagamentos()
+        indice = self.__tela.seleciona_pagamento()
+        
+        if indice < 0 or indice >= len(self.__pagamentos):
+            self.__tela.mostra_mensagem("Índice de pagamento inválido.")
+            return
+
+        pagamento_selecionado = self.__pagamentos[indice]
+        nova_data = self.__tela.pega_nova_data()
+        
+        try:
+            # O setter da propriedade data fará a validação da Regra 3 automaticamente
+            pagamento_selecionado.data = nova_data
+            self.__tela.mostra_mensagem("Data do pagamento alterada com sucesso!")
+        except (DadoInvalidoException, RegraNegocioException) as e:
+            self.__tela.mostra_mensagem(f"Falha ao alterar a data: {e}")
 
     def excluir_pagamento(self):
         if not self.__pagamentos:
@@ -120,7 +145,7 @@ class ControladorPagamento:
         if indice < 0 or indice >= len(self.__pagamentos):
             self.__tela.mostra_mensagem("Índice inválido.")
             return
-        self.__pagamentos.remove(self.__pagamentos[indice])
+        self.__pagamentos.pop(indice)
         self.__tela.mostra_mensagem("Pagamento removido.")
 
     def get_pagamentos(self) -> list:

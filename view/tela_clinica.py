@@ -2,13 +2,13 @@
 
 class TelaClinica:
   def tela_opcoes(self):
-    """Mostra o menu completo para gerenciar Clínicas (Escopo do Professor)."""
+    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("-------- GERENCIAR CLÍNICAS ----------")
-    print("1 - Incluir Clínica")
-    print("2 - Alterar Dados de uma Clínica")
-    print("3 - Listar Clínicas")
-    print("4 - Excluir Clínica")
-    print("0 - Retornar")
+    print("1 - Incluir: Registrar Clínica")
+    print("2 - Alterar: Dados de uma Clínica")
+    print("3 - Listar: Clínicas")
+    print("4 - Excluir: Clínica")
+    print("0 - Retornar ao Menu Principal")
     print("--------------------------------------")
 
     while True:

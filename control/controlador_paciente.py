@@ -1,6 +1,8 @@
 from model.Paciente import Paciente
+from model.Responsavel import Responsavel
 from model.CorRaca import CorRaca
 from view.tela_paciente import TelaPaciente
+from view.tela_responsavel import TelaResponsavel
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 
@@ -9,6 +11,7 @@ class ControladorPaciente:
     def __init__(self, controlador_sistema):
         self.__pacientes = []
         self.__tela_paciente = TelaPaciente()
+        self.__tela_responsavel = TelaResponsavel()
         self.__controlador_sistema = controlador_sistema
 
     def abre_tela(self):
@@ -31,7 +34,9 @@ class ControladorPaciente:
             if self.buscar_por_cpf(dados["cpf"]) is not None:
                 self.__tela_paciente.mostra_mensagem("Já existe um paciente com este CPF.")
                 return
+
             cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+
             novo = Paciente(
                 nome_civil=dados["nome_civil"],
                 celular=dados["celular"],
@@ -42,10 +47,46 @@ class ControladorPaciente:
                 cor_raca=cor_raca,
                 identidade_genero=dados["identidade_genero"]
             )
+
+            # Se menor de idade, obriga cadastrar responsável
+            if not novo.maior_de_idade:
+                self.__tela_paciente.mostra_mensagem(
+                    f"Paciente menor de idade ({novo.idade} anos). "
+                    "É obrigatório cadastrar um responsável legal."
+                )
+                responsavel = self.__cadastrar_responsavel()
+                if responsavel is None:
+                    self.__tela_paciente.mostra_mensagem(
+                        "Cadastro cancelado. Responsável é obrigatório para menores de idade."
+                    )
+                    return
+                novo.responsavel = responsavel
+
             self.__pacientes.append(novo)
             self.__tela_paciente.mostra_mensagem("Paciente cadastrado com sucesso!")
+
         except DadoInvalidoException as e:
             self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
+
+    def __cadastrar_responsavel(self):
+        """Pede dados do responsável e cria o objeto. Retorna None se falhar."""
+        try:
+            dados = self.__tela_responsavel.pega_dados_responsavel()
+            cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+            responsavel = Responsavel(
+                nome_civil=dados["nome_civil"],
+                celular=dados["celular"],
+                cpf=dados["cpf"],
+                parentesco=dados["parentesco"],
+                nome_social=dados["nome_social"],
+                pcd=dados["pcd"],
+                cor_raca=cor_raca,
+                identidade_genero=dados["identidade_genero"]
+            )
+            return responsavel
+        except DadoInvalidoException as e:
+            self.__tela_paciente.mostra_mensagem(f"Erro nos dados do responsável: {e}")
+            return None
 
     def alterar_paciente(self):
         if not self.__pacientes:

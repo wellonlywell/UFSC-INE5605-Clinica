@@ -5,6 +5,7 @@ from datetime import date
 from model.Paciente import Paciente
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
+from exceptions.regra_negocio_exception import RegraNegocioException
 
 class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e classes abstratas
     def __init__(self, data_pgto, atendimento, paciente: Paciente, valor_pago: float):
@@ -31,6 +32,17 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
             d = valor
         else:
             raise DadoInvalidoException("Erro: Data inválida.")
+        # Só podemos verificar se o atendimento já foi salvo no objeto (e foi, lá no __init__)
+        if hasattr(self, 'atendimento') and self.atendimento is not None:
+            data_atendimento = self.atendimento.data
+            
+            # Se a data de pagamento for maior que a data do atendimento, é uma violação da regra de negócio!
+            if d > data_atendimento:
+                raise RegraNegocioException(
+                    f"Violação de Regra: O pagamento (data: {d.strftime('%d/%m/%Y')}) "
+                    f"deve ser realizado até a data do atendimento ({data_atendimento.strftime('%d/%m/%Y')})."
+                )        
+        # Se passou em todas as verificações, salva a data.
         self.__data = d
 
 
