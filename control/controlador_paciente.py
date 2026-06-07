@@ -6,6 +6,7 @@ from view.tela_responsavel import TelaResponsavel
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
 
+
 class ControladorPaciente:
 
     def __init__(self, controlador_sistema):
@@ -18,62 +19,100 @@ class ControladorPaciente:
         while True:
             try:
                 opcao = self.__tela_paciente.tela_opcoes()
-                if opcao == 1: self.incluir_paciente()
-                elif opcao == 2: self.alterar_paciente()
-                elif opcao == 3: self.listar_pacientes()
-                elif opcao == 4: self.excluir_paciente()
-                elif opcao == 0: break
+                if opcao == 1:
+                    self.incluir_paciente()
+                elif opcao == 2:
+                    self.alterar_paciente()
+                elif opcao == 3:
+                    self.listar_pacientes()
+                elif opcao == 4:
+                    self.excluir_paciente()
+                elif opcao == 0:
+                    break
             except (DadoInvalidoException, RegraNegocioException) as e:
                 self.__tela_paciente.mostra_mensagem(str(e))
 
     def incluir_paciente(self):
+        """
+        REGRA 1 — Menor de idade exige responsável:
+        Se o paciente tiver menos de 18 anos, o sistema imediatamente pede os
+        dados do responsável. Se o usuário não fornecer um responsável válido,
+        o cadastro é cancelado. Sem responsável = sem cadastro de menor.
+
+        CORREÇÃO em relação à versão original:
+        - O raise RegraNegocioException foi substituído por um return limpo
+          com mensagem explicativa, para não interromper o fluxo do menu.
+        - O responsável é criado e registrado no controlador_responsavel
+          para garantir consistência.
+        """
         dados = self.__tela_paciente.pega_dados_paciente()
-        
-        # 1. Validação de Unicidade
+
+        # Verifica unicidade antes de criar
         if self.buscar_por_cpf(dados["cpf"]) is not None:
-            raise RegraNegocioException("Já existe um paciente com este CPF.")
+            self.__tela_paciente.mostra_mensagem("Já existe um paciente com este CPF.")
+            return
 
         cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
-        novo = Paciente(
-            nome_civil=dados["nome_civil"],
-            celular=dados["celular"],
-            cpf=dados["cpf"],
-            data_nascimento=dados["data_nascimento"],
-            nome_social=dados["nome_social"],
-            pcd=dados["pcd"],
-            cor_raca=cor_raca,
-            identidade_genero=dados["identidade_genero"]
-        )
 
-        # 2. Validação da Regra de Menor de Idade
+        try:
+            novo = Paciente(
+                nome_civil=dados["nome_civil"],
+                celular=dados["celular"],
+                cpf=dados["cpf"],
+                data_nascimento=dados["data_nascimento"],
+                nome_social=dados["nome_social"],
+                pcd=dados["pcd"],
+                cor_raca=cor_raca,
+                identidade_genero=dados["identidade_genero"]
+            )
+        except DadoInvalidoException as e:
+            self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
+            return
+
+        # ------------------------------------------------------------------ #
+        # REGRA 1 — Responsável obrigatório para menores de 18 anos           #
+        # ------------------------------------------------------------------ #
         if not novo.maior_de_idade:
-            self.__tela_paciente.mostra_mensagem(f"Paciente menor de idade ({novo.idade} anos). Responsável obrigatório.")
+            self.__tela_paciente.mostra_mensagem(
+                f"Paciente tem {novo.idade} anos (menor de idade). "
+                "É obrigatório cadastrar um responsável legal."
+            )
             responsavel = self.__cadastrar_responsavel()
             if responsavel is None:
-                # Mudança: Usamos raise para interromper o fluxo e avisar o sistema
-                raise RegraNegocioException("Cadastro interrompido: o responsável é obrigatório para menores.")
+                # Usuário não conseguiu fornecer responsável válido — cancela
+                self.__tela_paciente.mostra_mensagem(
+                    "Cadastro cancelado: responsável é obrigatório para menores de 18 anos."
+                )
+                return
             novo.responsavel = responsavel
 
         self.__pacientes.append(novo)
         self.__tela_paciente.mostra_mensagem("Paciente cadastrado com sucesso!")
 
     def __cadastrar_responsavel(self):
-        dados = self.__tela_responsavel.pega_dados_responsavel()
-        cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
-        
-        responsavel = Responsavel(
-            nome_civil=dados["nome_civil"],
-            celular=dados["celular"],
-            cpf=dados["cpf"],
-            parentesco=dados["parentesco"],
-            nome_social=dados["nome_social"],
-            pcd=dados["pcd"],
-            cor_raca=cor_raca,
-            identidade_genero=dados["identidade_genero"]
-        )
-                
-        self.__controlador_sistema.controlador_responsavel.registrar_responsavel(responsavel)
-        return responsavel
+        """
+        Pede os dados do responsável, cria o objeto e o registra no
+        controlador_responsavel. Retorna o objeto ou None em caso de erro.
+        """
+        try:
+            dados = self.__tela_responsavel.pega_dados_responsavel()
+            cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+            responsavel = Responsavel(
+                nome_civil=dados["nome_civil"],
+                celular=dados["celular"],
+                cpf=dados["cpf"],
+                parentesco=dados["parentesco"],
+                nome_social=dados["nome_social"],
+                pcd=dados["pcd"],
+                cor_raca=cor_raca,
+                identidade_genero=dados["identidade_genero"]
+            )
+            # Registra também no controlador de responsáveis para manter consistência
+            self.__controlador_sistema.controlador_responsavel.registrar_responsavel(responsavel)
+            return responsavel
+        except (DadoInvalidoException, RegraNegocioException) as e:
+            self.__tela_paciente.mostra_mensagem(f"Erro nos dados do responsável: {e}")
+            return None
 
     def alterar_paciente(self):
         if not self.__pacientes:
@@ -85,18 +124,19 @@ class ControladorPaciente:
         if paciente is None:
             self.__tela_paciente.mostra_mensagem("Paciente não encontrado.")
             return
-            
         dados = self.__tela_paciente.pega_dados_paciente()
-        cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
-        paciente.nome_civil = dados["nome_civil"]
-        paciente.nome_social = dados["nome_social"]
-        paciente.celular = dados["celular"]
-        paciente.data_nascimento = dados["data_nascimento"]
-        paciente.pcd = dados["pcd"]
-        paciente.cor_raca = cor_raca
-        paciente.identidade_genero = dados["identidade_genero"]
-        
-        self.__tela_paciente.mostra_mensagem("Paciente alterado com sucesso!")
+        try:
+            cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+            paciente.nome_civil         = dados["nome_civil"]
+            paciente.nome_social        = dados["nome_social"]
+            paciente.celular            = dados["celular"]
+            paciente.data_nascimento    = dados["data_nascimento"]
+            paciente.pcd                = dados["pcd"]
+            paciente.cor_raca           = cor_raca
+            paciente.identidade_genero  = dados["identidade_genero"]
+            self.__tela_paciente.mostra_mensagem("Paciente alterado com sucesso!")
+        except DadoInvalidoException as e:
+            self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
 
     def excluir_paciente(self):
         if not self.__pacientes:
@@ -130,7 +170,8 @@ class ControladorPaciente:
 
     def __converter_cor_raca(self, opcao: str):
         mapa = {
-            "1": CorRaca.BRANCA, "2": CorRaca.PRETA, "3": CorRaca.PARDA,
-            "4": CorRaca.AMARELA, "5": CorRaca.INDIGENA, "6": CorRaca.NAO_INFORMADO
+            "1": CorRaca.BRANCA,  "2": CorRaca.PRETA,
+            "3": CorRaca.PARDA,   "4": CorRaca.AMARELA,
+            "5": CorRaca.INDIGENA, "6": CorRaca.NAO_INFORMADO
         }
         return mapa.get(opcao, CorRaca.NAO_INFORMADO)
