@@ -1,68 +1,84 @@
-# fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
-
 class TelaAtendimento:
-  def tela_opcoes(self):
-    """Mostra o menu de gerenciamento de consultas/atendimentos."""
-    print("-------- MENU AGENDAMENTOS/ATENDIMENTOS ----------")
-    print("1 - Agendar Novo Atendimento")
-    print("2 - Alterar Data/Hora de Agendamento")
-    print("3 - Listar Todos os Atendimentos")
-    print("4 - Cancelar Atendimento")
-    print("5 - Iniciar/Finalizar Atendimento na SisClínica")
-    print("0 - Retornar ao Menu Principal")
-    print("--------------------------------------------------")
 
-    while True:
-      try:
-        opcao = int(input("Escolha a opção: "))
-        if opcao in [0, 1, 2, 3, 4, 5]:
-          return opcao
-        print("Opção inválida! Digite um número entre 0 e 5.")
-      except ValueError:
-        print("Por favor, digite um número inteiro válido.")
+    def tela_opcoes(self):
+        print("\n-------- MENU AGENDAMENTOS/ATENDIMENTOS ----------")
+        print("1 - Agendar Novo Atendimento")
+        print("2 - Alterar Atendimento")
+        print("3 - Listar Todos os Atendimentos")
+        print("4 - Cancelar Atendimento")
+        print("0 - Retornar ao Menu Principal")
+        print("--------------------------------------------------")
+        while True:
+            try:
+                opcao = int(input("Escolha a opção: "))
+                if opcao in [0, 1, 2, 3, 4]:
+                    return opcao
+                print("Opção inválida! Digite um número entre 0 e 4.")
+            except ValueError:
+                print("Por favor, digite um número inteiro válido.")
 
-  def pega_dados_atendimento(self):
-    """Pede os identificadores essenciais para criar a agenda."""
-    print("\n----- INSERIR DADOS DO AGENDAMENTO -----")
-    cpf_paciente = input("CPF do Paciente (apenas números): ").strip()
-    cpf_profissional = input("CPF do Profissional de Saúde (apenas números): ").strip()
-    codigo_tipo = input("Código do Tipo de Atendimento: ").strip().upper()
-    data_hora = input("Data e Hora do Atendimento (DD/MM/AAAA HH:MM): ").strip()
+    def pega_dados_atendimento(self):
+  
+        print("\n----- INSERIR DADOS DO AGENDAMENTO -----")
+        cnpj_clinica = input("CNPJ da Clínica (apenas números): ").strip()
+        cpf_paciente = input("CPF do Paciente (apenas números): ").strip()
+        cpf_profissional = input("CPF do Profissional (apenas números): ").strip()
+        descricao_tipo = input("Descrição do Tipo de Atendimento (ex: Consulta): ").strip()
+        data = input("Data do Atendimento (DD/MM/AAAA): ").strip()
+        hora_inicio = input("Hora de Início (HH:MM): ").strip()
+        hora_fim = input("Hora de Fim (HH:MM): ").strip()
+        while True:
+            try:
+                valor = float(input("Valor do Atendimento (R$): ").strip())
+                if valor > 0:
+                    break
+                print("O valor deve ser maior que zero.")
+            except ValueError:
+                print("Digite um número válido.")
+        return {
+            "cnpj_clinica": cnpj_clinica,
+            "cpf_paciente": cpf_paciente,
+            "cpf_profissional": cpf_profissional,
+            "descricao_tipo": descricao_tipo,
+            "data": data,
+            "hora_inicio": hora_inicio,
+            "hora_fim": hora_fim,
+            "valor": valor
+        }
 
-    return {
-      "cpf_paciente": cpf_paciente,
-      "cpf_profissional": cpf_profissional,
-      "codigo_tipo_atendimento": codigo_tipo,
-      "data_hora": data_hora
-    }
+    def mostra_atendimento(self, atendimento):
+        """
+        CORRIGIDO: A versão original acessava:
+          atendimento.id          → não existe
+          atendimento.data_hora_str → não existe
+          atendimento.profissional.registro_profissional → o atributo correto é .registro
+          atendimento.tipo_atendimento.nome → o atributo correto é .tipo.descricao
+          atendimento.status      → não existe
+          proc.nome, proc.valor   → os atributos corretos são .descricao e .custo
+        Agora usa apenas atributos que realmente existem no model.
+        """
+        print(f"Paciente: {atendimento.paciente.nome}")
+        print(f"Profissional: {atendimento.profissional.nome} ({atendimento.profissional.registro})")
+        print(f"Clínica: {atendimento.clinica.nome}")
+        print(f"Tipo: {atendimento.tipo.descricao}")
+        print(f"Data: {atendimento.data.strftime('%d/%m/%Y')}  "
+              f"{atendimento.hora_inicio.strftime('%H:%M')} - {atendimento.hora_fim.strftime('%H:%M')}")
+        print(f"Valor: R$ {atendimento.valor:.2f}")
+        print("Procedimentos:")
+        if atendimento.procedimentos:
+            for proc in atendimento.procedimentos:
+                print(f"  - {proc.descricao} (R$ {proc.custo:.2f})")
+        else:
+            print("  - Nenhum procedimento cadastrado.")
+        print("-" * 50)
 
-  def mostra_atendimento(self, atendimento):
-    """Exibe o espelho completo da consulta/atendimento."""
-    print(f"ID do Atendimento: {atendimento.id}")
-    print(f"Data/Hora: {atendimento.data_hora_str}")
-    print(f"Paciente: {atendimento.paciente.nome}")
-    print(f"Profissional: {atendimento.profissional.nome} ({atendimento.profissional.registro_profissional})")
-    print(f"Tipo: {atendimento.tipo_atendimento.nome}")
+    def seleciona_atendimento(self) -> int:
+        print("\n----- SELECIONAR ATENDIMENTO -----")
+        while True:
+            try:
+                return int(input("Digite o número do atendimento (entre colchetes): ").strip())
+            except ValueError:
+                print("Por favor, digite um número inteiro válido.")
 
-    print("Procedimentos Vinculados:")
-    if atendimento.procedimentos:
-      for proc in atendimento.procedimentos:
-        print(f"  - {proc.nome} (R$ {proc.valor:.2f})")
-    else:
-      print("  - Nenhum procedimento extra cadastrado.")
-
-    print(f"Status do Atendimento: {atendimento.status}")
-    print("-" * 50)
-
-  def seleciona_atendimento(self) -> int:
-    """Pede o ID único do atendimento para operações."""
-    print("\n----- SELECIONAR ATENDIMENTO -----")
-    while True:
-      try:
-        id_atendimento = int(input("Digite o ID do atendimento: ").strip())
-        return id_atendimento
-      except ValueError:
-        print("Por favor, digite um ID numérico inteiro válido.")
-
-  def mostra_mensagem(self, message: str):
-    print(f"\n[Atendimento]: {message}")
+    def mostra_mensagem(self, mensagem: str):
+        print(f"\n[Atendimento]: {mensagem}")
