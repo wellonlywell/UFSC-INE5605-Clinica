@@ -2,12 +2,12 @@
 class TelaPaciente:
   # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
-    """Mostra o menu de opções da pessoa Paciente."""
+    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("-------- MENU PACIENTES ----------")
-    print("1 - Incluir Paciente")
-    print("2 - Alterar Paciente")
-    print("3 - Listar Pacientes")
-    print("4 - Excluir Paciente")
+    print("1 - Incluir: cadastrar novo paciente")
+    print("2 - Alterar: editar paciente já cadastrado")
+    print("3 - Listar: exibir lista de pacientes cadastrados")
+    print("4 - Excluir: remover um paciente do sistema")
     print("0 - Retornar ao Menu Principal")
     print("----------------------------------")
 
@@ -31,14 +31,14 @@ class TelaPaciente:
 
     # Validação simples de S/N para PCD
     while True:
-      pcd_input = input("É Pessoa com Deficiência (PCD)? (S/N): ").strip().upper()
+      pcd_input = input("\nÉ Pessoa com Deficiência (PCD)? (S/N): ").strip().upper()
       if pcd_input in ['S', 'N']:
         pcd = (pcd_input == 'S')
         break
       print("Por favor, responda apenas com S ou N.")
 
     # Autodeclaração de Cor/Raça
-    print("\nCor ou raça (autodeclaração — categorias IBGE):")
+    print("\nAutodeclaração — categorias IBGE:")
     print("Nota: Dados coletados para fins de indicadores de equidade em saúde.")
     print("Como você se autodeclara?")
     print("( 1 ) Branca    ( 2 ) Preta     ( 3 ) Parda")
@@ -92,7 +92,7 @@ class TelaPaciente:
   def seleciona_paciente(self) -> str:
     """Pede o CPF para encontrar uma pessoa paciente específico."""
     print("\n----- SELECIONAR PACIENTE -----")
-    cpf = input("Digite o CPF do paciente: ").strip()
+    cpf = input("Digite o CPF da pessoa paciente: ").strip()
     return cpf
 
   def mostra_mensagem(self, mensagem: str):

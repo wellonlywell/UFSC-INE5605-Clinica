@@ -4,7 +4,7 @@ from model.CorRaca import CorRaca
 from view.tela_paciente import TelaPaciente
 from view.tela_responsavel import TelaResponsavel
 from exceptions.dado_invalido_exception import DadoInvalidoException
-
+from exceptions.regra_negocio_exception import RegraNegocioException
 
 class ControladorPaciente:
 
@@ -16,77 +16,61 @@ class ControladorPaciente:
 
     def abre_tela(self):
         while True:
-            opcao = self.__tela_paciente.tela_opcoes()
-            if opcao == 1:
-                self.incluir_paciente()
-            elif opcao == 2:
-                self.alterar_paciente()
-            elif opcao == 3:
-                self.listar_pacientes()
-            elif opcao == 4:
-                self.excluir_paciente()
-            elif opcao == 0:
-                break
+            try:
+                opcao = self.__tela_paciente.tela_opcoes()
+                if opcao == 1: self.incluir_paciente()
+                elif opcao == 2: self.alterar_paciente()
+                elif opcao == 3: self.listar_pacientes()
+                elif opcao == 4: self.excluir_paciente()
+                elif opcao == 0: break
+            except (DadoInvalidoException, RegraNegocioException) as e:
+                self.__tela_paciente.mostra_mensagem(str(e))
 
     def incluir_paciente(self):
         dados = self.__tela_paciente.pega_dados_paciente()
-        try:
-            if self.buscar_por_cpf(dados["cpf"]) is not None:
-                self.__tela_paciente.mostra_mensagem("Já existe um paciente com este CPF.")
-                return
+        
+        # 1. Validação de Unicidade
+        if self.buscar_por_cpf(dados["cpf"]) is not None:
+            raise RegraNegocioException("Já existe um paciente com este CPF.")
 
-            cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+        cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+        novo = Paciente(
+            nome_civil=dados["nome_civil"],
+            celular=dados["celular"],
+            cpf=dados["cpf"],
+            data_nascimento=dados["data_nascimento"],
+            nome_social=dados["nome_social"],
+            pcd=dados["pcd"],
+            cor_raca=cor_raca,
+            identidade_genero=dados["identidade_genero"]
+        )
 
-            novo = Paciente(
-                nome_civil=dados["nome_civil"],
-                celular=dados["celular"],
-                cpf=dados["cpf"],
-                data_nascimento=dados["data_nascimento"],
-                nome_social=dados["nome_social"],
-                pcd=dados["pcd"],
-                cor_raca=cor_raca,
-                identidade_genero=dados["identidade_genero"]
-            )
+        # 2. Validação da Regra de Menor de Idade
+        if not novo.maior_de_idade:
+            self.__tela_paciente.mostra_mensagem(f"Paciente menor de idade ({novo.idade} anos). Responsável obrigatório.")
+            responsavel = self.__cadastrar_responsavel()
+            if responsavel is None:
+                # Mudança: Usamos raise para interromper o fluxo e avisar o sistema
+                raise RegraNegocioException("Cadastro interrompido: o responsável é obrigatório para menores.")
+            novo.responsavel = responsavel
 
-            # Se menor de idade, obriga cadastrar responsável
-            if not novo.maior_de_idade:
-                self.__tela_paciente.mostra_mensagem(
-                    f"Paciente menor de idade ({novo.idade} anos). "
-                    "É obrigatório cadastrar um responsável legal."
-                )
-                responsavel = self.__cadastrar_responsavel()
-                if responsavel is None:
-                    self.__tela_paciente.mostra_mensagem(
-                        "Cadastro cancelado. Responsável é obrigatório para menores de idade."
-                    )
-                    return
-                novo.responsavel = responsavel
-
-            self.__pacientes.append(novo)
-            self.__tela_paciente.mostra_mensagem("Paciente cadastrado com sucesso!")
-
-        except DadoInvalidoException as e:
-            self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
+        self.__pacientes.append(novo)
+        self.__tela_paciente.mostra_mensagem("Paciente cadastrado com sucesso!")
 
     def __cadastrar_responsavel(self):
-        """Pede dados do responsável e cria o objeto. Retorna None se falhar."""
-        try:
-            dados = self.__tela_responsavel.pega_dados_responsavel()
-            cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
-            responsavel = Responsavel(
-                nome_civil=dados["nome_civil"],
-                celular=dados["celular"],
-                cpf=dados["cpf"],
-                parentesco=dados["parentesco"],
-                nome_social=dados["nome_social"],
-                pcd=dados["pcd"],
-                cor_raca=cor_raca,
-                identidade_genero=dados["identidade_genero"]
-            )
-            return responsavel
-        except DadoInvalidoException as e:
-            self.__tela_paciente.mostra_mensagem(f"Erro nos dados do responsável: {e}")
-            return None
+        dados = self.__tela_responsavel.pega_dados_responsavel()
+        cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+        # O construtor do Responsavel já valida os dados via Pessoa
+        return Responsavel(
+            nome_civil=dados["nome_civil"],
+            celular=dados["celular"],
+            cpf=dados["cpf"],
+            parentesco=dados["parentesco"],
+            nome_social=dados["nome_social"],
+            pcd=dados["pcd"],
+            cor_raca=cor_raca,
+            identidade_genero=dados["identidade_genero"]
+        )
 
     def alterar_paciente(self):
         if not self.__pacientes:
@@ -98,19 +82,18 @@ class ControladorPaciente:
         if paciente is None:
             self.__tela_paciente.mostra_mensagem("Paciente não encontrado.")
             return
+            
         dados = self.__tela_paciente.pega_dados_paciente()
-        try:
-            cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
-            paciente.nome_civil = dados["nome_civil"]
-            paciente.nome_social = dados["nome_social"]
-            paciente.celular = dados["celular"]
-            paciente.data_nascimento = dados["data_nascimento"]
-            paciente.pcd = dados["pcd"]
-            paciente.cor_raca = cor_raca
-            paciente.identidade_genero = dados["identidade_genero"]
-            self.__tela_paciente.mostra_mensagem("Paciente alterado com sucesso!")
-        except DadoInvalidoException as e:
-            self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
+        cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+        paciente.nome_civil = dados["nome_civil"]
+        paciente.nome_social = dados["nome_social"]
+        paciente.celular = dados["celular"]
+        paciente.data_nascimento = dados["data_nascimento"]
+        paciente.pcd = dados["pcd"]
+        paciente.cor_raca = cor_raca
+        paciente.identidade_genero = dados["identidade_genero"]
+        
+        self.__tela_paciente.mostra_mensagem("Paciente alterado com sucesso!")
 
     def excluir_paciente(self):
         if not self.__pacientes:

@@ -2,12 +2,12 @@
 class TelaResponsavel:
   # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
-    """Mostra o menu de opções da pessoa Responsável."""
+    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("-------- MENU RESPONSÁVEIS ----------")
-    print("1 - Incluir Responsável")
-    print("2 - Alterar Responsável")
-    print("3 - Listar Responsáveis")
-    print("4 - Excluir Responsável")
+    print("1 - Incluir: cadastrar novo responsável")
+    print("2 - Alterar: editar responsável já cadastrado")
+    print("3 - Listar: exibir lista de responsáveis cadastrados")
+    print("4 - Excluir: remover um responsável do sistema")
     print("0 - Retornar")
     print("-------------------------------------")
 
@@ -38,7 +38,7 @@ class TelaResponsavel:
       print("Por favor, responda apenas com S ou N.")
 
     # Autodeclaração de Cor/Raça
-    print("\nCor ou raça (autodeclaração — categorias IBGE):")
+    print("\nAutodeclaração — categorias IBGE:")
     print("Nota: Dados coletados para fins de indicadores de equidade em saúde.")
     print("Como você se autodeclara?")
     print("( 1 ) Branca    ( 2 ) Preta     ( 3 ) Parda")
@@ -84,7 +84,7 @@ class TelaResponsavel:
   def seleciona_responsavel(self) -> str:
     """Pede o CPF para encontrar um responsável específico."""
     print("\n----- SELECIONAR RESPONSÁVEL -----")
-    cpf = input("Digite o CPF do responsável: ").strip()
+    cpf = input("Digite o CPF da pessoa responsável: ").strip()
     return cpf
 
   def mostra_mensagem(self, mensagem: str):

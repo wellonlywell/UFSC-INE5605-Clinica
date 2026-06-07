@@ -2,7 +2,7 @@ from model.Responsavel import Responsavel
 from model.CorRaca import CorRaca
 from view.tela_responsavel import TelaResponsavel
 from exceptions.dado_invalido_exception import DadoInvalidoException
-
+from exceptions.regra_negocio_exception import RegraNegocioException
 
 class ControladorResponsavel:
 
@@ -13,39 +13,35 @@ class ControladorResponsavel:
 
     def abre_tela(self):
         while True:
-            opcao = self.__tela_responsavel.tela_opcoes()
-            if opcao == 1:
-                self.incluir_responsavel()
-            elif opcao == 2:
-                self.alterar_responsavel()
-            elif opcao == 3:
-                self.listar_responsaveis()
-            elif opcao == 4:
-                self.excluir_responsavel()
-            elif opcao == 0:
-                break
+            try:
+                opcao = self.__tela_responsavel.tela_opcoes()
+                if opcao == 1: self.incluir_responsavel()
+                elif opcao == 2: self.alterar_responsavel()
+                elif opcao == 3: self.listar_responsaveis()
+                elif opcao == 4: self.excluir_responsavel()
+                elif opcao == 0: break
+            except (DadoInvalidoException, RegraNegocioException) as e:
+                self.__tela_responsavel.mostra_mensagem(str(e))
 
     def incluir_responsavel(self):
         dados = self.__tela_responsavel.pega_dados_responsavel()
-        try:
-            if self.buscar_por_cpf(dados["cpf"]) is not None:
-                self.__tela_responsavel.mostra_mensagem("Já existe um responsável com este CPF.")
-                return
-            cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
-            novo = Responsavel(
-                nome_civil=dados["nome_civil"],
-                celular=dados["celular"],
-                cpf=dados["cpf"],
-                parentesco=dados["parentesco"],
-                nome_social=dados["nome_social"],
-                pcd=dados["pcd"],
-                cor_raca=cor_raca,
-                identidade_genero=dados["identidade_genero"]
-            )
-            self.__responsaveis.append(novo)
-            self.__tela_responsavel.mostra_mensagem("Responsável cadastrado com sucesso!")
-        except DadoInvalidoException as e:
-            self.__tela_responsavel.mostra_mensagem(f"Erro nos dados: {e}")
+        
+        if self.buscar_por_cpf(dados["cpf"]) is not None:
+            raise RegraNegocioException("Já existe um responsável cadastrado com este CPF.")
+            
+        cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+        novo = Responsavel(
+            nome_civil=dados["nome_civil"],
+            celular=dados["celular"],
+            cpf=dados["cpf"],
+            parentesco=dados["parentesco"],
+            nome_social=dados["nome_social"],
+            pcd=dados["pcd"],
+            cor_raca=cor_raca,
+            identidade_genero=dados["identidade_genero"]
+        )
+        self.__responsaveis.append(novo)
+        self.__tela_responsavel.mostra_mensagem("Responsável cadastrado com sucesso!")
 
     def alterar_responsavel(self):
         if not self.__responsaveis:
@@ -57,19 +53,19 @@ class ControladorResponsavel:
         if responsavel is None:
             self.__tela_responsavel.mostra_mensagem("Responsável não encontrado.")
             return
+            
         dados = self.__tela_responsavel.pega_dados_responsavel()
-        try:
-            cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
-            responsavel.nome_civil = dados["nome_civil"]
-            responsavel.nome_social = dados["nome_social"]
-            responsavel.celular = dados["celular"]
-            responsavel.parentesco = dados["parentesco"]
-            responsavel.pcd = dados["pcd"]
-            responsavel.cor_raca = cor_raca
-            responsavel.identidade_genero = dados["identidade_genero"]
-            self.__tela_responsavel.mostra_mensagem("Responsável alterado com sucesso!")
-        except DadoInvalidoException as e:
-            self.__tela_responsavel.mostra_mensagem(f"Erro nos dados: {e}")
+        
+        cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+        responsavel.nome_civil = dados["nome_civil"]
+        responsavel.nome_social = dados["nome_social"]
+        responsavel.celular = dados["celular"]
+        responsavel.parentesco = dados["parentesco"]
+        responsavel.pcd = dados["pcd"]
+        responsavel.cor_raca = cor_raca
+        responsavel.identidade_genero = dados["identidade_genero"]
+        
+        self.__tela_responsavel.mostra_mensagem("Responsável alterado com sucesso!")
 
     def excluir_responsavel(self):
         if not self.__responsaveis:

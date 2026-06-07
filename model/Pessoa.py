@@ -1,5 +1,3 @@
-# class feita por Well
-
 from abc import ABC, abstractmethod
 from typing import Optional
 from model.CorRaca import CorRaca
@@ -44,10 +42,10 @@ class Pessoa(ABC):
     @celular.setter
     def celular(self, valor: str):
         if not isinstance(valor, str):
-            raise DadoInvalidoException("Celular deve ser uma string.")
+            raise DadoInvalidoException("Celular deve ser um texto.")
         digitos = "".join(c for c in valor if c.isdigit())
         if len(digitos) < 10 or len(digitos) > 11:
-            raise DadoInvalidoException("Celular inválido.")
+            raise DadoInvalidoException("Celular inválido: informe o DDD + número (10 ou 11 dígitos).")
         self.__celular = valor
 
     @property
@@ -57,11 +55,11 @@ class Pessoa(ABC):
     @cpf.setter
     def cpf(self, valor: str):
         if not isinstance(valor, str):
-            raise DadoInvalidoException("CPF deve ser uma string.")
+            raise DadoInvalidoException("CPF deve ser um texto.")
         digitos = "".join(c for c in valor if c.isdigit())
         if len(digitos) != 11:
-            raise DadoInvalidoException("CPF deve ter 11 dígitos.")
-        self.__cpf = valor
+            raise DadoInvalidoException("CPF inválido: deve conter exatamente 11 números.")
+        self.__cpf = digitos
 
     @property
     def nome_social(self) -> Optional[str]:
@@ -70,7 +68,7 @@ class Pessoa(ABC):
     @nome_social.setter
     def nome_social(self, valor):
         if valor is not None and not isinstance(valor, str):
-            raise DadoInvalidoException("Nome social deve ser uma string.")
+            raise DadoInvalidoException("O nome social deve ser um texto válido.")
         self.__nome_social = valor.strip() if valor else None
 
     @property
@@ -80,7 +78,7 @@ class Pessoa(ABC):
     @pcd.setter
     def pcd(self, valor: bool):
         if not isinstance(valor, bool):
-            raise DadoInvalidoException("PCD deve ser verdadeiro ou falso.")
+            raise DadoInvalidoException("Por favor, responda apenas Sim ou Não (True/False).")
         self.__pcd = valor
 
     @property
@@ -100,7 +98,7 @@ class Pessoa(ABC):
     @identidade_genero.setter
     def identidade_genero(self, valor):
         if valor is not None and not isinstance(valor, str):
-            raise DadoInvalidoException("Identidade de gênero deve ser uma string.")
+            raise DadoInvalidoException("Identidade de gênero deve ser um texto válido.")
         self.__identidade_genero = valor.strip() if valor else None
 
     @abstractmethod

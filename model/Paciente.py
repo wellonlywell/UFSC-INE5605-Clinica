@@ -1,10 +1,7 @@
-# class feita por Well
-
 from datetime import date
 from model.Pessoa import Pessoa
 from model.CorRaca import CorRaca
 from typing import Optional
-# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Paciente(Pessoa):
@@ -34,7 +31,7 @@ class Paciente(Pessoa):
             try:
                 dia, mes, ano = map(int, valor.split('/'))
                 self.__data_nascimento = date(ano, mes, dia)
-            except Exception:
+            except ValueError:
                 raise DadoInvalidoException("Data inválida. Use DD/MM/AAAA.")
         elif isinstance(valor, date):
             self.__data_nascimento = valor

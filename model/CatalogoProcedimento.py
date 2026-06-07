@@ -1,5 +1,3 @@
-# class feita por Well
-
 from model.Profissional import Profissional
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException

@@ -1,6 +1,7 @@
 from model.CatalogoProcedimento import CatalogoProcedimento
 from view.tela_catalogo_procedimento import TelaCatalogoProcedimento
 from exceptions.dado_invalido_exception import DadoInvalidoException
+from exceptions.regra_negocio_exception import RegraNegocioException
 
 
 class ControladorCatalogoProcedimento:
@@ -13,24 +14,21 @@ class ControladorCatalogoProcedimento:
 
     def abre_tela(self):
         while True:
-            opcao = self.__tela_procedimento.tela_opcoes()
-            if opcao == 1:
-                self.incluir_procedimento()
-            elif opcao == 2:
-                self.alterar_procedimento()
-            elif opcao == 3:
-                self.listar_procedimentos()
-            elif opcao == 4:
-                self.excluir_procedimento()
-            elif opcao == 0:
-                break
+            try:
+                opcao = self.__tela_procedimento.tela_opcoes()
+                if opcao == 1: self.incluir_procedimento()
+                elif opcao == 2: self.alterar_procedimento()
+                elif opcao == 3: self.listar_procedimentos()
+                elif opcao == 4: self.excluir_procedimento()
+                elif opcao == 0: break
+            except (DadoInvalidoException, RegraNegocioException) as e:
+                self.__tela_procedimento.mostra_mensagem(str(e))
 
     def incluir_procedimento(self):
         # 1. Valida dependência
         ctrl_prof = self.__controlador_sistema.controlador_profissional
         if not ctrl_prof.get_profissionais():
-            self.__tela_procedimento.mostra_mensagem("Nenhum profissional cadastrado. Cadastre um profissional primeiro.")
-            return
+            raise RegraNegocioException("Não há profissionais cadastrados no sistema. Cadastre um profissional antes de incluir um procedimento.")
 
         # 2. Coleta dados via tela
         dados = self.__tela_procedimento.pega_dados_procedimento()
@@ -38,27 +36,22 @@ class ControladorCatalogoProcedimento:
         
         profissional = ctrl_prof.buscar_por_cpf(cpf_prof)
         if profissional is None:
-            self.__tela_procedimento.mostra_mensagem("Profissional não encontrado.")
-            return
+            raise RegraNegocioException("Profissional não encontrado. Verifique o CPF digitado e tente novamente.")
 
         # 3. Regra de Negócio: Descrição Única
         if self.buscar_por_descricao(dados["descricao"]):
-            self.__tela_procedimento.mostra_mensagem("Erro: Já existe um procedimento com esta descrição.")
-            return
+            raise RegraNegocioException("Já existe um procedimento com esta descrição.")
 
-        # 4. Instancia e salva
-        try:
-            novo = CatalogoProcedimento(
-                id=self.__proximo_id,
-                descricao=dados["descricao"],
-                custo=dados["custo"],
-                profissional=profissional
-            )
-            self.__procedimentos.append(novo)
-            self.__proximo_id += 1
-            self.__tela_procedimento.mostra_mensagem("Procedimento cadastrado com sucesso!")
-        except DadoInvalidoException as e:
-            self.__tela_procedimento.mostra_mensagem(f"Erro nos dados: {e}")
+        # 4. Instancia e salva 
+        novo = CatalogoProcedimento(
+            id=self.__proximo_id,
+            descricao=dados["descricao"],
+            custo=dados["custo"],
+            profissional=profissional
+        )
+        self.__procedimentos.append(novo)
+        self.__proximo_id += 1
+        self.__tela_procedimento.mostra_mensagem("Procedimento cadastrado com sucesso!")
 
     def alterar_procedimento(self):
         if not self.__procedimentos:
