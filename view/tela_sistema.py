@@ -9,20 +9,19 @@ class TelaSistema:
         print("3 - Gerenciar Tipos de Atendimento")
         print("4 - Gerenciar Procedimentos")
         print("5 - Gerenciar Pacientes")
-        print("6 - Gerenciar Agendamentos: Atendimentos")
+        print("6 - Gerenciar Atendimentos")
         print("7 - Gerenciar Pagamentos")
         print("8 - Emitir Relatórios")
-        print("0 - Sair: Encerrar sistema")        
+        print("0 - Sair: Encerrar sistema")
         print("================================")
-        
         while True:
             try:
-                entrada = input("Escolha a opção: ").strip()                
+                entrada = input("Escolha a opção: ").strip()
                 if not entrada.isdigit():
-                    raise DadoInvalidoException("Por favor, digite apenas números inteiros.")         
+                    raise DadoInvalidoException("Por favor, digite apenas números inteiros.")
                 opcao = int(entrada)
-                if 0 <= opcao <= 8:
-                    return opcao  
+                if opcao in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
+                    return opcao
                 raise DadoInvalidoException("Opção inválida! Digite um número correspondente ao menu.")
             except DadoInvalidoException as e:
                 print(f"\n[Erro]: {e}\n")

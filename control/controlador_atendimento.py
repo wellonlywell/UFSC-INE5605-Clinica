@@ -5,7 +5,7 @@ from exceptions.regra_negocio_exception import RegraNegocioException
 
 
 class ControladorAtendimento:
-   
+
     def __init__(self, controlador_sistema):
         self.__atendimentos = []
         self.__tela = TelaAtendimento()
@@ -22,21 +22,20 @@ class ControladorAtendimento:
                 self.listar_atendimentos()
             elif opcao == 4:
                 self.excluir_atendimento()
+            elif opcao == 5:
+                self.registrar_procedimento()
             elif opcao == 0:
                 break
 
     def incluir_atendimento(self):
-        """
-        Pede dados à tela, busca os objetos necessários nos outros
-        controladores e cria um novo Atendimento.
-        """
+ 
         dados = self.__tela.pega_dados_atendimento()
 
-        # --- Busca os objetos nos respectivos controladores ---
-        ctrl_clinica = self.__controlador_sistema.controlador_clinica
-        ctrl_paciente = self.__controlador_sistema.controlador_paciente
+        # Busca os objetos nos respectivos controladores
+        ctrl_clinica     = self.__controlador_sistema.controlador_clinica
+        ctrl_paciente    = self.__controlador_sistema.controlador_paciente
         ctrl_profissional = self.__controlador_sistema.controlador_profissional
-        ctrl_tipo = self.__controlador_sistema.controlador_tipo_atendimento
+        ctrl_tipo        = self.__controlador_sistema.controlador_tipo_atendimento
 
         clinica = ctrl_clinica.buscar_por_cnpj(dados["cnpj_clinica"])
         if clinica is None:
@@ -55,16 +54,41 @@ class ControladorAtendimento:
 
         tipo = ctrl_tipo.buscar_por_descricao(dados["descricao_tipo"])
         if tipo is None:
-            self.__tela.mostra_mensagem("Tipo de atendimento não encontrado. Cadastre-o primeiro.")
-            return
-
-        # --- Regra 1: paciente deve ter 18 anos ou mais ---
-        if not paciente.maior_de_idade and paciente.responsavel is None:
             self.__tela.mostra_mensagem(
-                "Regra 1: Paciente menor de idade sem responsável. Cadastre um responsável."
+                "Tipo de atendimento não encontrado. Cadastre-o primeiro."
             )
             return
 
+     
+        if not paciente.maior_de_idade and paciente.responsavel is None:
+            self.__tela.mostra_mensagem(
+                f"REGRA 1 VIOLADA: O paciente tem {paciente.idade} anos (menor de idade) "
+                "e não possui responsável legal cadastrado. "
+                "Cadastre o responsável antes de agendar o atendimento."
+            )
+            return
+
+        
+        try:
+            h, m = map(int, dados["hora_inicio"].split(":"))
+        except Exception:
+            self.__tela.mostra_mensagem("Hora de início inválida. Use o formato HH:MM.")
+            return
+
+        from datetime import time as Time
+        hora_inicio_time = Time(h, m)
+
+        # clinica.esta_aberta() verifica se o horário está entre abertura e fechamento
+        if not clinica.esta_aberta(hora_inicio_time):
+            abertura  = clinica.horario_abertura.strftime("%H:%M")
+            fechamento = clinica.horario_fechamento.strftime("%H:%M")
+            self.__tela.mostra_mensagem(
+                f"REGRA 2 VIOLADA: O horário {dados['hora_inicio']} está fora do "
+                f"funcionamento da clínica ({abertura} - {fechamento})."
+            )
+            return
+
+        # Tudo validado — cria o atendimento
         try:
             novo = Atendimento(
                 clinica=clinica,
@@ -91,12 +115,33 @@ class ControladorAtendimento:
         if atendimento is None:
             self.__tela.mostra_mensagem("Atendimento não encontrado.")
             return
-        dados = self.__tela.pega_dados_atendimento()
+
+        # Pede apenas os campos que podem mudar
+        dados = self.__tela.pega_dados_alteracao()
+
+        # REGRA 2 também vale na alteração
         try:
-            atendimento.data = dados["data"]
+            h, m = map(int, dados["hora_inicio"].split(":"))
+        except Exception:
+            self.__tela.mostra_mensagem("Hora de início inválida.")
+            return
+
+        from datetime import time as Time
+        hora_inicio_time = Time(h, m)
+        if not atendimento.clinica.esta_aberta(hora_inicio_time):
+            abertura   = atendimento.clinica.horario_abertura.strftime("%H:%M")
+            fechamento = atendimento.clinica.horario_fechamento.strftime("%H:%M")
+            self.__tela.mostra_mensagem(
+                f"REGRA 2 VIOLADA: Horário {dados['hora_inicio']} fora do "
+                f"funcionamento ({abertura} - {fechamento})."
+            )
+            return
+
+        try:
+            atendimento.data        = dados["data"]
             atendimento.hora_inicio = dados["hora_inicio"]
-            atendimento.hora_fim = dados["hora_fim"]
-            atendimento.valor = dados["valor"]
+            atendimento.hora_fim    = dados["hora_fim"]
+            atendimento.valor       = dados["valor"]
             self.__tela.mostra_mensagem("Atendimento alterado com sucesso!")
         except DadoInvalidoException as e:
             self.__tela.mostra_mensagem(f"Erro nos dados: {e}")
@@ -114,6 +159,36 @@ class ControladorAtendimento:
         self.__atendimentos.remove(atendimento)
         self.__tela.mostra_mensagem("Atendimento removido com sucesso!")
 
+    def registrar_procedimento(self):
+        """Vincula um procedimento do catálogo a um atendimento existente."""
+        if not self.__atendimentos:
+            self.__tela.mostra_mensagem("Nenhum atendimento cadastrado.")
+            return
+
+        ctrl_catalogo = self.__controlador_sistema.controlador_catalogo_procedimento
+
+        self.listar_atendimentos()
+        indice = self.__tela.seleciona_atendimento()
+        atendimento = self.__buscar_por_indice(indice)
+        if atendimento is None:
+            self.__tela.mostra_mensagem("Atendimento não encontrado.")
+            return
+
+        ctrl_catalogo.listar_procedimentos()
+        id_proc = self.__tela.pega_id_procedimento()
+        procedimento = ctrl_catalogo.buscar_por_id(id_proc)
+        if procedimento is None:
+            self.__tela.mostra_mensagem("Procedimento não encontrado no catálogo.")
+            return
+
+        # adicionar_procedimento cria um ItemProcedimento dentro do atendimento (COMPOSIÇÃO)
+        atendimento.adicionar_procedimento(
+            procedimento.descricao,
+            procedimento.custo,
+            procedimento.profissional
+        )
+        self.__tela.mostra_mensagem("Procedimento registrado no atendimento!")
+
     def listar_atendimentos(self):
         if not self.__atendimentos:
             self.__tela.mostra_mensagem("Nenhum atendimento cadastrado.")
@@ -130,3 +205,4 @@ class ControladorAtendimento:
 
     def get_atendimentos(self) -> list:
         return list(self.__atendimentos)
+
