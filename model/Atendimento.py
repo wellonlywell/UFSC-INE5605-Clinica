@@ -2,7 +2,7 @@ from datetime import date, time
 from model.Clinica import Clinica
 from model.Paciente import Paciente
 from model.Profissional import Profissional
-from model.Procedimento import Procedimento
+from model.ItemProcedimento import ItemProcedimento
 from model.TipoAtendimento import TipoAtendimento
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException# Exceptions customizadas, validações de dado movidas para a pasta exceptions
@@ -21,7 +21,7 @@ class Atendimento:
         self.hora_fim = hora_fim
         self.tipo = tipo
         self.valor = valor
-        self.__procedimentos = []
+        self.__item_procedimentos = []
 
 
     @property
@@ -152,33 +152,33 @@ class Atendimento:
 
     @property
     def procedimentos(self) -> list:
-        return list(self.__procedimentos)
+        return list(self.__item_procedimentos)
 
 
-    def adicionar_procedimento(self, id: int, descricao: str, custo: float, profissional: Profissional):
-        """COMPOSIÇÃO: Procedimento é criado aqui dentro, não existe fora do Atendimento."""
-        novo_procedimento = Procedimento(id, descricao, custo, profissional)
-        self.__procedimentos.append(novo_procedimento)
+    def adicionar_procedimento(self, descricao: str, custo: float, profissional: Profissional):
+        """COMPOSIÇÃO: item é criado aqui dentro, não existe fora do Atendimento, seria tipo um procedimento específico daquele atendimento, como item numa nota fiscal. Vc tem  catalgo geral mas tem a item espcifico no seu atendimento."""
+        novo_item = ItemProcedimento(descricao, custo, profissional)
+        self.__item_procedimentos.append(novo_item)
 
 
     def calcular_total_procedimentos(self) -> float:
         """Retorna a soma dos custos de todos os procedimentos do atendimento."""
-        return sum(p.custo for p in self.__procedimentos)
+        return sum(p.custo for p in self.__item_procedimentos)
 
 
-    def remover_procedimento(self, procedimento: Procedimento):
-        if procedimento not in self.__procedimentos:
+    def remover_procedimento(self, item: ItemProcedimento):
+        if item not in self.__item_procedimentos:
             raise DadoInvalidoException("Erro: Procedimento não encontrado.")
-        self.__procedimentos.remove(procedimento)
+        self.__item_procedimentos.remove(item)
 
 
     def __str__(self) -> str:
-        procs = "\n  ".join(str(p) for p in self.__procedimentos) if self.__procedimentos else "Nenhum"
+        procs = "\n  ".join(str(p) for p in self.__item_procedimentos) if self.__item_procedimentos else "Nenhum"
         return (f"Atendimento - Clínica: {self.__clinica.nome}\n"
                 f"Paciente: {self.__paciente.nome}\n"
                 f"Profissional: {self.__profissional.nome}\n"
                 f"Data e Horário: {self.__data.strftime('%d/%m/%Y')} às {self.__hora_inicio.strftime('%H:%M')}\n"
                 f"Valor Total: R$ {self.__valor:.2f}\n"
-                f"Procedimentos: {procs}")
+                f"Procedimentos realizados: {procs}")
 
 

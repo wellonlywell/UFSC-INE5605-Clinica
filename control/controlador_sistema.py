@@ -2,7 +2,7 @@ from control.controlador_clinica import ControladorClinica
 from control.controlador_paciente import ControladorPaciente
 from control.controlador_profissional import ControladorProfissional
 from control.controlador_tipo_atendimento import ControladorTipoAtendimento
-from control.controlador_procedimento import ControladorProcedimento
+from control.controlador_catalogo_procedimento import ControladorCatalogoProcedimento
 from control.controlador_atendimento import ControladorAtendimento
 from control.controlador_pagamento import ControladorPagamento
 from control.controlador_relatorios import ControladorRelatorios
@@ -16,7 +16,7 @@ class ControladorSistema:
         self.__controlador_clinica = ControladorClinica(self)
         self.__controlador_profissional = ControladorProfissional(self)
         self.__controlador_tipo_atendimento = ControladorTipoAtendimento(self)
-        self.__controlador_procedimento = ControladorProcedimento(self)
+        self.__controlador_catalogo_procedimento = ControladorCatalogoProcedimento(self)
         self.__controlador_paciente = ControladorPaciente(self)
         self.__controlador_atendimento = ControladorAtendimento(self)
         self.__controlador_pagamento = ControladorPagamento(self)
@@ -41,8 +41,8 @@ class ControladorSistema:
         return self.__controlador_tipo_atendimento
 
     @property
-    def controlador_procedimento(self):
-        return self.__controlador_procedimento
+    def controlador_catalogo_procedimento(self):
+        return self.__controlador_catalogo_procedimento
 
     @property
     def controlador_atendimento(self):
@@ -71,7 +71,7 @@ class ControladorSistema:
             elif opcao == 3:
                 self.__controlador_tipo_atendimento.abre_tela()
             elif opcao == 4:
-                self.__controlador_procedimento.abre_tela()
+                self.__controlador_catalogo_procedimento.abre_tela()
             elif opcao == 5:
                 self.__controlador_paciente.abre_tela()
             elif opcao == 6:

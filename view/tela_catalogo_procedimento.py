@@ -1,14 +1,14 @@
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
-class TelaProcedimento:
+class TelaCatalogoProcedimento:
   # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
-    """Mostra o menu de opções para Procedimentos."""
-    print("-------- MENU PROCEDIMENTOS ----------")
-    print("1 - Incluir Procedimento")
-    print("2 - Alterar Procedimento")
-    print("3 - Listar Procedimentos")
-    print("4 - Excluir Procedimento")
+    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
+    print("-------- MENU: CATÁLOGO DE PROCEDIMENTOS ----------")
+    print("1 - Incluir: cadastrar novo procedimento (ex: Hemograma, Raio-X, etc)")
+    print("2 - Alterar: editar procedimento já cadastrado")
+    print("3 - Listar: exibir lista de procedimentos cadastrados")
+    print("4 - Excluir: remover um procedimento do sistema")
     print("0 - Retornar ao Menu Principal")
     print("--------------------------------------")
 
@@ -42,6 +42,7 @@ class TelaProcedimento:
     print(f"ID: {procedimento.id}")
     print(f"Descrição: {procedimento.descricao}")
     print(f"Custo: R$ {procedimento.custo:.2f}")
+    print(f"Profissional Responsável: {procedimento.profissional.nome}")
     print("-" * 40)
 
   def seleciona_procedimento(self) -> int:
@@ -54,6 +55,10 @@ class TelaProcedimento:
         raise DadoInvalidoException("Digite um número inteiro válido.")
       except DadoInvalidoException as e:
         print(e)
+  
+  def seleciona_profissional(self):
+        print("\n----- SELECIONAR PROFISSIONAL RESPONSÁVEL -----")
+        return input("CPF do profissional responsável: ").strip()
 
   def mostra_mensagem(self, mensagem: str):
     print(f"\n[Aviso]: {mensagem}")

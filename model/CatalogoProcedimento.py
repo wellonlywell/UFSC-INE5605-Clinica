@@ -4,7 +4,7 @@ from model.Profissional import Profissional
 # Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
-class Procedimento:
+class CatalogoProcedimento:
     def __init__(self, id: int, descricao: str, custo: float, profissional: Profissional):
         self.id = id
         self.descricao = descricao
