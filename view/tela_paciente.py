@@ -8,7 +8,7 @@ class TelaPaciente:
     print("2 - Alterar Paciente")
     print("3 - Listar Pacientes")
     print("4 - Excluir Paciente")
-    print("0 - Retornar")
+    print("0 - Retornar ao Menu Principal")
     print("----------------------------------")
 
     while True:

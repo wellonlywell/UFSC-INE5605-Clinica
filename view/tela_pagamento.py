@@ -8,8 +8,8 @@ class TelaPagamento:
     """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("-------- MENU PAGAMENTOS ----------")
     print("1 - Incluir: Registrar Pagamento")
-    print("2 - Listar: Listar Histórico de Pagamentos")
-    print("3 - Alterar: Corrigir/Alterar Data de Pagamento")
+    print("2 - Alterar: Corrigir/Alterar Data de Pagamento")
+    print("3 - Listar: Listar Histórico de Pagamentos")
     print("4 - Excluir: Estornar/Cancelar Pagamento")
     print("0 - Retornar ao Menu Principal")
     print("-----------------------------------")
@@ -18,8 +18,7 @@ class TelaPagamento:
       try:
         entrada = input("Escolha a opção: ").strip()        
         if not entrada.isdigit():
-            raise DadoInvalidoException("Por favor, digite apenas números inteiros.")
-                
+          raise DadoInvalidoException("Por favor, digite apenas números inteiros.")                
         opcao = int(entrada)
         if opcao in [0, 1, 2, 3, 4]:
           return opcao
@@ -33,7 +32,7 @@ class TelaPagamento:
             try:
                 entrada = input("Digite o índice (número entre colchetes) do atendimento que deseja pagar: ").strip()
                 if not entrada.isdigit():
-                    raise DadoInvalidoException("Por favor, digite apenas números inteiros.")
+                  raise DadoInvalidoException("Por favor, digite apenas números inteiros.")
                 return int(entrada)
             except DadoInvalidoException as e:
                 print(f"\n[Erro]: {e}\n")
@@ -54,7 +53,7 @@ class TelaPagamento:
                 entrada_valor = input(f"Valor a ser pago agora (Max R$ {valor_total_atendimento:.2f}): ").strip()
                 # Substitui ponto por vazio para verificar se é um número válido (ex: 150.50)
                 if not entrada_valor.replace('.', '', 1).isdigit():
-                    raise DadoInvalidoException("Digite um valor numérico válido (exemplo: 150.50).")
+                  raise DadoInvalidoException("Digite um valor numérico válido (exemplo: 150.50).")
                 
                 valor_pago = float(entrada_valor)
                 if 0 < valor_pago <= valor_total_atendimento:
@@ -84,7 +83,7 @@ class TelaPagamento:
             try:
                 entrada = input(f"Quantia entregue em dinheiro (Mínimo R$ {valor_pago:.2f}): ").strip()
                 if not entrada.replace('.', '', 1).isdigit():
-                    raise DadoInvalidoException("Digite um valor numérico válido.")
+                  raise DadoInvalidoException("Digite um valor numérico válido.")
                 
                 quantia = float(entrada)
                 if quantia >= valor_pago:
@@ -141,7 +140,7 @@ class TelaPagamento:
             try:
                 entrada = input("Digite o índice (número entre colchetes) do pagamento desejado: ").strip()
                 if not entrada.isdigit():
-                    raise DadoInvalidoException("Por favor, digite apenas números inteiros.")
+                  raise DadoInvalidoException("Por favor, digite apenas números inteiros.")
                 return int(entrada)
             except DadoInvalidoException as e:
                 print(f"\n[Erro]: {e}\n")

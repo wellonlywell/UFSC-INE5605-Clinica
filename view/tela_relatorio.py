@@ -8,7 +8,7 @@ class TelaRelatorios:
     print("3 - Procedimentos mais realizados (populares)")
     print("4 - Procedimentos mais caros e mais baratos")
     print("5 - Indicadores de Equidade (PCD, Cor/Raça, Gênero)")
-    print("0 - Retornar")
+    print("0 - Retornar ao Menu Principal")
     print("--------------------------------------------")
 
     while True:

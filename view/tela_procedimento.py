@@ -9,7 +9,7 @@ class TelaProcedimento:
     print("2 - Alterar Procedimento")
     print("3 - Listar Procedimentos")
     print("4 - Excluir Procedimento")
-    print("0 - Retornar")
+    print("0 - Retornar ao Menu Principal")
     print("--------------------------------------")
 
     while True:

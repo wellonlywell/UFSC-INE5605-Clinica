@@ -22,11 +22,14 @@ class TelaSistema:
                 # Se for letra ou vazio, levanta a SUA exceção.
                 if not entrada.isdigit():
                     raise DadoInvalidoException("Por favor, digite apenas números inteiros.")                
+                
                 # Passo 2: Agora é seguro converter para inteiro
                 opcao = int(entrada)
+                
                 # Passo 3: Verifica se a opção está na lista                
                 if opcao in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
                     return opcao
+                
                 # Se digitou um número como 9 ou 99, levanta a SUA exceção.
                 raise DadoInvalidoException("Opção inválida! Digite um número correspondente ao menu.")
             except DadoInvalidoException as e:

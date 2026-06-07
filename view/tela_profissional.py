@@ -8,7 +8,7 @@ class TelaProfissional:
     print("2 - Alterar Profissional")
     print("3 - Listar Profissionais")
     print("4 - Excluir Profissional")
-    print("0 - Retornar")
+    print("0 - Retornar ao Menu Principal")
     print("--------------------------------------")
 
     while True:

@@ -9,7 +9,7 @@ class TelaAtendimento:
     print("3 - Listar Todos os Atendimentos")
     print("4 - Cancelar Atendimento")
     print("5 - Iniciar/Finalizar Atendimento na SisClínica")
-    print("0 - Retornar")
+    print("0 - Retornar ao Menu Principal")
     print("--------------------------------------------------")
 
     while True:
