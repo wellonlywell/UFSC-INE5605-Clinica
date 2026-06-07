@@ -60,8 +60,8 @@ class ControladorPaciente:
     def __cadastrar_responsavel(self):
         dados = self.__tela_responsavel.pega_dados_responsavel()
         cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
-        # O construtor do Responsavel já valida os dados via Pessoa
-        return Responsavel(
+        
+        responsavel = Responsavel(
             nome_civil=dados["nome_civil"],
             celular=dados["celular"],
             cpf=dados["cpf"],
@@ -71,6 +71,9 @@ class ControladorPaciente:
             cor_raca=cor_raca,
             identidade_genero=dados["identidade_genero"]
         )
+                
+        self.__controlador_sistema.controlador_responsavel.registrar_responsavel(responsavel)
+        return responsavel
 
     def alterar_paciente(self):
         if not self.__pacientes:

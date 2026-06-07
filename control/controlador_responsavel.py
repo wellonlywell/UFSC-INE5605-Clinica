@@ -23,7 +23,12 @@ class ControladorResponsavel:
             except (DadoInvalidoException, RegraNegocioException) as e:
                 self.__tela_responsavel.mostra_mensagem(str(e))
 
+    def registrar_responsavel(self, responsavel):
+        """Registra um responsável já criado (chamado pelo ControladorPaciente)."""
+        self.__responsaveis.append(responsavel)
+
     def incluir_responsavel(self):
+        """Método chamado pelo menu (TelaResponsavel) para cadastrar manualmente."""
         dados = self.__tela_responsavel.pega_dados_responsavel()
         
         if self.buscar_por_cpf(dados["cpf"]) is not None:
