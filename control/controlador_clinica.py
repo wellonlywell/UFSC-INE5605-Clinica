@@ -13,7 +13,6 @@ class ControladorClinica:
     def abre_tela(self):
         while True:
             opcao = self.__tela_clinica.tela_opcoes()
-
             if opcao == 1:
                 self.incluir_clinica()
             elif opcao == 2:
@@ -23,13 +22,17 @@ class ControladorClinica:
             elif opcao == 4:
                 self.excluir_clinica()
             elif opcao == 0:
-                # Sai do loop e retorna para o menu principal
-                break        
+                break
 
     def incluir_clinica(self):
-        """Pede dados à tela, cria o objeto Clinica e adiciona na lista."""
+ 
         dados = self.__tela_clinica.pega_dados_clinica()
         try:
+            # Passo 1: checar duplicidade ANTES de criar o objeto
+            if self.buscar_por_cnpj(dados["cnpj"]) is not None:
+                self.__tela_clinica.mostra_mensagem("Já existe uma clínica com este CNPJ.")
+                return
+            # Passo 2: só agora criamos o objeto
             nova_clinica = Clinica(
                 nome=dados["nome"],
                 cnpj=dados["cnpj"],
@@ -38,17 +41,12 @@ class ControladorClinica:
                 horario_abertura=dados["horario_abertura"],
                 horario_fechamento=dados["horario_fechamento"]
             )
-            # Verifica se já existe uma clínica com o mesmo CNPJ
-            if self.buscar_por_cnpj(dados["cnpj"]) is not None:
-                self.__tela_clinica.mostra_mensagem("Já existe uma clínica com este CNPJ.")
-                return
             self.__clinicas.append(nova_clinica)
             self.__tela_clinica.mostra_mensagem("Clínica cadastrada com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro nos dados: {e}")
 
     def alterar_clinica(self):
-        """Busca uma clínica pelo CNPJ e atualiza seus dados."""
         if not self.__clinicas:
             self.__tela_clinica.mostra_mensagem("Nenhuma clínica cadastrada.")
             return
@@ -62,13 +60,13 @@ class ControladorClinica:
         try:
             clinica.nome = dados["nome"]
             clinica.cidade = dados["cidade"]
-            # CNPJ não é alterado — é o identificador único
+            clinica.descricao = dados["descricao"]
+            # CNPJ não é alterado: é o identificador único
             self.__tela_clinica.mostra_mensagem("Clínica alterada com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro nos dados: {e}")
 
     def excluir_clinica(self):
-        """Remove uma clínica da lista pelo CNPJ."""
         if not self.__clinicas:
             self.__tela_clinica.mostra_mensagem("Nenhuma clínica cadastrada.")
             return
@@ -82,7 +80,6 @@ class ControladorClinica:
         self.__tela_clinica.mostra_mensagem("Clínica removida com sucesso!")
 
     def listar_clinicas(self):
-        """Exibe todas as clínicas cadastradas."""
         if not self.__clinicas:
             self.__tela_clinica.mostra_mensagem("Nenhuma clínica cadastrada.")
             return
@@ -90,7 +87,7 @@ class ControladorClinica:
             self.__tela_clinica.mostra_clinica(clinica)
 
     def buscar_por_cnpj(self, cnpj: str):
-        
+        """Retorna a clínica com o CNPJ informado, ou None."""
         digitos_buscados = "".join(c for c in cnpj if c.isdigit())
         for clinica in self.__clinicas:
             digitos_clinica = "".join(c for c in clinica.cnpj if c.isdigit())
@@ -99,5 +96,4 @@ class ControladorClinica:
         return None
 
     def get_clinicas(self) -> list:
-        """Retorna cópia da lista de clínicas (para uso de outros controladores)."""
         return list(self.__clinicas)

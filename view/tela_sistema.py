@@ -9,11 +9,10 @@ class TelaSistema:
         print("3 - Gerenciar Tipos de Atendimento")
         print("4 - Gerenciar Procedimentos")
         print("5 - Gerenciar Pacientes")
-        print("6 - Gerenciar Responsáveis")
-        print("7 - Gerenciar Atendimentos")
-        print("8 - Gerenciar Pagamentos")
-        print("9 - Emitir Relatórios")
-        print("0 - Sair")
+        print("6 - Gerenciar Atendimentos")
+        print("7 - Gerenciar Pagamentos")
+        print("8 - Emitir Relatórios")
+        print("0 - Sair: Encerrar sistema")
         print("================================")
         while True:
             try:
