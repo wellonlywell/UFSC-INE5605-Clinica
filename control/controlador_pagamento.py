@@ -7,10 +7,7 @@ from exceptions.regra_negocio_exception import RegraNegocioException
 
 
 class ControladorPagamento:
-    """
-    Gerencia todos os pagamentos do sistema.
-    
-    """
+    """Gerencia todos os pagamentos do sistema."""
 
     def __init__(self, controlador_sistema):
         self.__pagamentos = []
@@ -19,48 +16,55 @@ class ControladorPagamento:
 
     def abre_tela(self):
         while True:
-            opcao = self.__tela.tela_opcoes()
-            if opcao == 1:
-                self.registrar_pagamento()
-            elif opcao == 2:
-                self.listar_pagamentos()
-            elif opcao == 3:
-                self.alterar_pagamento()
-            elif opcao == 4:
-                self.excluir_pagamento()
-            elif opcao == 0:
-                break
+            try:
+                opcao = self.__tela.tela_opcoes()
+                if opcao == 1:
+                    self.registrar_pagamento()
+                elif opcao == 2:
+                    self.alterar_pagamento()
+                elif opcao == 3:
+                    self.listar_pagamentos()
+                elif opcao == 4:
+                    self.excluir_pagamento()
+                elif opcao == 0:
+                    break
+            except (DadoInvalidoException, RegraNegocioException) as e:
+                self.__tela.mostra_mensagem(str(e))
 
     def registrar_pagamento(self):
-        """
-        Pede os dados gerais, escolhe a modalidade e cria o objeto certo.
-        
-        """
         ctrl_atendimento = self.__controlador_sistema.controlador_atendimento
-        
+
         atendimentos = ctrl_atendimento.get_atendimentos()
         if not atendimentos:
             self.__tela.mostra_mensagem("Nenhum atendimento cadastrado para pagar.")
             return
 
-        # Mostra atendimentos disponíveis
-        for i, at in enumerate(atendimentos):
-            print(f"[{i}] {at.paciente.nome} - R$ {at.valor:.2f} - {at.data.strftime('%d/%m/%Y')}")
+        self.__tela.mostra_atendimentos_pendentes(atendimentos)
 
         indice = self.__tela.seleciona_atendimento()
         if indice < 0 or indice >= len(atendimentos):
             self.__tela.mostra_mensagem("Índice inválido.")
             return
+
         atendimento = atendimentos[indice]
         paciente = atendimento.paciente
 
-        dados_gerais = self.__tela.pega_dados_pagamento(atendimento.valor)
+        # Pagamento parcial: desconta o que já foi pago para este atendimento
+        valor_ja_pago = sum(p.valor_pago for p in self.__pagamentos if p.atendimento == atendimento)
+        valor_restante = atendimento.valor - valor_ja_pago
+
+        if valor_restante <= 0:
+            self.__tela.mostra_mensagem("Este atendimento já está totalmente pago!")
+            return
+
+        # Passa o valor_restante para a tela — o usuário só pode pagar até esse limite
+        dados_gerais = self.__tela.pega_dados_pagamento(valor_restante)
         forma = dados_gerais["forma_pagamento"]
         data_pgto = dados_gerais["data_pgto"]
         valor_pago = dados_gerais["valor_pago"]
 
         try:
-            # --- DINHEIRO ---
+            # Regra 3 e formato da data são validados pelo setter de Pagamento.data
             if forma == "1":
                 dados_extra = self.__tela.pega_dados_dinheiro(valor_pago)
                 pagamento = PagamentoDinheiro(
@@ -71,7 +75,6 @@ class ControladorPagamento:
                     quantia_entregue=dados_extra["quantia_entregue"]
                 )
 
-            # --- PIX ---
             elif forma == "2":
                 dados_extra = self.__tela.pega_dados_pix()
                 pagamento = PagamentoPix(
@@ -82,7 +85,6 @@ class ControladorPagamento:
                     cpf_pagador=dados_extra["cpf_pagador"]
                 )
 
-            # --- CARTÃO ---
             elif forma == "3":
                 dados_extra = self.__tela.pega_dados_cartao()
                 pagamento = PagamentoCartao(
@@ -99,8 +101,7 @@ class ControladorPagamento:
                 return
 
             self.__pagamentos.append(pagamento)
-            # Exibe o comprovante logo após o registro
-            print("\n" + pagamento.emitir_comprovante())
+            self.__tela.mostra_comprovante(pagamento.emitir_comprovante())
             self.__tela.mostra_mensagem("Pagamento registrado com sucesso!")
 
         except (DadoInvalidoException, RegraNegocioException) as e:
@@ -111,26 +112,26 @@ class ControladorPagamento:
             self.__tela.mostra_mensagem("Nenhum pagamento registrado.")
             return
         for i, pag in enumerate(self.__pagamentos):
-            print(f"\n[{i}] {pag.emitir_comprovante()}")
+            self.__tela.mostra_comprovante(f"[{i}] {pag.emitir_comprovante()}")
 
     def alterar_pagamento(self):
-        """Alteração: Modifica a data de um pagamento existente."""
+        """Alteração: modifica a data de um pagamento existente."""
         if not self.__pagamentos:
             self.__tela.mostra_mensagem("Nenhum pagamento registrado no sistema.")
             return
 
         self.listar_pagamentos()
         indice = self.__tela.seleciona_pagamento()
-        
+
         if indice < 0 or indice >= len(self.__pagamentos):
             self.__tela.mostra_mensagem("Índice de pagamento inválido.")
             return
 
         pagamento_selecionado = self.__pagamentos[indice]
         nova_data = self.__tela.pega_nova_data()
-        
+
         try:
-            # O setter da propriedade data fará a validação da Regra 3 automaticamente
+            # O setter de Pagamento.data valida a Regra 3 automaticamente
             pagamento_selecionado.data = nova_data
             self.__tela.mostra_mensagem("Data do pagamento alterada com sucesso!")
         except (DadoInvalidoException, RegraNegocioException) as e:
