@@ -1,6 +1,7 @@
 from model.Clinica import Clinica
 from view.tela_clinica import TelaClinica
 from exceptions.dado_invalido_exception import DadoInvalidoException
+from exceptions.regra_negocio_exception import RegraNegocioException
 
 
 class ControladorClinica:
@@ -12,27 +13,27 @@ class ControladorClinica:
 
     def abre_tela(self):
         while True:
-            opcao = self.__tela_clinica.tela_opcoes()
-            if opcao == 1:
-                self.incluir_clinica()
-            elif opcao == 2:
-                self.alterar_clinica()
-            elif opcao == 3:
-                self.listar_clinicas()
-            elif opcao == 4:
-                self.excluir_clinica()
-            elif opcao == 0:
-                break
+            try:
+                opcao = self.__tela_clinica.tela_opcoes()
+                if opcao == 1:
+                    self.incluir_clinica()
+                elif opcao == 2:
+                    self.alterar_clinica()
+                elif opcao == 3:
+                    self.listar_clinicas()
+                elif opcao == 4:
+                    self.excluir_clinica()
+                elif opcao == 0:
+                    break
+            except (DadoInvalidoException, RegraNegocioException) as e:
+                self.__tela_clinica.mostra_mensagem(str(e))
 
     def incluir_clinica(self):
- 
         dados = self.__tela_clinica.pega_dados_clinica()
         try:
-            # Passo 1: checar duplicidade ANTES de criar o objeto
             if self.buscar_por_cnpj(dados["cnpj"]) is not None:
                 self.__tela_clinica.mostra_mensagem("Já existe uma clínica com este CNPJ.")
                 return
-            # Passo 2: só agora criamos o objeto
             nova_clinica = Clinica(
                 nome=dados["nome"],
                 cnpj=dados["cnpj"],
@@ -61,7 +62,6 @@ class ControladorClinica:
             clinica.nome = dados["nome"]
             clinica.cidade = dados["cidade"]
             clinica.descricao = dados["descricao"]
-            # CNPJ não é alterado: é o identificador único
             self.__tela_clinica.mostra_mensagem("Clínica alterada com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro nos dados: {e}")
@@ -87,7 +87,6 @@ class ControladorClinica:
             self.__tela_clinica.mostra_clinica(clinica)
 
     def buscar_por_cnpj(self, cnpj: str):
-        """Retorna a clínica com o CNPJ informado, ou None."""
         digitos_buscados = "".join(c for c in cnpj if c.isdigit())
         for clinica in self.__clinicas:
             digitos_clinica = "".join(c for c in clinica.cnpj if c.isdigit())

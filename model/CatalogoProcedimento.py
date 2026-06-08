@@ -1,6 +1,6 @@
 from model.Profissional import Profissional
-# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
+
 
 class CatalogoProcedimento:
     def __init__(self, id: int, descricao: str, custo: float, profissional: Profissional):
@@ -11,14 +11,14 @@ class CatalogoProcedimento:
 
     @property
     def id(self) -> int:
-        return self.__id    
-    
+        return self.__id
+
     @id.setter
     def id(self, valor):
         if not isinstance(valor, int) or valor <= 0:
             raise DadoInvalidoException("ID deve ser um inteiro positivo.")
-        self.__id = valor   
-        
+        self.__id = valor
+
     @property
     def descricao(self) -> str:
         return self.__descricao
@@ -39,8 +39,8 @@ class CatalogoProcedimento:
             v = float(valor)
         except (ValueError, TypeError):
             raise DadoInvalidoException("Custo deve ser um número.")
-        if v < 0:
-            raise DadoInvalidoException("Custo não pode ser negativo.")
+        if v <= 0:
+            raise DadoInvalidoException("Custo deve ser maior que zero.")
         self.__custo = v
 
     @property

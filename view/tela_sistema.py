@@ -20,9 +20,9 @@ class TelaSistema:
                 if not entrada.isdigit():
                     raise DadoInvalidoException("Por favor, digite apenas números inteiros.")
                 opcao = int(entrada)
-                if opcao in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
+                if opcao in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
                     return opcao
-                raise DadoInvalidoException("Opção inválida! Digite um número correspondente ao menu.")
+                raise DadoInvalidoException("Opção inválida! Digite um número entre 0 e 8.")
             except DadoInvalidoException as e:
                 print(f"\n[Erro]: {e}\n")
 
