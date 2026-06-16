@@ -155,9 +155,9 @@ class Atendimento:
         return list(self.__item_procedimentos)
 
 
-    def adicionar_procedimento(self, descricao: str, custo: float, profissional: Profissional):
+    def adicionar_procedimento(self, descricao: str, custo: float):
         """COMPOSIÇÃO: item é criado aqui dentro, não existe fora do Atendimento, seria tipo um procedimento específico daquele atendimento, como item numa nota fiscal. Vc tem  catalgo geral mas tem a item espcifico no seu atendimento."""
-        novo_item = ItemProcedimento(descricao, custo, profissional)
+        novo_item = ItemProcedimento(descricao, custo)
         self.__item_procedimentos.append(novo_item)
 
 

@@ -84,7 +84,18 @@ class ControladorCatalogoProcedimento:
         if procedimento is None:
             self.__tela_procedimento.mostra_mensagem(f"Erro: Não existe procedimento com o ID {id_buscado}.")
             return
-            
+        
+        # Bloqueia exclusão se o procedimento já foi usado em algum atendimento
+        atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
+        for at in atendimentos:
+            for item in at.procedimentos:
+                if item.descricao.lower() == procedimento.descricao.lower():
+                    self.__tela_procedimento.mostra_mensagem(
+                        f"Não é possível excluir '{procedimento.descricao}': "
+                        f"já foi usado em um atendimento."
+                    )
+                    return
+                    
         self.__procedimentos.remove(procedimento)
         self.__tela_procedimento.mostra_mensagem("Procedimento removido com sucesso!")
 

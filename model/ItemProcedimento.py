@@ -1,11 +1,9 @@
-from model.Profissional import Profissional
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class ItemProcedimento:
-    def __init__(self, descricao: str, custo: float, profissional: Profissional):
+    def __init__(self, descricao: str, custo: float):
         self.descricao = descricao
-        self.custo = custo
-        self.profissional = profissional
+        self.custo = custo        
 
     @property
     def descricao(self) -> str:
@@ -30,16 +28,6 @@ class ItemProcedimento:
         if v < 0:
             raise DadoInvalidoException("Erro: Custo não pode ser negativo.")
         self.__custo = v
-
-    @property
-    def profissional(self) -> Profissional:
-        return self.__profissional
-
-    @profissional.setter
-    def profissional(self, valor):
-        if not isinstance(valor, Profissional):
-            raise DadoInvalidoException("Erro: Profissional do item inválido.")
-        self.__profissional = valor
-
+    
     def __str__(self) -> str:
-        return f"{self.__descricao} (R$ {self.__custo:.2f}) - Resp: {self.__profissional.nome}"
+        return f"{self.__descricao} (R$ {self.__custo:.2f})"
