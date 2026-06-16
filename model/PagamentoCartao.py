@@ -1,9 +1,7 @@
-#class feita pelo Marcos
-
 from model.Pagamento import Pagamento
 from model.Paciente import Paciente
-# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
+
 
 class PagamentoCartao(Pagamento):
     def __init__(self, data_pgto, atendimento, paciente: Paciente, valor_pago: float,
@@ -13,7 +11,6 @@ class PagamentoCartao(Pagamento):
         self.bandeira = bandeira
         self.tipo_cartao = tipo_cartao
        
-
 
     @property
     def numero_cartao(self) -> str:
@@ -59,12 +56,12 @@ class PagamentoCartao(Pagamento):
         return self.emitir_comprovante()
 
 
-    def emitir_comprovante(self) -> str:
+    def emitir_comprovante(self, valor_restante: float = 0.0) -> str:
         final_cartao = self.numero_cartao[-4:]
         return (f"--- COMPROVANTE: CARTÃO DE {self.tipo_cartao} ---\n"
                 f"Data: {self.data.strftime('%d/%m/%Y')}\n"
                 f"Paciente: {self.paciente.nome}\n"
                 f"Bandeira: {self.bandeira} | Cartão: **** **** **** {final_cartao}\n"
                 f"Valor Autorizado: R$ {self.valor_pago:.2f}\n"
-                f"Débito Restante: R$ {self.valor_restante:.2f}\n"
+                f"Débito Restante: R$ {valor_restante:.2f}\n"
                 f"-------------------------------------------")

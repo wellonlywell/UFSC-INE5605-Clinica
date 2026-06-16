@@ -31,6 +31,7 @@ class ControladorPagamento:
             except (DadoInvalidoException, RegraNegocioException) as e:
                 self.__tela.mostra_mensagem(str(e))
 
+
     def registrar_pagamento(self):
         ctrl_atendimento = self.__controlador_sistema.controlador_atendimento
 
@@ -101,11 +102,14 @@ class ControladorPagamento:
                 return
 
             self.__pagamentos.append(pagamento)
-            self.__tela.mostra_comprovante(pagamento.emitir_comprovante())
+            total_ja_pago = sum(p.valor_pago for p in self.__pagamentos if p.atendimento == atendimento)
+            saldo_restante = atendimento.valor - total_ja_pago
+            self.__tela.mostra_comprovante(pagamento.emitir_comprovante(saldo_restante))
             self.__tela.mostra_mensagem("Pagamento registrado com sucesso!")
 
         except (DadoInvalidoException, RegraNegocioException) as e:
             self.__tela.mostra_mensagem(f"Não foi possível registrar o pagamento: {e}")
+
 
     def listar_pagamentos(self):
         if not self.__pagamentos:
@@ -113,6 +117,7 @@ class ControladorPagamento:
             return
         for i, pag in enumerate(self.__pagamentos):
             self.__tela.mostra_comprovante(f"[{i}] {pag.emitir_comprovante()}")
+
 
     def alterar_pagamento(self):
         """Alteração: modifica a data de um pagamento existente."""
@@ -137,6 +142,7 @@ class ControladorPagamento:
         except (DadoInvalidoException, RegraNegocioException) as e:
             self.__tela.mostra_mensagem(f"Falha ao alterar a data: {e}")
 
+
     def excluir_pagamento(self):
         if not self.__pagamentos:
             self.__tela.mostra_mensagem("Nenhum pagamento registrado.")
@@ -148,6 +154,7 @@ class ControladorPagamento:
             return
         self.__pagamentos.pop(indice)
         self.__tela.mostra_mensagem("Pagamento removido.")
+
 
     def get_pagamentos(self) -> list:
         return list(self.__pagamentos)

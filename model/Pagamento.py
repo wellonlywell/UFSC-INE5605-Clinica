@@ -1,11 +1,9 @@
-# class feita por Marcos
-
 from abc import ABC, abstractmethod
 from datetime import date
 from model.Paciente import Paciente
-# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
+
 
 class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e classes abstratas
     def __init__(self, data_pgto, atendimento, paciente: Paciente, valor_pago: float):
@@ -84,13 +82,7 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
         if v <= 0:
             raise DadoInvalidoException("Erro: Valor pago deve ser maior que zero.")
         self.__valor_pago = v
-
-
-    @property
-    def valor_restante(self) -> float:
-        """Permite pagamentos parciais: retorna quanto ainda falta pagar."""
-        return self.__atendimento.valor - self.__valor_pago
-
+    
 
     @abstractmethod  # MÉTODO ABSTRATO: cada modalidade implementa seu comprovante
     def emitir_comprovante(self) -> str:
