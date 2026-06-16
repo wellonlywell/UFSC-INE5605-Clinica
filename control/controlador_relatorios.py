@@ -66,7 +66,7 @@ class ControladorRelatorios:
             self.__tela_relatorio.mostra_mensagem("Nenhum atendimento registrado.")
             return
 
-        ordenados = sorted(atendimentos, key=lambda at: at.valor, reverse=True)
+        ordenados = sorted(atendimentos, key=lambda at: at.valor + at.calcular_total_procedimentos(), reverse=True)
 
         linhas = ["ATENDIMENTOS POR VALOR (mais caro → mais barato)\n"]
         linhas.append(f"{'Pos':<5} {'Paciente':<25} {'Clínica':<20} {'Data':<12} {'Valor':>10}")
@@ -78,9 +78,10 @@ class ControladorRelatorios:
             elif pos == len(ordenados):
                 destaque = "  ← MAIS BARATO"
             data_str = at.data.strftime("%d/%m/%Y")
+            total = at.valor + at.calcular_total_procedimentos()
             linhas.append(
-                f"{pos:<5} {at.paciente.nome:<25} {at.clinica.nome:<20} "
-                f"{data_str:<12} R$ {at.valor:>7.2f}{destaque}"
+                f"{pos:<5} {at.paciente.nome:<25} {at.clinica.nome:<20}"                
+                f"{data_str:<12} R$ {total:>8.2f}{destaque}"
             )
 
         self.__tela_relatorio.exibe_dados_relatorio("\n".join(linhas))
