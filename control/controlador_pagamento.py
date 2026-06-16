@@ -50,22 +50,20 @@ class ControladorPagamento:
         atendimento = atendimentos[indice]
         paciente = atendimento.paciente
 
-        # Pagamento parcial: desconta o que já foi pago para este atendimento
+        valor_total = atendimento.valor + atendimento.calcular_total_procedimentos()
         valor_ja_pago = sum(p.valor_pago for p in self.__pagamentos if p.atendimento == atendimento)
-        valor_restante = atendimento.valor - valor_ja_pago
+        valor_restante = valor_total - valor_ja_pago
 
         if valor_restante <= 0:
             self.__tela.mostra_mensagem("Este atendimento já está totalmente pago!")
             return
 
-        # Passa o valor_restante para a tela — o usuário só pode pagar até esse limite
         dados_gerais = self.__tela.pega_dados_pagamento(valor_restante)
         forma = dados_gerais["forma_pagamento"]
         data_pgto = dados_gerais["data_pgto"]
         valor_pago = dados_gerais["valor_pago"]
 
         try:
-            # Regra 3 e formato da data são validados pelo setter de Pagamento.data
             if forma == "1":
                 dados_extra = self.__tela.pega_dados_dinheiro(valor_pago)
                 pagamento = PagamentoDinheiro(
@@ -75,7 +73,6 @@ class ControladorPagamento:
                     valor_pago=valor_pago,
                     quantia_entregue=dados_extra["quantia_entregue"]
                 )
-
             elif forma == "2":
                 dados_extra = self.__tela.pega_dados_pix()
                 pagamento = PagamentoPix(
@@ -85,7 +82,6 @@ class ControladorPagamento:
                     valor_pago=valor_pago,
                     cpf_pagador=dados_extra["cpf_pagador"]
                 )
-
             elif forma == "3":
                 dados_extra = self.__tela.pega_dados_cartao()
                 pagamento = PagamentoCartao(
@@ -103,14 +99,14 @@ class ControladorPagamento:
 
             self.__pagamentos.append(pagamento)
             total_ja_pago = sum(p.valor_pago for p in self.__pagamentos if p.atendimento == atendimento)
-            saldo_restante = atendimento.valor - total_ja_pago
+            saldo_restante = valor_total - total_ja_pago
             self.__tela.mostra_comprovante(pagamento.emitir_comprovante(saldo_restante))
             self.__tela.mostra_mensagem("Pagamento registrado com sucesso!")
 
         except (DadoInvalidoException, RegraNegocioException) as e:
             self.__tela.mostra_mensagem(f"Não foi possível registrar o pagamento: {e}")
-
-
+    
+    
     def listar_pagamentos(self):
         if not self.__pagamentos:
             self.__tela.mostra_mensagem("Nenhum pagamento registrado.")
