@@ -49,7 +49,6 @@ class TelaCatalogoProcedimento:
         print(f"ID: {procedimento.id}")
         print(f"Descrição: {procedimento.descricao}")
         print(f"Custo: R$ {procedimento.custo:.2f}")
-        print(f"Profissional Responsável: {procedimento.profissional.nome}")
         print("-" * 40)
 
     def seleciona_procedimento(self) -> int:
@@ -59,10 +58,6 @@ class TelaCatalogoProcedimento:
                 return int(input("Digite o ID do procedimento (ou 0 para cancelar): ").strip())
             except ValueError:
                 print("[Erro]: Digite um número inteiro válido.")
-
-    def seleciona_profissional(self):
-        print("\n----- SELECIONAR PROFISSIONAL RESPONSÁVEL -----")
-        return input("CPF do profissional responsável: ").strip()
-
+  
     def mostra_mensagem(self, mensagem: str):
         print(f"\n[Aviso]: {mensagem}")

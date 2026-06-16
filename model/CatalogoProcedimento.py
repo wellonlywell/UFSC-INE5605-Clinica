@@ -1,13 +1,11 @@
-from model.Profissional import Profissional
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 
 class CatalogoProcedimento:
-    def __init__(self, id: int, descricao: str, custo: float, profissional: Profissional):
+    def __init__(self, id: int, descricao: str, custo: float):
         self.id = id
         self.descricao = descricao
-        self.custo = custo
-        self.profissional = profissional
+        self.custo = custo        
 
     @property
     def id(self) -> int:
@@ -42,18 +40,7 @@ class CatalogoProcedimento:
         if v <= 0:
             raise DadoInvalidoException("Custo deve ser maior que zero.")
         self.__custo = v
-
-    @property
-    def profissional(self) -> Profissional:
-        return self.__profissional
-
-    @profissional.setter
-    def profissional(self, valor):
-        if not isinstance(valor, Profissional):
-            raise DadoInvalidoException("Profissional inválido.")
-        self.__profissional = valor
-
+    
     def __str__(self) -> str:
         return (f"ID: {self.__id} | Procedimento: {self.__descricao}\n"
-                f"Custo: R$ {self.__custo:.2f}\n"
-                f"Responsável: {self.__profissional.nome}")
+                f"Custo: R$ {self.__custo:.2f}\n")
