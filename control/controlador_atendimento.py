@@ -175,7 +175,8 @@ class ControladorAtendimento:
 
         atendimento.adicionar_procedimento(
             procedimento.descricao,
-            procedimento.custo            
+            procedimento.custo,
+            atendimento.profissional            
         )
         self.__tela.mostra_mensagem("Procedimento registrado no atendimento!")
 

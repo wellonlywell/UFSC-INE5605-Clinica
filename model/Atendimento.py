@@ -4,9 +4,7 @@ from model.Paciente import Paciente
 from model.Profissional import Profissional
 from model.ItemProcedimento import ItemProcedimento
 from model.TipoAtendimento import TipoAtendimento
-# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException# Exceptions customizadas, validações de dado movidas para a pasta exceptions
-
 
 
 class Atendimento:
@@ -155,9 +153,9 @@ class Atendimento:
         return list(self.__item_procedimentos)
 
 
-    def adicionar_procedimento(self, descricao: str, custo: float):
+    def adicionar_procedimento(self, descricao: str, custo: float, profissional: Profissional):
         """COMPOSIÇÃO: item é criado aqui dentro, não existe fora do Atendimento, seria tipo um procedimento específico daquele atendimento, como item numa nota fiscal. Vc tem  catalgo geral mas tem a item espcifico no seu atendimento."""
-        novo_item = ItemProcedimento(descricao, custo)
+        novo_item = ItemProcedimento(descricao, custo, profissional)
         self.__item_procedimentos.append(novo_item)
 
 
