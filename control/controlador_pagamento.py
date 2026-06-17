@@ -112,7 +112,12 @@ class ControladorPagamento:
             self.__tela.mostra_mensagem("Nenhum pagamento registrado.")
             return
         for i, pag in enumerate(self.__pagamentos):
-            self.__tela.mostra_comprovante(f"[{i}] {pag.emitir_comprovante()}")
+            total_at = pag.atendimento.valor + pag.atendimento.calcular_total_procedimentos()
+            pagamentos_do_atendimento = [p for p in self.__pagamentos if p.atendimento == pag.atendimento]
+            indice_atual = pagamentos_do_atendimento.index(pag)
+            total_pago_ate_aqui = sum(p.valor_pago for p in pagamentos_do_atendimento[:indice_atual + 1])
+            saldo = total_at - total_pago_ate_aqui
+            self.__tela.mostra_comprovante(f"[{i}] {pag.emitir_comprovante(saldo)}")
 
 
     def alterar_pagamento(self):

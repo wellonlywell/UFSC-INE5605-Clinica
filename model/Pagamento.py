@@ -84,6 +84,6 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
         self.__valor_pago = v
     
 
-    @abstractmethod  # MÉTODO ABSTRATO: cada modalidade implementa seu comprovante
-    def emitir_comprovante(self) -> str:
+    @abstractmethod  # Cada modalidade implementa seu próprio comprovante.
+    def emitir_comprovante(self, valor_restante: float = 0.0) -> str:
         pass
