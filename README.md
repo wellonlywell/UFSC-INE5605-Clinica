@@ -85,6 +85,7 @@ A classe base `Pessoa` foi desenvolvida além do mínimo exigido pelo enunciado,
 | Regra 1 | Pacientes menores de 18 anos exigem cadastro de responsável legal |
 | Regra 2 | Atendimentos só podem ser agendados dentro do horário de funcionamento da clínica |
 | Regra 3 | A data do pagamento não pode ser posterior à data do atendimento |
+> Para a lista completa de regras de negócio e critérios de avaliação, consulte [REGRAS.md](./REGRAS.md).
 
 ---
 
