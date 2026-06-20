@@ -33,21 +33,9 @@ class ControladorPaciente:
                 self.__tela_paciente.mostra_mensagem(str(e))
 
     def incluir_paciente(self):
-        """
-        REGRA 1 — Menor de idade exige responsável:
-        Se o paciente tiver menos de 18 anos, o sistema imediatamente pede os
-        dados do responsável. Se o usuário não fornecer um responsável válido,
-        o cadastro é cancelado. Sem responsável = sem cadastro de menor.
-
-        CORREÇÃO em relação à versão original:
-        - O raise RegraNegocioException foi substituído por um return limpo
-          com mensagem explicativa, para não interromper o fluxo do menu.
-        - O responsável é criado e registrado no controlador_responsavel
-          para garantir consistência.
-        """
+        
         dados = self.__tela_paciente.pega_dados_paciente()
 
-        # Verifica unicidade antes de criar
         if self.buscar_por_cpf(dados["cpf"]) is not None:
             self.__tela_paciente.mostra_mensagem("Já existe um paciente com este CPF.")
             return
@@ -68,10 +56,7 @@ class ControladorPaciente:
         except DadoInvalidoException as e:
             self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
             return
-
-        # ------------------------------------------------------------------ #
-        # REGRA 1 — Responsável obrigatório para menores de 18 anos           #
-        # ------------------------------------------------------------------ #
+        
         if not novo.maior_de_idade:
             self.__tela_paciente.mostra_mensagem(
                 f"Paciente tem {novo.idade} anos (menor de idade). "
@@ -79,7 +64,6 @@ class ControladorPaciente:
             )
             responsavel = self.__cadastrar_responsavel()
             if responsavel is None:
-                # Usuário não conseguiu fornecer responsável válido — cancela
                 self.__tela_paciente.mostra_mensagem(
                     "Cadastro cancelado: responsável é obrigatório para menores de 18 anos."
                 )
@@ -90,10 +74,7 @@ class ControladorPaciente:
         self.__tela_paciente.mostra_mensagem("Paciente cadastrado com sucesso!")
 
     def __cadastrar_responsavel(self):
-        """
-        Pede os dados do responsável, cria o objeto e o registra no
-        controlador_responsavel. Retorna o objeto ou None em caso de erro.
-        """
+        
         try:
             dados = self.__tela_responsavel.pega_dados_responsavel()
             cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
@@ -107,7 +88,6 @@ class ControladorPaciente:
                 cor_raca=cor_raca,
                 identidade_genero=dados["identidade_genero"]
             )
-            # Registra também no controlador de responsáveis para manter consistência
             self.__controlador_sistema.controlador_responsavel.registrar_responsavel(responsavel)
             return responsavel
         except (DadoInvalidoException, RegraNegocioException) as e:

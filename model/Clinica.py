@@ -1,6 +1,5 @@
 from datetime import time
 from model.Profissional import Profissional
-# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Clinica:
@@ -12,7 +11,7 @@ class Clinica:
         self.descricao = descricao
         self.horario_abertura = horario_abertura
         self.horario_fechamento = horario_fechamento
-        self.__profissionais = []  # AGREGAÇÃO: profissionais existem fora da clínica
+        self.__profissionais = []  
 
 
     @property
@@ -103,20 +102,17 @@ class Clinica:
             t = valor
         else:
             raise DadoInvalidoException("Erro: Horário inválido.")
-        # Validação cruzada: fechamento deve ser após abertura
         if hasattr(self, '_Clinica__horario_abertura') and t <= self.__horario_abertura:
             raise DadoInvalidoException("Erro: Horário de fechamento deve ser posterior ao de abertura.")
         self.__horario_fechamento = t
 
 
-    # Profissionais (AGREGAÇÃO)
     @property
     def profissionais(self) -> list:
         return list(self.__profissionais)  # retorna cópia para proteger a lista interna
 
 
     def adicionar_profissional(self, profissional: Profissional):
-        """AGREGAÇÃO: adiciona profissional à clínica. Ele pode existir sem ela."""
         if not isinstance(profissional, Profissional):
             raise DadoInvalidoException("Erro: Profissional inválido.")
         if profissional in self.__profissionais:
@@ -125,14 +121,12 @@ class Clinica:
 
 
     def remover_profissional(self, profissional: Profissional):
-        """AGREGAÇÃO: remove da clínica, mas profissional continua existindo no sistema."""
         if profissional not in self.__profissionais:
             raise DadoInvalidoException("Erro: Profissional não encontrado nesta clínica.")
         self.__profissionais.remove(profissional)
 
 
     def esta_aberta(self, horario: time) -> bool:
-        """Verifica se a clínica está aberta no horário informado (usada na Regra 2)."""
         return self.__horario_abertura <= horario <= self.__horario_fechamento
 
 

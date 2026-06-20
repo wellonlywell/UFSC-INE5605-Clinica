@@ -7,7 +7,6 @@ from exceptions.regra_negocio_exception import RegraNegocioException
 
 
 class ControladorPagamento:
-    """Gerencia todos os pagamentos do sistema."""
 
     def __init__(self, controlador_sistema):
         self.__pagamentos = []
@@ -49,7 +48,6 @@ class ControladorPagamento:
         atendimento = atendimentos[indice]
         paciente = atendimento.paciente
 
-        # Pagamento parcial: desconta o que já foi pago para este atendimento
         valor_ja_pago = sum(p.valor_pago for p in self.__pagamentos if p.atendimento == atendimento)
         valor_restante = atendimento.valor - valor_ja_pago
 
@@ -57,14 +55,12 @@ class ControladorPagamento:
             self.__tela.mostra_mensagem("Este atendimento já está totalmente pago!")
             return
 
-        # Passa o valor_restante para a tela — o usuário só pode pagar até esse limite
         dados_gerais = self.__tela.pega_dados_pagamento(valor_restante)
         forma = dados_gerais["forma_pagamento"]
         data_pgto = dados_gerais["data_pgto"]
         valor_pago = dados_gerais["valor_pago"]
 
         try:
-            # Regra 3 e formato da data são validados pelo setter de Pagamento.data
             if forma == "1":
                 dados_extra = self.__tela.pega_dados_dinheiro(valor_pago)
                 pagamento = PagamentoDinheiro(
@@ -131,7 +127,6 @@ class ControladorPagamento:
         nova_data = self.__tela.pega_nova_data()
 
         try:
-            # O setter de Pagamento.data valida a Regra 3 automaticamente
             pagamento_selecionado.data = nova_data
             self.__tela.mostra_mensagem("Data do pagamento alterada com sucesso!")
         except (DadoInvalidoException, RegraNegocioException) as e:

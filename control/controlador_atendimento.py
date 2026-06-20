@@ -32,10 +32,7 @@ class ControladorAtendimento:
                 self.__tela.mostra_mensagem(str(e))
 
     def __verifica_regra2(self, clinica, hora_inicio_str: str, hora_fim_str: str):
-        """
-        Regra 2: atendimento inteiro deve estar dentro do horário da clínica.
-        Verifica tanto hora_inicio quanto hora_fim.
-        """
+        
         h_i, m_i = map(int, hora_inicio_str.split(":"))
         h_f, m_f = map(int, hora_fim_str.split(":"))
         inicio = Time(h_i, m_i)
@@ -54,6 +51,8 @@ class ControladorAtendimento:
 
         ctrl_clinica      = self.__controlador_sistema.controlador_clinica
         ctrl_paciente     = self.__controlador_sistema.controlador_paciente
+        ctrl_clinica     = self.__controlador_sistema.controlador_clinica
+        ctrl_paciente    = self.__controlador_sistema.controlador_paciente
         ctrl_profissional = self.__controlador_sistema.controlador_profissional
         ctrl_tipo         = self.__controlador_sistema.controlador_tipo_atendimento
 
@@ -77,7 +76,6 @@ class ControladorAtendimento:
             self.__tela.mostra_mensagem("Tipo de atendimento não encontrado. Cadastre-o primeiro.")
             return
 
-        # Regra 1: menor de idade precisa de responsável
         if not paciente.maior_de_idade and paciente.responsavel is None:
             self.__tela.mostra_mensagem(
                 f"REGRA 1 VIOLADA: O paciente tem {paciente.idade} anos (menor de idade) "
@@ -86,11 +84,23 @@ class ControladorAtendimento:
             )
             return
 
-        # Regra 2: início E fim dentro do horário da clínica
+        
         try:
-            self.__verifica_regra2(clinica, dados["hora_inicio"], dados["hora_fim"])
-        except RegraNegocioException as e:
-            self.__tela.mostra_mensagem(str(e))
+            h, m = map(int, dados["hora_inicio"].split(":"))
+        except Exception:
+            self.__tela.mostra_mensagem("Hora de início inválida. Use o formato HH:MM.")
+            return
+
+        from datetime import time as Time
+        hora_inicio_time = Time(h, m)
+
+        if not clinica.esta_aberta(hora_inicio_time):
+            abertura  = clinica.horario_abertura.strftime("%H:%M")
+            fechamento = clinica.horario_fechamento.strftime("%H:%M")
+            self.__tela.mostra_mensagem(
+                f"REGRA 2 VIOLADA: O horário {dados['hora_inicio']} está fora do "
+                f"funcionamento da clínica ({abertura} - {fechamento})."
+            )
             return
 
         try:
@@ -122,11 +132,21 @@ class ControladorAtendimento:
 
         dados = self.__tela.pega_dados_alteracao()
 
-        # Regra 2 também vale na alteração — início E fim
         try:
-            self.__verifica_regra2(atendimento.clinica, dados["hora_inicio"], dados["hora_fim"])
-        except RegraNegocioException as e:
-            self.__tela.mostra_mensagem(str(e))
+            h, m = map(int, dados["hora_inicio"].split(":"))
+        except Exception:
+            self.__tela.mostra_mensagem("Hora de início inválida.")
+            return
+
+        from datetime import time as Time
+        hora_inicio_time = Time(h, m)
+        if not atendimento.clinica.esta_aberta(hora_inicio_time):
+            abertura   = atendimento.clinica.horario_abertura.strftime("%H:%M")
+            fechamento = atendimento.clinica.horario_fechamento.strftime("%H:%M")
+            self.__tela.mostra_mensagem(
+                f"REGRA 2 VIOLADA: Horário {dados['hora_inicio']} fora do "
+                f"funcionamento ({abertura} - {fechamento})."
+            )
             return
 
         try:
@@ -152,7 +172,6 @@ class ControladorAtendimento:
         self.__tela.mostra_mensagem("Atendimento removido com sucesso!")
 
     def registrar_procedimento(self):
-        """Vincula um procedimento do catálogo a um atendimento existente (COMPOSIÇÃO)."""
         if not self.__atendimentos:
             self.__tela.mostra_mensagem("Nenhum atendimento cadastrado.")
             return
@@ -188,7 +207,6 @@ class ControladorAtendimento:
             self.__tela.mostra_lista_atendimento(i, atendimento)
 
     def __buscar_por_indice(self, indice: int):
-        """Retorna o atendimento na posição informada, ou None."""
         if 0 <= indice < len(self.__atendimentos):
             return self.__atendimentos[indice]
         return None

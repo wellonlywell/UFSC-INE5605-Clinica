@@ -3,15 +3,14 @@
 from abc import ABC, abstractmethod
 from datetime import date
 from model.Paciente import Paciente
-# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
 
-class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e classes abstratas
+class Pagamento(ABC):  
     def __init__(self, data_pgto, atendimento, paciente: Paciente, valor_pago: float):
-        self.atendimento = atendimento  # ASSOCIAÇÃO com Atendimento (setado antes da data)
-        self.data = data_pgto           # valida Regra 3 após atendimento estar setado
-        self.paciente = paciente        # ASSOCIAÇÃO com Paciente
+        self.atendimento = atendimento  
+        self.data = data_pgto           
+        self.paciente = paciente        
         self.valor_pago = valor_pago
 
 
@@ -32,17 +31,14 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
             d = valor
         else:
             raise DadoInvalidoException("Erro: Data inválida.")
-        # Só podemos verificar se o atendimento já foi salvo no objeto (e foi, lá no __init__)
         if hasattr(self, 'atendimento') and self.atendimento is not None:
             data_atendimento = self.atendimento.data
             
-            # Se a data de pagamento for maior que a data do atendimento, é uma violação da regra de negócio!
             if d > data_atendimento:
                 raise RegraNegocioException(
                     f"Violação de Regra: O pagamento (data: {d.strftime('%d/%m/%Y')}) "
                     f"deve ser realizado até a data do atendimento ({data_atendimento.strftime('%d/%m/%Y')})."
                 )        
-        # Se passou em todas as verificações, salva a data.
         self.__data = d
 
 
@@ -88,10 +84,9 @@ class Pagamento(ABC):  # CLASSE ABSTRATA — critério avaliação: herança e c
 
     @property
     def valor_restante(self) -> float:
-        """Permite pagamentos parciais: retorna quanto ainda falta pagar."""
         return self.__atendimento.valor - self.__valor_pago
 
 
-    @abstractmethod  # MÉTODO ABSTRATO: cada modalidade implementa seu comprovante
+    @abstractmethod  
     def emitir_comprovante(self) -> str:
         pass
