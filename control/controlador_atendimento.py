@@ -32,10 +32,7 @@ class ControladorAtendimento:
                 self.__tela.mostra_mensagem(str(e))
 
     def __verifica_regra2(self, clinica, hora_inicio_str: str, hora_fim_str: str):
-        """
-        Regra 2: atendimento inteiro deve estar dentro do horário da clínica.
-        Verifica tanto hora_inicio quanto hora_fim.
-        """
+        
         h_i, m_i = map(int, hora_inicio_str.split(":"))
         h_f, m_f = map(int, hora_fim_str.split(":"))
         inicio = Time(h_i, m_i)
@@ -77,7 +74,6 @@ class ControladorAtendimento:
             self.__tela.mostra_mensagem("Tipo de atendimento não encontrado. Cadastre-o primeiro.")
             return
 
-        # Regra 1: menor de idade precisa de responsável
         if not paciente.maior_de_idade and paciente.responsavel is None:
             self.__tela.mostra_mensagem(
                 f"REGRA 1 VIOLADA: O paciente tem {paciente.idade} anos (menor de idade) "
@@ -86,7 +82,6 @@ class ControladorAtendimento:
             )
             return
 
-        # Regra 2: início E fim dentro do horário da clínica
         try:
             self.__verifica_regra2(clinica, dados["hora_inicio"], dados["hora_fim"])
         except RegraNegocioException as e:
@@ -122,7 +117,6 @@ class ControladorAtendimento:
 
         dados = self.__tela.pega_dados_alteracao()
 
-        # Regra 2 também vale na alteração — início E fim
         try:
             self.__verifica_regra2(atendimento.clinica, dados["hora_inicio"], dados["hora_fim"])
         except RegraNegocioException as e:
@@ -152,7 +146,6 @@ class ControladorAtendimento:
         self.__tela.mostra_mensagem("Atendimento removido com sucesso!")
 
     def registrar_procedimento(self):
-        """Vincula um procedimento do catálogo a um atendimento existente (COMPOSIÇÃO)."""
         if not self.__atendimentos:
             self.__tela.mostra_mensagem("Nenhum atendimento cadastrado.")
             return

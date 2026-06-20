@@ -13,14 +13,11 @@ class Paciente(Pessoa):
                  cor_raca: Optional[CorRaca] = None,
                  identidade_genero: Optional[str] = None):
 
-        # Passando apenas os atributos que a Pessoa possui
         super().__init__(nome_civil, celular, cpf, nome_social, pcd, cor_raca, identidade_genero)
 
-        # Data de nascimento pertence a paciente
         self.data_nascimento = data_nascimento
         self.responsavel = responsavel
 
-    # Data de Nascimento
     @property
     def data_nascimento(self) -> date:
         return self.__data_nascimento
@@ -38,7 +35,6 @@ class Paciente(Pessoa):
         else:
             raise DadoInvalidoException("Data inválida.")
 
-    # Idade e Maioridade
     @property
     def idade(self) -> int:
         hoje = date.today()
@@ -52,7 +48,6 @@ class Paciente(Pessoa):
         """Regra 1 do enunciado: somente pacientes com mais de 18 anos."""
         return self.idade >= 18
 
-    # Responsável Legal
     @property
     def responsavel(self):
         return self.__responsavel
@@ -64,7 +59,6 @@ class Paciente(Pessoa):
             raise DadoInvalidoException("Responsável inválido.")
         self.__responsavel = valor
 
-    # Representação
     def get_info(self) -> str:
         resp = self.__responsavel.nome if self.__responsavel else "Nenhum"
         pcd_str = "Sim" if self.pcd else "Não"

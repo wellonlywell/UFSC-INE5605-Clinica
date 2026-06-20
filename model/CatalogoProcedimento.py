@@ -1,6 +1,5 @@
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
-
 class CatalogoProcedimento:
     def __init__(self, id: int, descricao: str, custo: float):
         self.id = id

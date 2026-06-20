@@ -2,7 +2,6 @@ from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class TelaTipoAtendimento:
   def tela_opcoes(self):
-    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("-------- TIPOS DE ATENDIMENTO ----------")
     print("1 - Incluir: cadastrar novo tipo (ex: Consulta, Exame, Retorno)")
     print("2 - Alterar: editar um tipo já cadastrado")

@@ -7,7 +7,6 @@ from exceptions.regra_negocio_exception import RegraNegocioException
 
 
 class ControladorPagamento:
-    """Gerencia todos os pagamentos do sistema."""
 
     def __init__(self, controlador_sistema):
         self.__pagamentos = []
@@ -121,7 +120,6 @@ class ControladorPagamento:
 
 
     def alterar_pagamento(self):
-        """Alteração: modifica a data de um pagamento existente."""
         if not self.__pagamentos:
             self.__tela.mostra_mensagem("Nenhum pagamento registrado no sistema.")
             return
@@ -137,7 +135,6 @@ class ControladorPagamento:
         nova_data = self.__tela.pega_nova_data()
 
         try:
-            # O setter de Pagamento.data valida a Regra 3 automaticamente
             pagamento_selecionado.data = nova_data
             self.__tela.mostra_mensagem("Data do pagamento alterada com sucesso!")
         except (DadoInvalidoException, RegraNegocioException) as e:

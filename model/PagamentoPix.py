@@ -1,19 +1,15 @@
 from model.Pagamento import Pagamento
 from model.Paciente import Paciente
-# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
-
 
 class PagamentoPix(Pagamento):
     def __init__(self, data_pgto, atendimento, paciente: Paciente, valor_pago: float, cpf_pagador: str):
         super().__init__(data_pgto, atendimento, paciente, valor_pago)
         self.cpf_pagador = cpf_pagador
 
-
     @property
     def cpf_pagador(self) -> str:
         return self.__cpf_pagador
-
 
     @cpf_pagador.setter
     def cpf_pagador(self, valor: str):

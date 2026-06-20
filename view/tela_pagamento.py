@@ -27,7 +27,6 @@ class TelaPagamento:
 
 
     def mostra_atendimentos_pendentes(self, atendimentos: list):
-        """Exibe a lista de atendimentos disponíveis para pagamento."""
         print("\n----- ATENDIMENTOS DISPONÍVEIS -----")
         for i, at in enumerate(atendimentos):
             total = at.valor + at.calcular_total_procedimentos()
@@ -36,7 +35,6 @@ class TelaPagamento:
 
 
     def seleciona_atendimento(self) -> int:
-        """Solicita ao usuário o índice do atendimento que receberá o pagamento."""
         while True:
             try:
                 entrada = input("Digite o índice (número entre colchetes) do atendimento: ").strip()
@@ -48,7 +46,6 @@ class TelaPagamento:
 
 
     def __valida_data(self, texto: str) -> str:
-        """Valida se o texto é uma data real no formato DD/MM/AAAA. Retorna a string se válida."""
         try:
             partes = texto.split('/')
             if len(partes) != 3:
@@ -61,7 +58,6 @@ class TelaPagamento:
 
 
     def pega_dados_pagamento(self, valor_total_atendimento: float):
-        """Coleta os dados iniciais necessários para qualquer forma de pagamento."""
         print(f"\n----- REGISTRAR PAGAMENTO -----")
         print(f"Valor total do atendimento: R$ {valor_total_atendimento:.2f}")
 
@@ -102,7 +98,6 @@ class TelaPagamento:
 
 
     def pega_dados_dinheiro(self, valor_pago: float) -> dict:
-        """Coleta os dados específicos para pagamentos em dinheiro."""
         while True:
             try:
                 entrada = input(f"Quantia entregue em dinheiro (Mínimo R$ {valor_pago:.2f}): ").strip()
@@ -117,16 +112,14 @@ class TelaPagamento:
 
 
     def pega_dados_pix(self) -> dict:
-        """Coleta os dados específicos para pagamentos via PIX."""
         while True:
-            cpf = input("CPF do pagador (Apenas os 11 números): ").strip()
+            cpf = input("Digite apenas os dígitos do CPF, 11 dígitos:  ").strip()
             if cpf.isdigit() and len(cpf) == 11:
                 return {"cpf_pagador": cpf}
             print("\n[Erro]: O CPF deve conter exatamente 11 números, sem letras ou símbolos.\n")
 
 
     def pega_dados_cartao(self) -> dict:
-        """Coleta os dados específicos para pagamentos em cartão."""
         while True:
             numero = input("Número do cartão (13 a 19 números): ").strip()
             if numero.isdigit() and 13 <= len(numero) <= 19:
@@ -141,9 +134,7 @@ class TelaPagamento:
 
         while True:
             tipo = input("Tipo do cartão (digite Credito ou Debito): ").strip().upper()
-            # Normaliza com ou sem acento para não punir o usuário
             if tipo in ["CRÉDITO", "DÉBITO", "CREDITO", "DEBITO"]:
-                # Padroniza para o formato com acento (que o model aceita)
                 tipo = "CRÉDITO" if tipo in ["CRÉDITO", "CREDITO"] else "DÉBITO"
                 break
             print("\n[Erro]: Escolha entre 'Credito' ou 'Debito'.\n")
@@ -156,7 +147,6 @@ class TelaPagamento:
 
 
     def pega_nova_data(self) -> str:
-        """Solicita uma nova data para a função de alteração."""
         while True:
             nova_data = input("Digite a nova data do pagamento (DD/MM/AAAA): ").strip()
             try:
@@ -167,7 +157,6 @@ class TelaPagamento:
 
 
     def seleciona_pagamento(self) -> int:
-        """Solicita o índice de um pagamento salvo na lista."""
         while True:
             try:
                 entrada = input("Digite o índice (número entre colchetes) do pagamento desejado: ").strip()
@@ -179,10 +168,8 @@ class TelaPagamento:
 
 
     def mostra_comprovante(self, texto: str):
-        """Exibe um comprovante de pagamento formatado."""
         print(f"\n{texto}")
 
 
     def mostra_mensagem(self, mensagem: str):
-        """Exibe mensagens do sistema para usuário."""
         print(f"\n[Sistema Financeiro]: {mensagem}\n")

@@ -2,7 +2,6 @@
 
 class TelaProfissional:
   def tela_opcoes(self):
-    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("\n-------- MENU PROFISSIONAIS ----------")
     print("1 - Incluir: cadastrar novo profissional")
     print("2 - Alterar: editar profissional já cadastrado")
@@ -21,19 +20,16 @@ class TelaProfissional:
         print("Por favor, digite um número inteiro válido.")
 
   def pega_dados_profissional(self):
-    """Pede os dados para cadastrar ou alterar um profissional de saúde."""
     print("\n----- INSERIR DADOS DO PROFISSIONAL -----")
-    cpf = input("CPF (apenas números): ").strip()
+    cpf = input("CPF (Digite apenas os dígitos do CPF, 11 dígitos ): ").strip()
     nome_civil = input("Nome Civil: ").strip()
     nome_social = input("Nome Social (Deixe vazio se não houver): ").strip()
     celular = input("Celular (Ex: 48999998888): ").strip()
 
-    # Dados específicos para profissionais de saúde
     print("\n--- DADOS PROFISSIONAIS ---")
     registro = input("Registro Profissional (Ex: CRM/SC 12345, COREN 6789): ").strip()
     especialidade = input("Especialidade Médica/Área (Ex: Clínico Geral, Pediatra): ").strip()
 
-    # Validação simples de S/N para PCD
     while True:
       pcd_input = input("\nÉ Pessoa com Deficiência (PCD)? (S/N): ").strip().upper()
       if pcd_input in ['S', 'N']:
@@ -41,7 +37,6 @@ class TelaProfissional:
         break
       print("Por favor, responda apenas com S ou N.")
 
-    # Autodeclaração de Cor/Raça
     print("\nAutodeclaração — categorias IBGE:")
     print("Nota: Dados coletados para fins de indicadores de equidade em saúde.")
     print("Como você se autodeclara?")
@@ -54,7 +49,6 @@ class TelaProfissional:
         break
       print("Opção inválida! Digite um número de 1 a 6.")
 
-    # Identidade de gênero aberta
     print("\n--- Identidade de Gênero ---")
     print("Como você se identifica em relação ao seu gênero atual?")
     print("Exemplos: Mulher Cis/Trans, Homem Cis/Trans, Pessoa não-binária, Gênero fluido, Agênero, etc")
@@ -74,7 +68,6 @@ class TelaProfissional:
     }
 
   def mostra_profissional(self, profissional):
-    """Exibe os dados extraídos diretamente do objeto Profissional."""
     print(f"Registro Profissional: {profissional.registro}")
     print(f"Especialidade: {profissional.especialidade}")
     print(f"Nome: {profissional.nome}")
@@ -89,7 +82,6 @@ class TelaProfissional:
     print("-" * 40)
 
   def seleciona_profissional(self) -> str:
-    """Pede o CPF para encontrar um profissional específico."""
     print("\n----- SELECIONAR PROFISSIONAL -----")
     cpf = input("Digite o CPF da pessoa profissional: ").strip()
     return cpf

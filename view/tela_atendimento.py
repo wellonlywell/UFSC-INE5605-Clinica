@@ -27,7 +27,6 @@ class TelaAtendimento:
                 print(f"[Erro]: {e}")
 
     def __valida_data(self, texto: str) -> str:
-        """Valida se o texto é uma data real no formato DD/MM/AAAA."""
         try:
             partes = texto.split('/')
             if len(partes) != 3:
@@ -39,7 +38,6 @@ class TelaAtendimento:
             raise DadoInvalidoException("Data inválida. Use o formato DD/MM/AAAA com valores reais.")
 
     def __valida_hora(self, texto: str) -> str:
-        """Valida se o texto é um horário real no formato HH:MM."""
         try:
             partes = texto.split(':')
             if len(partes) != 2:
@@ -51,7 +49,6 @@ class TelaAtendimento:
             raise DadoInvalidoException("Horário inválido. Use o formato HH:MM com valores reais (ex: 08:30).")
 
     def __pede_texto_obrigatorio(self, prompt: str) -> str:
-        """Pede uma string não vazia em loop."""
         while True:
             valor = input(prompt).strip()
             if valor:
@@ -59,7 +56,6 @@ class TelaAtendimento:
             print("[Erro]: Este campo não pode ficar em branco.")
 
     def pega_dados_atendimento(self):
-        """Coleta os dados para criar um atendimento."""
         print("\n----- INSERIR DADOS DO AGENDAMENTO -----")
 
         cnpj_clinica     = self.__pede_texto_obrigatorio("CNPJ da Clínica (apenas números): ")
@@ -113,7 +109,6 @@ class TelaAtendimento:
         }
 
     def pega_dados_alteracao(self):
-        """Pede apenas os campos alteráveis de um atendimento existente."""
         print("\n----- ALTERAR AGENDAMENTO -----")
 
         while True:
@@ -158,7 +153,6 @@ class TelaAtendimento:
         }
 
     def mostra_atendimento(self, atendimento):
-        """Exibe o resumo do atendimento."""
         print(f"Data/Hora: {atendimento.data.strftime('%d/%m/%Y')} "
               f"das {atendimento.hora_inicio.strftime('%H:%M')} "
               f"às {atendimento.hora_fim.strftime('%H:%M')}")
@@ -179,12 +173,10 @@ class TelaAtendimento:
         print("-" * 50)
 
     def mostra_lista_atendimento(self, indice: int, atendimento):
-        """Exibe o índice e os dados de um atendimento na listagem."""
         print(f"\n[{indice}]")
         self.mostra_atendimento(atendimento)
 
     def seleciona_atendimento(self) -> int:
-        """Pede o índice do atendimento para operações."""
         print("\n----- SELECIONAR ATENDIMENTO -----")
         while True:
             try:
@@ -193,7 +185,6 @@ class TelaAtendimento:
                 print("[Erro]: Por favor, digite um número inteiro válido.")
 
     def pega_id_procedimento(self) -> int:
-        """Pede o ID do procedimento do catálogo para adicionar ao atendimento."""
         while True:
             try:
                 return int(input("Digite o ID do procedimento: ").strip())

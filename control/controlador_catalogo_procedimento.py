@@ -25,14 +25,11 @@ class ControladorCatalogoProcedimento:
                 self.__tela_procedimento.mostra_mensagem(str(e))
 
     def incluir_procedimento(self):
-        # 1. Coleta dados
         dados = self.__tela_procedimento.pega_dados_procedimento()
 
-        # 2. Regra de Negócio: Descrição Única
         if self.buscar_por_descricao(dados["descricao"]):
             raise RegraNegocioException("Já existe um procedimento com esta descrição.")
 
-        # 3. Instancia e salva 
         novo = CatalogoProcedimento(
             id=self.__proximo_id,
             descricao=dados["descricao"],
@@ -69,7 +66,7 @@ class ControladorCatalogoProcedimento:
             self.__tela_procedimento.mostra_mensagem("Procedimento alterado com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_procedimento.mostra_mensagem(f"Erro nos dados: {e}")
-            
+          
         
     def excluir_procedimento(self):
         if not self.__procedimentos:
@@ -85,7 +82,6 @@ class ControladorCatalogoProcedimento:
             self.__tela_procedimento.mostra_mensagem(f"Erro: Não existe procedimento com o ID {id_buscado}.")
             return
         
-        # Bloqueia exclusão se o procedimento já foi usado em algum atendimento
         atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
         for at in atendimentos:
             for item in at.procedimentos:
