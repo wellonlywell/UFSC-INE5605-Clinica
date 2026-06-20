@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 from model.CorRaca import CorRaca
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class Pessoa(ABC):
@@ -19,6 +20,7 @@ class Pessoa(ABC):
 
     @property
     def nome(self) -> str:
+        """Retorna nome social se existir, senão nome civil (nome social garantido pela Lei 8.727/2016)."""
         if self.__nome_social:
             return self.__nome_social
         return self.__nome_civil
@@ -101,4 +103,5 @@ class Pessoa(ABC):
 
     @abstractmethod
     def get_info(self) -> str:
+        """Método abstrato que obriga os filhos (Paciente/Profissional/Responsável) a implementarem."""
         pass

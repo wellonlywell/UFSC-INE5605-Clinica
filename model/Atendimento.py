@@ -4,6 +4,7 @@ from model.Paciente import Paciente
 from model.Profissional import Profissional
 from model.ItemProcedimento import ItemProcedimento
 from model.TipoAtendimento import TipoAtendimento
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 
 
@@ -115,6 +116,7 @@ class Atendimento:
             t = valor
         else:
             raise DadoInvalidoException("Erro: Hora inválida.")
+        # Garante que o fim não seja menor ou igual ao início
         if hasattr(self, '_Atendimento__hora_inicio') and t <= self.__hora_inicio:
             raise DadoInvalidoException("Erro: Hora de fim deve ser posterior à hora de início.")
         self.__hora_fim = t
@@ -154,11 +156,13 @@ class Atendimento:
 
 
     def adicionar_procedimento(self, descricao: str, custo: float, profissional: Profissional):
+        """COMPOSIÇÃO: item é criado aqui dentro, não existe fora do Atendimento, seria tipo um procedimento específico daquele atendimento, como item numa nota fiscal. Vc tem  catalgo geral mas tem a item espcifico no seu atendimento."""
         novo_item = ItemProcedimento(descricao, custo, profissional)
         self.__item_procedimentos.append(novo_item)
 
 
     def calcular_total_procedimentos(self) -> float:
+        """Retorna a soma dos custos de todos os procedimentos do atendimento."""
         return sum(p.custo for p in self.__item_procedimentos)
 
 

@@ -2,6 +2,7 @@
 
 class TelaClinica:
   def tela_opcoes(self):
+    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("-------- GERENCIAR CLÍNICAS ----------")
     print("1 - Incluir: Registrar Clínica")
     print("2 - Alterar: Dados de uma Clínica")
@@ -20,6 +21,7 @@ class TelaClinica:
         print("Por favor, digite um número inteiro válido.")
 
   def pega_dados_clinica(self):
+    """Pede as informações básicas para cadastrar/alterar uma clínica."""
     print("\n----- INSERIR DADOS DA CLÍNICA -----")
     nome = input("Nome Fantasia: ").strip()
     cnpj = input("CNPJ (apenas números): ").strip()
@@ -37,6 +39,7 @@ class TelaClinica:
       "horario_fechamento": horario_fechamento   }
 
   def mostra_clinica(self, clinica):
+    """Exibe as informações de uma clínica cadastrada."""
     print(f"CNPJ: {clinica.cnpj}")
     print(f"Nome: {clinica.nome}")
     print(f"Cidade: {clinica.cidade}")
@@ -46,8 +49,9 @@ class TelaClinica:
     print("-" * 40)
 
   def seleciona_clinica(self) -> str:
+    """Pede o CNPJ para identificar uma clínica específica."""
     print("\n----- SELECIONAR CLÍNICA -----")
-    cnpj = input("Digite apenas os digitos do CNPJ da clínica: ").strip()
+    cnpj = input("Digite o CNPJ da clínica: ").strip()
     return cnpj
 
   def mostra_mensagem(self, mensagem: str):

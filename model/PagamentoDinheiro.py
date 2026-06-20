@@ -1,6 +1,8 @@
+#class feita pelo Marcos
 
 from model.Pagamento import Pagamento
 from model.Paciente import Paciente
+# Exceptions customizadas, validações de dado movidas para a pasta exceptions
 from exceptions.dado_invalido_exception import DadoInvalidoException
 
 class PagamentoDinheiro(Pagamento):

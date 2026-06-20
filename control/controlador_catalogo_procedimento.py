@@ -25,10 +25,12 @@ class ControladorCatalogoProcedimento:
                 self.__tela_procedimento.mostra_mensagem(str(e))
 
     def incluir_procedimento(self):
+        # 1. Valida dependência
         ctrl_prof = self.__controlador_sistema.controlador_profissional
         if not ctrl_prof.get_profissionais():
             raise RegraNegocioException("Não há profissionais cadastrados no sistema. Cadastre um profissional antes de incluir um procedimento.")
 
+        # 2. Coleta dados via tela
         dados = self.__tela_procedimento.pega_dados_procedimento()
         cpf_prof = self.__tela_procedimento.seleciona_profissional()
         
@@ -36,9 +38,11 @@ class ControladorCatalogoProcedimento:
         if profissional is None:
             raise RegraNegocioException("Profissional não encontrado. Verifique o CPF digitado e tente novamente.")
 
+        # 3. Regra de Negócio: Descrição Única
         if self.buscar_por_descricao(dados["descricao"]):
             raise RegraNegocioException("Já existe um procedimento com esta descrição.")
 
+        # 4. Instancia e salva 
         novo = CatalogoProcedimento(
             id=self.__proximo_id,
             descricao=dados["descricao"],

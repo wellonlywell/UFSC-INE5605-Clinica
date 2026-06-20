@@ -1,6 +1,8 @@
 
 class TelaPaciente:
+  # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
+    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("\n-------- MENU PACIENTES ----------")
     print("1 - Incluir: cadastrar novo paciente")
     print("2 - Alterar: editar paciente já cadastrado")
@@ -19,6 +21,7 @@ class TelaPaciente:
         print("Por favor, digite um número inteiro válido.")
 
   def pega_dados_paciente(self):
+    """Pede os dados para cadastrar ou alterar um paciente."""
     print("\n----- INSERIR DADOS DO PACIENTE -----")
     cpf = input("CPF (apenas números): ").strip()
     nome_civil = input("Nome Civil: ").strip()
@@ -26,6 +29,7 @@ class TelaPaciente:
     celular = input("Celular (Ex: 48999998888): ").strip()
     data_nascimento = input("Data de Nascimento (DD/MM/AAAA): ").strip()
 
+    # Validação simples de S/N para PCD
     while True:
       pcd_input = input("\nÉ Pessoa com Deficiência (PCD)? (S/N): ").strip().upper()
       if pcd_input in ['S', 'N']:
@@ -33,6 +37,7 @@ class TelaPaciente:
         break
       print("Por favor, responda apenas com S ou N.")
 
+    # Autodeclaração de Cor/Raça
     print("\nAutodeclaração — categorias IBGE:")
     print("Nota: Dados coletados para fins de indicadores de equidade em saúde.")
     print("Como você se autodeclara?")
@@ -45,6 +50,7 @@ class TelaPaciente:
         break
       print("Opção inválida! Digite um número de 1 a 6.")
 
+    # Identidade de gênero aberta
     print("\n--- Identidade de Gênero ---")
     print("Como você se identifica em relação ao seu gênero atual?")
     print("Exemplos: Mulher Cis/Trans, Homem Cis/Trans, Pessoa não-binária, Gênero fluido, Agênero, etc")
@@ -62,6 +68,7 @@ class TelaPaciente:
     }
 
   def mostra_paciente(self, paciente):
+    """Exibe os dados extraídos diretamente do objeto Paciente."""
     print(f"CPF: {paciente.cpf}")
     print(f"Nome: {paciente.nome}")
     print(f"Celular: {paciente.celular}")
@@ -83,9 +90,11 @@ class TelaPaciente:
     print("-" * 40)
 
   def seleciona_paciente(self) -> str:
+    """Pede o CPF para encontrar uma pessoa paciente específico."""
     print("\n----- SELECIONAR PACIENTE -----")
-    cpf = input("Digite apenas os dígitos do CPF do paciente: ").strip()
+    cpf = input("Digite o CPF da pessoa paciente: ").strip()
     return cpf
 
   def mostra_mensagem(self, mensagem: str):
+    """Mostra qualquer mensagem de sucesso ou erro no terminal."""
     print(f"\n[Aviso]: {mensagem}")

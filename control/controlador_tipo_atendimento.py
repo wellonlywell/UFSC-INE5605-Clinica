@@ -27,6 +27,7 @@ class ControladorTipoAtendimento:
 
     def incluir_tipo_atendimento(self):
         dados = self.__tela_tipo_atendimento.pega_dados_tipo_atendimento()
+        # Validação extra: impede descrição puramente numérica, exemplo digitar um nº e isso ser cadastrado como um tipo de atendimento, o que não faz sentido
         if dados["descricao"].isdigit():
             self.__tela_tipo_atendimento.mostra_mensagem("Descrição inválida: não pode ser apenas números.")
             return
@@ -45,15 +46,18 @@ class ControladorTipoAtendimento:
         self.listar_tipos_atendimento()
         id_buscado = self.__tela_tipo_atendimento.seleciona_tipo_atendimento()
         
+        # Rota de fuga: se o usuário digitar 0, ele desiste da alteração
         if id_buscado == 0:
             self.__tela_tipo_atendimento.mostra_mensagem("Operação cancelada. Retornando ao menu...")
             return
         
         tipo = self.buscar_por_id(id_buscado)
         if tipo is None:
+            # Mensagem informando exatamente o número que deu erro
             self.__tela_tipo_atendimento.mostra_mensagem(f"O ID {id_buscado} não foi encontrado no sistema.")
             return
         dados = self.__tela_tipo_atendimento.pega_dados_tipo_atendimento("ALTERAR")
+        # Validação extra: impede descrição puramente numérica
         if dados["descricao"].isdigit():
             self.__tela_tipo_atendimento.mostra_mensagem("Descrição inválida: não pode ser apenas números.")
             return
@@ -89,12 +93,14 @@ class ControladorTipoAtendimento:
         self.listar_tipos_atendimento()
         id_buscado = self.__tela_tipo_atendimento.seleciona_tipo_atendimento()
         
+        # Rota de fuga: se o usuário digitar 0, ele desiste da exclusão
         if id_buscado == 0:
             self.__tela_tipo_atendimento.mostra_mensagem("Operação cancelada. Retornando ao menu...")
             return
         
         tipo = self.buscar_por_id(id_buscado)
         if tipo is None:
+            # Mensagem informando exatamente o número que deu erro
             self.__tela_tipo_atendimento.mostra_mensagem(f"O ID {id_buscado} não foi encontrado no sistema.")
             return
         self.__tipos_atendimento.remove(tipo)

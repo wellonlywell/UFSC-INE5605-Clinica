@@ -1,6 +1,8 @@
 
 class TelaResponsavel:
+  # fazer aqui tratamento dos dados, caso a entrada seja diferente do esperado
   def tela_opcoes(self):
+    """Mostra o menu com as opções disponíveis: Incluir, Listar, Alterar e Excluir."""
     print("\n-------- MENU RESPONSÁVEIS ----------")
     print("1 - Incluir: cadastrar novo responsável")
     print("2 - Alterar: editar responsável já cadastrado")
@@ -19,6 +21,7 @@ class TelaResponsavel:
         print("Por favor, digite um número inteiro válido.")
 
   def pega_dados_responsavel(self):
+    """Pede os dados para cadastrar ou alterar um responsável legal."""
     print("\n----- INSERIR DADOS DO RESPONSÁVEL -----")
     cpf = input("CPF (apenas números): ").strip()
     nome_civil = input("Nome Civil: ").strip()
@@ -26,6 +29,7 @@ class TelaResponsavel:
     celular = input("Celular (Ex: 48999998888): ").strip()
     parentesco = input("Grau de Parentesco/Vínculo (Ex: Mãe, Pai, Tutor): ").strip()
 
+    # Validação simples de S/N para PCD
     while True:
       pcd_input = input("É Pessoa com Deficiência (PCD)? (S/N): ").strip().upper()
       if pcd_input in ['S', 'N']:
@@ -33,6 +37,7 @@ class TelaResponsavel:
         break
       print("Por favor, responda apenas com S ou N.")
 
+    # Autodeclaração de Cor/Raça
     print("\nAutodeclaração — categorias IBGE:")
     print("Nota: Dados coletados para fins de indicadores de equidade em saúde.")
     print("Como você se autodeclara?")
@@ -45,6 +50,7 @@ class TelaResponsavel:
         break
       print("Opção inválida! Digite um número de 1 a 6.")
 
+    # Identidade de gênero aberta
     print("\n--- Identidade de Gênero ---")
     print("Como você se identifica em relação ao seu gênero atual?")
     print("Exemplos: Mulher Cis/Trans, Homem Cis/Trans, Pessoa não-binária, Gênero fluido, Agênero, etc")
@@ -62,6 +68,7 @@ class TelaResponsavel:
     }
 
   def mostra_responsavel(self, responsavel):
+    """Exibe os dados extraídos diretamente do objeto Responsavel (Indentação corrigida)."""
     print(f"CPF: {responsavel.cpf}")
     print(f"Nome: {responsavel.nome}")
     print(f"Celular: {responsavel.celular}")
@@ -75,9 +82,11 @@ class TelaResponsavel:
     print("-" * 40)
 
   def seleciona_responsavel(self) -> str:
+    """Pede o CPF para encontrar um responsável específico."""
     print("\n----- SELECIONAR RESPONSÁVEL -----")
     cpf = input("Digite o CPF da pessoa responsável: ").strip()
     return cpf
 
   def mostra_mensagem(self, mensagem: str):
+    """Mostra qualquer mensagem de sucesso ou erro no terminal."""
     print(f"\n[Aviso]: {mensagem}")
