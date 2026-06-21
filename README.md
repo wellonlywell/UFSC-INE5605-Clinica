@@ -18,7 +18,7 @@
 
 ## 👩‍💻 Dupla
 
-Marcos Garcia Labadie | Well Christina Costa Sousa 
+**Estudantes:** Marcos Garcia Labadie e Well Christina Costa Sousa 
 
 **Professores:** Lucas Machado da Palma e Vinícius Zanandrea
 
@@ -26,7 +26,9 @@ Marcos Garcia Labadie | Well Christina Costa Sousa
 
 ## 📋 Sobre o sistema
 
-O **SisClínica** é um sistema de gerenciamento de clínicas desenvolvido em Python puro, com arquitetura MVC estrita e execução totalmente via terminal. O sistema gerencia cadastros de clínicas, pacientes, profissionais e tipos de atendimento, além de registrar atendimentos, procedimentos e pagamentos, com emissão de relatórios gerenciais.
+O **SisClínica** é um sistema de gerenciamento de clínicas desenvolvido em **Python puro**, utilizando arquitetura **MVC** e execução totalmente via terminal.
+
+O sistema permite o gerenciamento de clínicas, pacientes, profissionais, tipos de atendimento, catálogo de procedimentos, atendimentos, pagamentos e emissão de relatórios gerenciais.
 
 ---
 
@@ -35,19 +37,21 @@ O **SisClínica** é um sistema de gerenciamento de clínicas desenvolvido em Py
 <details>
 <summary><strong>📁 Cadastros (CRUD completo)</strong></summary>
 
-- 🏥 Clínica (CNPJ, horários de funcionamento, profissionais vinculados)
-- 🧑‍⚕️ Paciente (nome social, identidade de gênero, PCD, cor/raça)
-- 👨‍⚕️ Profissional (especialidade, registro)
+- 🏥 Clínica
+- 🧑‍⚕️ Paciente
+- 👨‍⚕️ Profissional
+- 👤 Responsável
 - 📋 Tipo de Atendimento
+- 🩺 Catálogo de Procedimentos
 
 </details>
 
 <details>
 <summary><strong>📝 Registros</strong></summary>
 
-- 📅 Atendimento (vinculado à clínica, paciente e profissional, com validação de horário)
-- 🩺 Procedimento (catálogo geral e itens por atendimento)
-- 💳 Pagamento (Dinheiro, PIX ou Cartão)
+- 📅 Atendimento
+- 🧾 Registro de procedimentos por atendimento
+- 💳 Pagamentos em Dinheiro, Pix e Cartão
 
 </details>
 
@@ -65,7 +69,7 @@ O **SisClínica** é um sistema de gerenciamento de clínicas desenvolvido em Py
 
 ## 💜 Campos inclusivos em `Pessoa`
 
-A classe base `Pessoa` foi desenvolvida além do mínimo exigido pelo enunciado, incorporando campos de inclusão social presentes em **todos** os subtipos (`Paciente`, `Profissional`, `Responsavel`):
+A classe abstrata `Pessoa` foi desenvolvida além do mínimo exigido pelo enunciado, incorporando campos de inclusão social presentes em **todos** os subtipos (`Paciente`, `Profissional`, `Responsavel`):
 
 | Campo | Descrição |
 |---|---|
@@ -78,14 +82,16 @@ A classe base `Pessoa` foi desenvolvida além do mínimo exigido pelo enunciado,
 
 ---
 
-## 📏 Regras de negócio
+## 📏 Principais regras de negócio
 
 | # | Regra |
 |---|---|
-| Regra 1 | Pacientes menores de 18 anos exigem cadastro de responsável legal |
-| Regra 2 | Atendimentos só podem ser agendados dentro do horário de funcionamento da clínica |
-| Regra 3 | A data do pagamento não pode ser posterior à data do atendimento |
-> Para a lista completa de regras de negócio e critérios de avaliação, consulte [REGRAS.md](./REGRAS.md).
+| Regra 1 | Pacientes menores de 18 anos exigem responsável legal cadastrado. |
+| Regra 2 | Atendimentos devem ocorrer dentro do horário de funcionamento da clínica. |
+| Regra 3 | O pagamento deve ocorrer até a data do atendimento. |
+| Regra 4 | O sistema permite pagamentos parciais para um mesmo atendimento. |
+
+> **Observação:** A documentação completa das regras de negócio, critérios de avaliação e decisões de modelagem adotadas pela equipe encontra-se em [`REGRAS.md`](./REGRAS.md).
 
 ---
 
@@ -95,16 +101,16 @@ A classe base `Pessoa` foi desenvolvida além do mínimo exigido pelo enunciado,
 SisClinica/
 ├── main.py                          # Ponto de entrada
 ├── model/                           # Entidades e regras de validação
-│   ├── Pessoa.py                    # Classe abstrata base
+│   ├── Pessoa.py                    # Classe abstrata 
 │   ├── Paciente.py
 │   ├── Profissional.py
-│   ├── Responsavel.py
+│   ├── Responsavel.py               
 │   ├── Clinica.py
 │   ├── TipoAtendimento.py
 │   ├── Atendimento.py
 │   ├── ItemProcedimento.py          # Composição com Atendimento
 │   ├── CatalogoProcedimento.py
-│   ├── Pagamento.py                 # Classe abstrata base
+│   ├── Pagamento.py                 # Classe abstrata 
 │   ├── PagamentoDinheiro.py
 │   ├── PagamentoPix.py
 │   ├── PagamentoCartao.py
@@ -120,14 +126,16 @@ SisClinica/
 
 | Tipo | Relação |
 |---|---|
-| ♦ Composição | `Atendimento` → `ItemProcedimento` — item não existe fora do atendimento |
-| ◇ Agregação | `Clinica` → `Profissional` — profissional existe independentemente |
-| → Associação | `Pagamento` → `Atendimento` e `Paciente` |
+| ♦ Composição | `Paciente` → `Responsavel` — o responsável faz parte do cadastro do paciente menor |
+| ♦ Composição | `Atendimento` → `ItemProcedimento` — o item existe apenas dentro de um atendimento |
+| ◇ Agregação | `Clinica` → `Profissional` — o profissional existe independentemente da clínica |
+| → Associação | `Pagamento` → `Atendimento` |
+| → Associação | `Pagamento` → `Paciente` |
 
 ### Herança
 
-- `Pessoa` *(ABC)* → `Paciente`, `Profissional`, `Responsavel`
-- `Pagamento` *(ABC)* → `PagamentoDinheiro`, `PagamentoPix`, `PagamentoCartao`
+- `Pessoa` *(classe abstrata)* → `Paciente`, `Profissional` e `Responsavel`
+- `Pagamento` *(classe abstrata)* → `PagamentoDinheiro`, `PagamentoPix` e `PagamentoCartao`
 
 ---
 
@@ -143,11 +151,16 @@ python main.py
 
 ## 📐 Diagrama UML
 
-O diagrama de classes completo está disponível em dois formatos:
-- [`diagrama_SisClinica.png`](./diagrama_SisClinica.png) — para visualização rápida
-- [`diagrama_SisClinica.svg`](./diagrama_SisClinica.svg) — vetorial, zoom sem perder qualidade
+O diagrama de classes do projeto está disponível em dois formatos:
 
----
+- [`diagrama_SisClinica.png`](./diagrama_SisClinica.png) — visualização rápida.
+- [`diagrama_SisClinica.svg`](./diagrama_SisClinica.svg) — versão vetorial para ampliação sem perda de qualidade.
 
 <div align="center">
+
+**SisClínica**
+
+Projeto desenvolvido para a disciplina **INE5605 — Desenvolvimento de Sistemas Orientados a Objetos I**  
+Universidade Federal de Santa Catarina (UFSC)
+
 </div>
