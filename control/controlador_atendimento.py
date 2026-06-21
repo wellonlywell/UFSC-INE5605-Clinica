@@ -114,6 +114,16 @@ class ControladorAtendimento:
         if atendimento is None:
             self.__tela.mostra_mensagem("Atendimento não encontrado.")
             return
+        
+        ctrl_pagamento = self.__controlador_sistema.controlador_pagamento
+        pagamentos = ctrl_pagamento.get_pagamentos()
+
+        for pagamento in pagamentos:
+            if pagamento.atendimento == atendimento:
+                self.__tela.mostra_mensagem(
+                    "Não é possível alterar este atendimento, pois já existe pagamento registrado para ele."
+                )
+                return
 
         dados = self.__tela.pega_dados_alteracao()
 
@@ -142,6 +152,17 @@ class ControladorAtendimento:
         if atendimento is None:
             self.__tela.mostra_mensagem("Atendimento não encontrado.")
             return
+        
+        ctrl_pagamento = self.__controlador_sistema.controlador_pagamento
+        pagamentos = ctrl_pagamento.get_pagamentos()
+
+        for pagamento in pagamentos:
+            if pagamento.atendimento == atendimento:
+                self.__tela.mostra_mensagem(
+                    "Não é possível excluir este atendimento, pois já existe pagamento registrado para ele."
+                )
+                return
+
         self.__atendimentos.remove(atendimento)
         self.__tela.mostra_mensagem("Atendimento removido com sucesso!")
 
