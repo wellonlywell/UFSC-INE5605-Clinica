@@ -57,7 +57,7 @@ class ControladorPaciente:
             self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
             return
 
-        
+        # Regra 1: menor de 18 anos exige responsável legal
         if not novo.maior_de_idade:
             self.__tela_paciente.mostra_mensagem(
                 f"Paciente tem {novo.idade} anos (menor de idade). "

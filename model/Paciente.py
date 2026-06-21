@@ -45,7 +45,7 @@ class Paciente(Pessoa):
 
     @property
     def maior_de_idade(self) -> bool:
-        """Regra 1 do enunciado: somente pacientes com mais de 18 anos."""
+        # Regra 1 do enunciado: somente pacientes com mais de 18 anos
         return self.idade >= 18
 
     @property
@@ -55,6 +55,7 @@ class Paciente(Pessoa):
     @responsavel.setter
     def responsavel(self, valor):
         from model.Responsavel import Responsavel
+        # Responsável só é obrigatório para menores de idade (Regra 1)
         if valor is not None and not isinstance(valor, Responsavel):
             raise DadoInvalidoException("Responsável inválido.")
         self.__responsavel = valor

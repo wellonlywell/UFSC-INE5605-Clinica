@@ -1,4 +1,5 @@
 SisClínica — Regras e Critérios de Avaliação
+
 Critérios de Avaliação (INE5605)
 Critério	Peso
 Cadastros — inclusão, exclusão, alteração e listagem	2,0
