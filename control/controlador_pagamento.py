@@ -62,6 +62,10 @@ class ControladorPagamento:
         data_pgto = dados_gerais["data_pgto"]
         valor_pago = dados_gerais["valor_pago"]
 
+        if valor_pago > valor_restante:
+            self.__tela.mostra_mensagem("Valor pago não pode ser maior que o saldo restante.")
+            return
+
         try:
             if forma == "1":
                 dados_extra = self.__tela.pega_dados_dinheiro(valor_pago)
