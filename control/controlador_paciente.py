@@ -108,6 +108,7 @@ class ControladorPaciente:
         dados = self.__tela_paciente.pega_dados_paciente()
         try:
             cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
+            data_anterior = paciente.data_nascimento
             paciente.nome_civil         = dados["nome_civil"]
             paciente.nome_social        = dados["nome_social"]
             paciente.celular            = dados["celular"]
@@ -115,6 +116,14 @@ class ControladorPaciente:
             paciente.pcd                = dados["pcd"]
             paciente.cor_raca           = cor_raca
             paciente.identidade_genero  = dados["identidade_genero"]
+            # Regra 1: se virou menor sem responsável, desfaz e bloqueia
+            if not paciente.maior_de_idade and paciente.responsavel is None:
+                paciente.data_nascimento = data_anterior
+                self.__tela_paciente.mostra_mensagem(
+                    f"Alteração bloqueada: paciente ficaria com {paciente.idade} anos "
+                    "sem responsável cadastrado. Cadastre um responsável antes."
+                )
+                return
             self.__tela_paciente.mostra_mensagem("Paciente alterado com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
