@@ -18,7 +18,7 @@ class PagamentoPix(Pagamento):
         digitos = "".join(c for c in valor if c.isdigit())
         if len(digitos) != 11:
             raise DadoInvalidoException("Erro: CPF do pagador deve ter 11 dígitos.")
-        self.__cpf_pagador = valor
+        self.__cpf_pagador = digitos
 
 
     def __str__(self) -> str:
