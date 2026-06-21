@@ -80,6 +80,16 @@ class ControladorProfissional:
         if profissional is None:
             self.__tela_profissional.mostra_mensagem("Profissional não encontrado.")
             return
+        
+        atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
+
+        for atendimento in atendimentos:
+            if atendimento.profissional == profissional:
+                self.__tela_profissional.mostra_mensagem(
+                    "Não é possível excluir este profissional, pois ele já possui atendimento registrado."
+                )
+                return
+            
         self.__profissionais.remove(profissional)
         self.__tela_profissional.mostra_mensagem("Profissional removido com sucesso!")
 

@@ -138,6 +138,16 @@ class ControladorPaciente:
         if paciente is None:
             self.__tela_paciente.mostra_mensagem("Paciente não encontrado.")
             return
+        
+        atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
+
+        for atendimento in atendimentos:
+            if atendimento.paciente == paciente:
+                self.__tela_paciente.mostra_mensagem(
+                    "Não é possível excluir este paciente, pois ele já possui atendimento registrado."
+                )
+                return
+            
         self.__pacientes.remove(paciente)
         self.__tela_paciente.mostra_mensagem("Paciente removido com sucesso!")
 

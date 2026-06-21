@@ -97,6 +97,16 @@ class ControladorTipoAtendimento:
         if tipo is None:
             self.__tela_tipo_atendimento.mostra_mensagem(f"O ID {id_buscado} não foi encontrado no sistema.")
             return
+        
+        atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
+
+        for atendimento in atendimentos:
+            if atendimento.tipo == tipo:
+                self.__tela_tipo_atendimento.mostra_mensagem(
+                    "Não é possível excluir este tipo de atendimento, pois ele já foi usado em atendimento."
+                )
+                return
+            
         self.__tipos_atendimento.remove(tipo)
         self.__tela_tipo_atendimento.mostra_mensagem("Tipo de atendimento removido com sucesso!")
 
