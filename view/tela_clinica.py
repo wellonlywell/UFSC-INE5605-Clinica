@@ -1,4 +1,3 @@
-
 class TelaClinica:
     def tela_opcoes(self):
         print("-------- GERENCIAR CLÍNICAS ----------")
@@ -12,31 +11,56 @@ class TelaClinica:
         print("0 - Retornar ao Menu Principal")
         print("--------------------------------------")
 
-       while True:
-         try:
-           opcao = int(input("Escolha a opção: "))
-           if opcao in [0, 1, 2, 3, 4, 5, 6, 7]:
-             return opcao
-           print("Opção inválida! Digite um número entre 0 e 7.")
-         except ValueError:
-             print("Por favor, digite um número inteiro válido.")
+        while True:
+            try:
+                opcao = int(input("Escolha a opção: "))
+                if opcao in [0, 1, 2, 3, 4, 5, 6, 7]:
+                    return opcao
+                print("Opção inválida! Digite um número entre 0 e 7.")
+            except ValueError:
+                print("Por favor, digite um número inteiro válido.")
 
     def pega_dados_clinica(self):
         print("\n----- INSERIR DADOS DA CLÍNICA -----")
-        nome = input("Nome Fantasia: ").strip()
-        cnpj = input("CNPJ (Digite apenas os dígitos do CNPJ, 14 dígitos ): ").strip()
-        cidade = input("Cidade: ").strip()
-        descricao = input("Descrição: ").strip()
-        horario_abertura = input("Horário de Abertura (HH:MM): ").strip()
-        horario_fechamento = input("Horário de Fechamento (HH:MM): ").strip()
-
+        while True:
+            nome = input("Nome Fantasia: ").strip()
+            if nome:
+                break
+            print("[Erro]: O nome não pode ficar em branco.")
+        while True:
+            cnpj = input("CNPJ (somente números, 14 dígitos): ").strip()
+            if cnpj:
+                break
+            print("[Erro]: O CNPJ não pode ficar em branco.")
+        while True:
+            cidade = input("Cidade: ").strip()
+            if cidade:
+                break
+            print("[Erro]: A cidade não pode ficar em branco.")
+        while True:
+            descricao = input("Descrição: ").strip()
+            if descricao:
+                break
+            print("[Erro]: A descrição não pode ficar em branco.")
+        while True:
+            horario_abertura = input("Horário de Abertura (HH): ").strip()
+            if horario_abertura:
+                break
+            print("[Erro]: O horário de abertura não pode ficar em branco.")
+        while True:
+            horario_fechamento = input("Horário de Fechamento (HH): ").strip()
+            if horario_fechamento:
+                break
+            print("[Erro]: O horário de fechamento não pode ficar em branco.")
+        
         return {
-         "nome": nome,
-         "cnpj": cnpj,
-         "cidade": cidade,
-         "descricao": descricao,
-         "horario_abertura": horario_abertura,
-         "horario_fechamento": horario_fechamento   }
+            "nome": nome,
+            "cnpj": cnpj,
+            "cidade": cidade,
+            "descricao": descricao,
+            "horario_abertura": horario_abertura,
+            "horario_fechamento": horario_fechamento
+        }
 
     def mostra_clinica(self, clinica):
         print(f"CNPJ: {clinica.cnpj}")
@@ -65,10 +89,10 @@ class TelaClinica:
         profissionais = clinica.profissionais
         if not profissionais:
             print("Nenhum profissional vinculado a esta clínica.")
-        return
+            return
 
-for profissional in profissionais:
-    print(f"CPF: {profissional.cpf}")
-    print(f"Nome: {profissional.nome_exibicao}")
-    print(f"Especialidade: {profissional.especialidade}")
-    print("-" * 40)
+        for profissional in profissionais:
+            print(f"CPF: {profissional.cpf}")
+            print(f"Nome: {profissional.nome_exibicao}")
+            print(f"Especialidade: {profissional.especialidade}")
+            print("-" * 40)
