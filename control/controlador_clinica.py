@@ -62,6 +62,8 @@ class ControladorClinica:
             clinica.nome = dados["nome"]
             clinica.cidade = dados["cidade"]
             clinica.descricao = dados["descricao"]
+            clinica.horario_abertura = dados["horario_abertura"]
+            clinica.horario_fechamento = dados["horario_fechamento"]
             self.__tela_clinica.mostra_mensagem("Clínica alterada com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro nos dados: {e}")
