@@ -78,6 +78,19 @@ class ControladorClinica:
         if clinica is None:
             self.__tela_clinica.mostra_mensagem("Clínica não encontrada.")
             return
+
+        atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
+        total_vinculados = 0
+        for at in atendimentos:
+            if at.clinica is clinica:
+                total_vinculados += 1
+        if total_vinculados > 0:
+            self.__tela_clinica.mostra_mensagem(
+                f"Não é possível excluir: {total_vinculados} atendimento(s) "
+                "referencia(m) esta clínica."
+            )
+            return 
+
         self.__clinicas.remove(clinica)
         self.__tela_clinica.mostra_mensagem("Clínica removida com sucesso!")
 
