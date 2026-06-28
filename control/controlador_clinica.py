@@ -189,3 +189,4 @@ class ControladorClinica:
             return
 
         self.__tela_clinica.mostra_profissionais_da_clinica(clinica)
+
