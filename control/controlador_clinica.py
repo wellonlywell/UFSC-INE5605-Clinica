@@ -84,6 +84,16 @@ class ControladorClinica:
         if clinica is None:
             self.__tela_clinica.mostra_mensagem("Clínica não encontrada.")
             return
+
+        # bloqueia exclusão se clínica tem atendimento
+        atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
+        for atendimento in atendimentos:
+            if atendimento.clinica == clinica:
+                self.__tela_clinica.mostra_mensagem(
+                "Não é possível excluir esta clínica pois ela possui atendimentos registrados."
+                )
+                return
+            
         self.__clinicas.remove(clinica)
         self.__tela_clinica.mostra_mensagem("Clínica removida com sucesso!")
 
