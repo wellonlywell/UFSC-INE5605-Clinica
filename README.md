@@ -117,6 +117,13 @@ SisClinica/
 │   └── CorRaca.py                   # Enum com categorias IBGE
 ├── view/                            # Telas (apenas input/print)
 ├── control/                         # Controladores (lógica e ponte MVC)
+├── dao/                             # Persistência (pickle) — ver seção própria abaixo
+│   ├── dao_base.py                  # Classe genérica: get_all() / save_all()
+│   ├── clinica_dao.py
+│   ├── tipo_atendimento_dao.py
+│   ├── atendimento_dao.py
+│   └── pagamento_dao.py
+├── dados/                           # Gerado automaticamente — arquivos .pkl
 └── exceptions/                      # Exceções customizadas
     ├── dado_invalido_exception.py
     └── regra_negocio_exception.py
@@ -136,6 +143,24 @@ SisClinica/
 
 - `Pessoa` *(classe abstrata)* → `Paciente`, `Profissional` e `Responsavel`
 - `Pagamento` *(classe abstrata)* → `PagamentoDinheiro`, `PagamentoPix` e `PagamentoCartao`
+
+---
+
+## 💾 Persistência de Dados
+
+O sistema usa o padrão **DAO (Data Access Object)** para gravar os cadastros em disco com `pickle`, de forma que os dados sobrevivam ao fechamento do programa. `dao/dao_base.py` concentra a lógica genérica de leitura/escrita (`get_all()` / `save_all()`); cada entidade tem um DAO concreto que só informa o arquivo a usar.
+
+| Entidade | DAO | Status |
+|---|---|---|
+| Clínica | `clinica_dao.py` | ✅ Implementado |
+| Tipo de Atendimento | `tipo_atendimento_dao.py` | ✅ Implementado |
+| Atendimento | `atendimento_dao.py` | ✅ Implementado |
+| Pagamento | `pagamento_dao.py` | ✅ Implementado |
+| Paciente / Profissional / Responsável / Catálogo de Procedimentos | — | ⏳ Ainda não implementado nesta etapa |
+
+Os arquivos `.pkl` ficam em `dados/`, criada automaticamente na primeira execução. Cada operação de cadastro (incluir, alterar, excluir, vincular) já salva no disco imediatamente — não existe um passo separado de "salvar antes de sair", o que também protege contra perda de dados em caso de fechamento abrupto do programa.
+
+**Detalhe de implementação:** como cada entidade é salva em um arquivo próprio, mas `Atendimento` referencia objetos `Clinica`/`TipoAtendimento` e `Pagamento` referencia `Atendimento`, o sistema reconecta essas referências aos objetos oficiais logo após carregar os dados (em `__revincular_referencias()`, dentro de `controlador_atendimento.py` e `controlador_pagamento.py`). Sem isso, comparações como "este atendimento já tem pagamento?" voltariam a falhar depois de reabrir o programa, mesmo com os dados corretos salvos em disco. Paciente e Profissional ainda não entram nessa reconexão, pois seus DAOs estão fora do escopo desta etapa — quando forem implementados, basta seguir o mesmo padrão.
 
 ---
 

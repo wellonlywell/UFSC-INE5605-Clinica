@@ -2,15 +2,39 @@ from model.Atendimento import Atendimento
 from view.tela_atendimento import TelaAtendimento
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
+from dao.atendimento_dao import AtendimentoDAO  # NOVO (Tarefa 2)
 from datetime import time as Time
 
 
 class ControladorAtendimento:
 
     def __init__(self, controlador_sistema):
-        self.__atendimentos = []
+        self.__dao = AtendimentoDAO()  # NOVO (Tarefa 2)
         self.__tela = TelaAtendimento()
         self.__controlador_sistema = controlador_sistema
+        self.__atendimentos = self.__dao.get_all()  # ALTERADO: antes era [] (Tarefa 2)
+        self.__revincular_referencias()  # NOVO (Tarefa 2)
+
+    def __revincular_referencias(self):
+        """Reconecta .clinica e .tipo de cada atendimento carregado do disco
+        aos objetos oficiais já carregados pelos respectivos controladores.
+        Ver explicação completa no cabeçalho do arquivo. (Tarefa 2)
+        """
+        ctrl_clinica = self.__controlador_sistema.controlador_clinica
+        ctrl_tipo = self.__controlador_sistema.controlador_tipo_atendimento
+
+        for atendimento in self.__atendimentos:
+            clinica_oficial = ctrl_clinica.buscar_por_cnpj(atendimento.clinica.cnpj)
+            if clinica_oficial is not None:
+                atendimento.clinica = clinica_oficial
+
+            tipo_oficial = ctrl_tipo.buscar_por_id(atendimento.tipo.id)
+            if tipo_oficial is not None:
+                atendimento.tipo = tipo_oficial
+
+    def __persistir(self):
+        """Grava o estado atual da lista de atendimentos em disco. (Tarefa 2)"""
+        self.__dao.save_all(self.__atendimentos)
 
     def abre_tela(self):
         while True:
@@ -32,7 +56,7 @@ class ControladorAtendimento:
                 self.__tela.mostra_mensagem(str(e))
 
     def __verifica_regra2(self, clinica, hora_inicio_str: str, hora_fim_str: str):
-        
+
         h_i, m_i = map(int, hora_inicio_str.split(":"))
         h_f, m_f = map(int, hora_fim_str.split(":"))
         inicio = Time(h_i, m_i)
@@ -100,6 +124,7 @@ class ControladorAtendimento:
                 valor=dados["valor"]
             )
             self.__atendimentos.append(novo)
+            self.__persistir()  # NOVO (Tarefa 2)
             self.__tela.mostra_mensagem("Atendimento cadastrado com sucesso!")
         except DadoInvalidoException as e:
             self.__tela.mostra_mensagem(f"Erro nos dados: {e}")
@@ -114,7 +139,7 @@ class ControladorAtendimento:
         if atendimento is None:
             self.__tela.mostra_mensagem("Atendimento não encontrado.")
             return
-        
+
         ctrl_pagamento = self.__controlador_sistema.controlador_pagamento
         pagamentos = ctrl_pagamento.get_pagamentos()
 
@@ -138,6 +163,7 @@ class ControladorAtendimento:
             atendimento.hora_inicio = dados["hora_inicio"]
             atendimento.hora_fim    = dados["hora_fim"]
             atendimento.valor       = dados["valor"]
+            self.__persistir()  # NOVO (Tarefa 2)
             self.__tela.mostra_mensagem("Atendimento alterado com sucesso!")
         except DadoInvalidoException as e:
             self.__tela.mostra_mensagem(f"Erro nos dados: {e}")
@@ -152,7 +178,7 @@ class ControladorAtendimento:
         if atendimento is None:
             self.__tela.mostra_mensagem("Atendimento não encontrado.")
             return
-        
+
         ctrl_pagamento = self.__controlador_sistema.controlador_pagamento
         pagamentos = ctrl_pagamento.get_pagamentos()
 
@@ -164,6 +190,7 @@ class ControladorAtendimento:
                 return
 
         self.__atendimentos.remove(atendimento)
+        self.__persistir()  # NOVO (Tarefa 2)
         self.__tela.mostra_mensagem("Atendimento removido com sucesso!")
 
     def registrar_procedimento(self):
@@ -190,8 +217,9 @@ class ControladorAtendimento:
         atendimento.adicionar_procedimento(
             procedimento.descricao,
             procedimento.custo,
-            atendimento.profissional            
+            atendimento.profissional
         )
+        self.__persistir()  # NOVO (Tarefa 2)
         self.__tela.mostra_mensagem("Procedimento registrado no atendimento!")
 
     def listar_atendimentos(self):
@@ -209,3 +237,4 @@ class ControladorAtendimento:
 
     def get_atendimentos(self) -> list:
         return list(self.__atendimentos)
+

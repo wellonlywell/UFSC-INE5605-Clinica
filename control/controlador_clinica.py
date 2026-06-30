@@ -2,14 +2,20 @@ from model.Clinica import Clinica
 from view.tela_clinica import TelaClinica
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
+from dao.clinica_dao import ClinicaDAO  # NOVO (Tarefa 2)
 
 
 class ControladorClinica:
 
     def __init__(self, controlador_sistema):
-        self.__clinicas = []
+        self.__dao = ClinicaDAO()  # NOVO (Tarefa 2)
+        self.__clinicas = self.__dao.get_all()  # ALTERADO: antes era [] (Tarefa 2)
         self.__tela_clinica = TelaClinica()
         self.__controlador_sistema = controlador_sistema
+
+    def __persistir(self):
+        """Grava o estado atual da lista de clínicas em disco. (Tarefa 2)"""
+        self.__dao.save_all(self.__clinicas)
 
     def abre_tela(self):
         while True:
@@ -49,6 +55,7 @@ class ControladorClinica:
                 horario_fechamento=dados["horario_fechamento"]
             )
             self.__clinicas.append(nova_clinica)
+            self.__persistir()  # NOVO (Tarefa 2)
             self.__tela_clinica.mostra_mensagem("Clínica cadastrada com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro nos dados: {e}")
@@ -70,6 +77,7 @@ class ControladorClinica:
             clinica.descricao = dados["descricao"]
             clinica.horario_abertura = dados["horario_abertura"]
             clinica.horario_fechamento = dados["horario_fechamento"]
+            self.__persistir()  # NOVO (Tarefa 2)
             self.__tela_clinica.mostra_mensagem("Clínica alterada com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro nos dados: {e}")
@@ -93,8 +101,9 @@ class ControladorClinica:
                 "Não é possível excluir esta clínica pois ela possui atendimentos registrados."
                 )
                 return
-            
+
         self.__clinicas.remove(clinica)
+        self.__persistir()  # NOVO (Tarefa 2)
         self.__tela_clinica.mostra_mensagem("Clínica removida com sucesso!")
 
     def listar_clinicas(self):
@@ -143,6 +152,7 @@ class ControladorClinica:
 
         try:
             clinica.adicionar_profissional(profissional)
+            self.__persistir()  # NOVO (Tarefa 2)
             self.__tela_clinica.mostra_mensagem("Profissional vinculado à clínica com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro ao vincular profissional: {e}")
@@ -182,6 +192,7 @@ class ControladorClinica:
 
         try:
             clinica.remover_profissional(profissional_encontrado)
+            self.__persistir()  # NOVO (Tarefa 2)
             self.__tela_clinica.mostra_mensagem("Profissional removido da clínica com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro ao remover profissional: {e}")

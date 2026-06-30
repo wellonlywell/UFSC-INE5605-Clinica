@@ -52,7 +52,7 @@ class TelaClinica:
             if horario_fechamento:
                 break
             print("[Erro]: O horário de fechamento não pode ficar em branco.")
-        
+
         return {
             "nome": nome,
             "cnpj": cnpj,
@@ -93,6 +93,9 @@ class TelaClinica:
 
         for profissional in profissionais:
             print(f"CPF: {profissional.cpf}")
-            print(f"Nome: {profissional.nome_exibicao}")
+            # CORRIGIDO: profissional.nome (correto) em vez de
+            # profissional.nome_exibicao (atributo inexistente).
+            print(f"Nome: {profissional.nome}")
             print(f"Especialidade: {profissional.especialidade}")
             print("-" * 40)
+
