@@ -4,7 +4,7 @@ from model.PagamentoCartao import PagamentoCartao
 from view.tela_pagamento import TelaPagamento
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
-from dao.pagamento_dao import PagamentoDAO  # NOVO (Tarefa 2)
+from dao.dao_pagamento import PagamentoDAO  # NOVO (Tarefa 2)
 
 
 class ControladorPagamento:

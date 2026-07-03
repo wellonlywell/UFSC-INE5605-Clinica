@@ -5,15 +5,19 @@ from view.tela_paciente import TelaPaciente
 from view.tela_responsavel import TelaResponsavel
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
-
+from dao.dao_paciente import PacienteDAO  # # T2: DAO do paciente
 
 class ControladorPaciente:
 
     def __init__(self, controlador_sistema):
-        self.__pacientes = []
+        self.__dao = PacienteDAO() # T2: cria o DAO
+        self.__pacientes = self.__dao.get_all() # T2: carrega do disco        
         self.__tela_paciente = TelaPaciente()
         self.__tela_responsavel = TelaResponsavel()
         self.__controlador_sistema = controlador_sistema
+
+    def __persistir(self): # T2: salva a lista em disco        
+        self.__dao.save_all(self.__pacientes)
 
     def abre_tela(self):
         while True:
@@ -72,6 +76,7 @@ class ControladorPaciente:
             novo.responsavel = responsavel
 
         self.__pacientes.append(novo)
+        self.__persistir() # T2: grava no disco
         self.__tela_paciente.mostra_mensagem("Paciente cadastrado com sucesso!")
 
     def __cadastrar_responsavel(self):
@@ -123,7 +128,8 @@ class ControladorPaciente:
                     f"Alteração bloqueada: paciente ficaria com {paciente.idade} anos "
                     "sem responsável cadastrado. Cadastre um responsável antes."
                 )
-                return
+                return # T2: não persiste, nada mudou
+            self.__persistir() # T2: grava no disco
             self.__tela_paciente.mostra_mensagem("Paciente alterado com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
@@ -149,6 +155,7 @@ class ControladorPaciente:
                 return
             
         self.__pacientes.remove(paciente)
+        self.__persistir() # T2: grava no disco
         self.__tela_paciente.mostra_mensagem("Paciente removido com sucesso!")
 
     def listar_pacientes(self):

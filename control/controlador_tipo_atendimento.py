@@ -1,7 +1,7 @@
 from model.TipoAtendimento import TipoAtendimento
 from view.tela_tipo_atendimento import TelaTipoAtendimento
 from exceptions.dado_invalido_exception import DadoInvalidoException
-from dao.tipo_atendimento_dao import TipoAtendimentoDAO  # NOVO (Tarefa 2)
+from dao.dao_tipo_atendimento import TipoAtendimentoDAO  # NOVO (Tarefa 2)
 
 
 class ControladorTipoAtendimento:

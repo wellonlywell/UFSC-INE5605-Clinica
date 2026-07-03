@@ -3,13 +3,18 @@ from model.CorRaca import CorRaca
 from view.tela_profissional import TelaProfissional
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
+from dao.dao_profissional import ProfissionalDAO  # T2: DAO do profissional
 
 class ControladorProfissional:
 
     def __init__(self, controlador_sistema):
-        self.__profissionais = []
+        self.__dao = ProfissionalDAO()  # T2: cria o DAO
+        self.__profissionais = self.__dao.get_all()  # T2: carrega do disco
         self.__tela_profissional = TelaProfissional()
         self.__controlador_sistema = controlador_sistema
+
+    def __persistir(self):  # T2: salva a lista em disco
+        self.__dao.save_all(self.__profissionais)
 
     def abre_tela(self):
         while True:
@@ -41,6 +46,7 @@ class ControladorProfissional:
             identidade_genero=dados["identidade_genero"]
         )
         self.__profissionais.append(novo)
+        self.__persistir()  # T2: grava no disco
         self.__tela_profissional.mostra_mensagem("Profissional cadastrado com sucesso!")
     
     def alterar_profissional(self):
@@ -68,6 +74,7 @@ class ControladorProfissional:
         profissional.cor_raca = cor_raca
         profissional.identidade_genero = dados["identidade_genero"]
         
+        self.__persistir()  # T2: grava no disco
         self.__tela_profissional.mostra_mensagem("Profissional alterado com sucesso!")
 
     def excluir_profissional(self):
@@ -91,6 +98,7 @@ class ControladorProfissional:
                 return
             
         self.__profissionais.remove(profissional)
+        self.__persistir()  # T2: grava no disco
         self.__tela_profissional.mostra_mensagem("Profissional removido com sucesso!")
 
     def listar_profissionais(self):

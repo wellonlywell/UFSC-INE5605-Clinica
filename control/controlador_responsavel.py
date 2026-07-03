@@ -3,13 +3,18 @@ from model.CorRaca import CorRaca
 from view.tela_responsavel import TelaResponsavel
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
+from dao.dao_responsavel import ResponsavelDAO  # T2: DAO do responsavel
 
 class ControladorResponsavel:
 
     def __init__(self, controlador_sistema):
-        self.__responsaveis = []
+        self.__dao = ResponsavelDAO()  # T2: cria o DAO
+        self.__responsaveis = self.__dao.get_all()  # T2: carrega do disco
         self.__tela_responsavel = TelaResponsavel()
         self.__controlador_sistema = controlador_sistema
+
+    def __persistir(self):  # T2: salva a lista em disco
+        self.__dao.save_all(self.__responsaveis)
 
     def abre_tela(self):
         while True:
@@ -26,6 +31,7 @@ class ControladorResponsavel:
     def registrar_responsavel(self, responsavel):
         """Registra um responsável já criado (chamado pelo ControladorPaciente)."""
         self.__responsaveis.append(responsavel)
+        self.__persistir()  # T2: grava no disco
 
     def incluir_responsavel(self):
         """Método chamado pelo menu (TelaResponsavel) para cadastrar manualmente."""
@@ -46,6 +52,7 @@ class ControladorResponsavel:
             identidade_genero=dados["identidade_genero"]
         )
         self.__responsaveis.append(novo)
+        self.__persistir()  # T2: grava no disco
         self.__tela_responsavel.mostra_mensagem("Responsável cadastrado com sucesso!")
 
     def alterar_responsavel(self):
@@ -70,6 +77,7 @@ class ControladorResponsavel:
         responsavel.cor_raca = cor_raca
         responsavel.identidade_genero = dados["identidade_genero"]
         
+        self.__persistir()  # T2: grava no disco
         self.__tela_responsavel.mostra_mensagem("Responsável alterado com sucesso!")
 
     def excluir_responsavel(self):
@@ -83,6 +91,7 @@ class ControladorResponsavel:
             self.__tela_responsavel.mostra_mensagem("Responsável não encontrado.")
             return
         self.__responsaveis.remove(responsavel)
+        self.__persistir()  # T2: grava no disco
         self.__tela_responsavel.mostra_mensagem("Responsável removido com sucesso!")
 
     def listar_responsaveis(self):

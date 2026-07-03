@@ -2,15 +2,21 @@ from model.CatalogoProcedimento import CatalogoProcedimento
 from view.tela_catalogo_procedimento import TelaCatalogoProcedimento
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
-
+from dao.dao_catalogo_procedimento import CatalogoProcedimentoDAO  # T2: DAO do catálogo
 
 class ControladorCatalogoProcedimento:
 
     def __init__(self, controlador_sistema):
-        self.__procedimentos = []
+        self.__dao = CatalogoProcedimentoDAO()  # T2: cria o DAO
+        self.__procedimentos = self.__dao.get_all()  # T2: carrega do disco
         self.__tela_procedimento = TelaCatalogoProcedimento()
         self.__controlador_sistema = controlador_sistema
-        self.__proximo_id = 1
+        # T2: recalcula o próximo ID a partir do que já foi carregado,
+        # senão reinicia em 1 e repete ID depois de reabrir o sistema
+        self.__proximo_id = max((p.id for p in self.__procedimentos), default=0) + 1
+
+    def __persistir(self):  # T2: salva a lista em disco
+        self.__dao.save_all(self.__procedimentos)
 
     def abre_tela(self):
         while True:
@@ -37,6 +43,7 @@ class ControladorCatalogoProcedimento:
         )
         self.__procedimentos.append(novo)
         self.__proximo_id += 1
+        self.__persistir()  # T2: grava no disco
         self.__tela_procedimento.mostra_mensagem("Procedimento cadastrado com sucesso!")
 
     def alterar_procedimento(self):
@@ -63,6 +70,7 @@ class ControladorCatalogoProcedimento:
         try:
             procedimento.descricao = dados["descricao"]
             procedimento.custo = dados["custo"]
+            self.__persistir()  # T2: grava no disco
             self.__tela_procedimento.mostra_mensagem("Procedimento alterado com sucesso!")
         except DadoInvalidoException as e:
             self.__tela_procedimento.mostra_mensagem(f"Erro nos dados: {e}")
@@ -93,6 +101,7 @@ class ControladorCatalogoProcedimento:
                     return
                     
         self.__procedimentos.remove(procedimento)
+        self.__dao.save_all(self.__procedimentos)  # T2: grava no disco
         self.__tela_procedimento.mostra_mensagem("Procedimento removido com sucesso!")
 
     def listar_procedimentos(self):

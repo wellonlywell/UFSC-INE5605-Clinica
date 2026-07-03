@@ -2,7 +2,7 @@ from model.Atendimento import Atendimento
 from view.tela_atendimento import TelaAtendimento
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
-from dao.atendimento_dao import AtendimentoDAO  # NOVO (Tarefa 2)
+from dao.dao_atendimento import AtendimentoDAO  # NOVO (Tarefa 2)
 from datetime import time as Time
 
 

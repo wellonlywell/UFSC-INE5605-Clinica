@@ -2,7 +2,7 @@ from model.Clinica import Clinica
 from view.tela_clinica import TelaClinica
 from exceptions.dado_invalido_exception import DadoInvalidoException
 from exceptions.regra_negocio_exception import RegraNegocioException
-from dao.clinica_dao import ClinicaDAO  # NOVO (Tarefa 2)
+from dao.dao_clinica import ClinicaDAO  # NOVO (Tarefa 2)
 
 
 class ControladorClinica:
