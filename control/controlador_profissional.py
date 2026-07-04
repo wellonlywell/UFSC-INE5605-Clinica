@@ -91,7 +91,7 @@ class ControladorProfissional:
         atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
 
         for atendimento in atendimentos:
-            if atendimento.profissional == profissional:
+            if atendimento.profissional.cpf == profissional.cpf: # T2: compara por CPF, não por identidade do objeto
                 self.__tela_profissional.mostra_mensagem(
                     "Não é possível excluir este profissional, pois ele já possui atendimento registrado."
                 )
