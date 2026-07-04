@@ -1,52 +1,35 @@
-import tkinter as tk
-from tkinter import messagebox
-
-_ROOT = None  # T2: raiz tkinter escondida, compartilhada pelas janelas
-
-
-def _get_root():
-    global _ROOT
-    if _ROOT is None:
-        _ROOT = tk.Tk()
-        _ROOT.withdraw()
-    return _ROOT
+import FreeSimpleGUI as sg
 
 
 class TelaSistema:
 
-    def tela_opcoes(self):
-        janela = tk.Toplevel(_get_root())
-        janela.title("SisClínica")
-        janela.geometry("320x420")
-        janela.grab_set()
-        resultado = {"opcao": 0}
-
-        def escolher(opcao):
-            resultado["opcao"] = opcao
-            janela.destroy()
-
-        tk.Label(janela, text="SisClínica", font=("Arial", 16, "bold")).pack(pady=10)
-
-        opcoes = [
-            (1, "Gerenciar Clínicas"),
-            (2, "Gerenciar Profissionais"),
-            (3, "Gerenciar Tipos de Atendimento"),
-            (4, "Gerenciar Procedimentos"),
-            (5, "Gerenciar Pacientes"),
-            (6, "Gerenciar Atendimentos"),
-            (7, "Gerenciar Pagamentos"),
-            (8, "Emitir Relatórios"),
+    def tela_opcoes(self) -> int:
+        """Exibe o menu principal e retorna o número da opção escolhida (0–8)."""
+        layout = [
+            [sg.Text('SisClínica', font=('Helvetica', 18), justification='center')],
+            [sg.HSeparator()],
+            [sg.Button('1 - Gerenciar Clínicas',             key='1', size=(35, 1))],
+            [sg.Button('2 - Gerenciar Profissionais',         key='2', size=(35, 1))],
+            [sg.Button('3 - Gerenciar Tipos de Atendimento',  key='3', size=(35, 1))],
+            [sg.Button('4 - Gerenciar Procedimentos',         key='4', size=(35, 1))],
+            [sg.Button('5 - Gerenciar Pacientes',             key='5', size=(35, 1))],
+            [sg.Button('6 - Gerenciar Atendimentos',          key='6', size=(35, 1))],
+            [sg.Button('7 - Gerenciar Pagamentos',            key='7', size=(35, 1))],
+            [sg.Button('8 - Emitir Relatórios',               key='8', size=(35, 1))],
+            [sg.HSeparator()],
+            [sg.Button('0 - Sair', key='0', size=(35, 1), button_color=('white', '#c0392b'))],
         ]
-        for numero, texto in opcoes:
-            tk.Button(janela, text=f"{numero} - {texto}", width=35,
-                      command=lambda n=numero: escolher(n)).pack(pady=3)
-
-        tk.Button(janela, text="0 - Sair", width=35, bg="#e74c3c", fg="white",
-                  command=lambda: escolher(0)).pack(pady=(15, 10))
-
-        janela.protocol("WM_DELETE_WINDOW", lambda: escolher(0))
-        janela.wait_window()
-        return resultado["opcao"]
+        window = sg.Window('SisClínica — Menu Principal', layout, finalize=True)
+        while True:
+            event, _ = window.read()
+            if event == sg.WIN_CLOSED or event == '0':
+                window.close()
+                return 0
+            if event in ('1', '2', '3', '4', '5', '6', '7', '8'):
+                window.close()
+                return int(event)
 
     def mostra_mensagem(self, mensagem: str):
-        messagebox.showinfo("SisClínica", mensagem)
+        """Exibe uma mensagem ao usuário em uma janela popup."""
+        sg.popup(mensagem, title='SisClínica')
+

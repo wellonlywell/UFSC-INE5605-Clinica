@@ -1,101 +1,136 @@
+import FreeSimpleGUI as sg
+
+
 class TelaClinica:
-    def tela_opcoes(self):
-        print("-------- GERENCIAR CLÍNICAS ----------")
-        print("1 - Incluir: Registrar Clínica")
-        print("2 - Alterar: Dados de uma Clínica")
-        print("3 - Listar: Clínicas")
-        print("4 - Excluir: Clínica")
-        print("5 - Vincular Profissional à Clínica")
-        print("6 - Remover Profissional da Clínica")
-        print("7 - Listar Profissionais da Clínica")
-        print("0 - Retornar ao Menu Principal")
-        print("--------------------------------------")
 
+    def tela_opcoes(self) -> int:
+        """Exibe o menu de clínicas e retorna a opção escolhida (0–7)."""
+        layout = [
+            [sg.Text('Gerenciar Clínicas', font=('Helvetica', 14))],
+            [sg.HSeparator()],
+            [sg.Button('1 - Incluir: Registrar Clínica',          key='1', size=(40, 1))],
+            [sg.Button('2 - Alterar: Dados de uma Clínica',        key='2', size=(40, 1))],
+            [sg.Button('3 - Listar: Clínicas',                     key='3', size=(40, 1))],
+            [sg.Button('4 - Excluir: Clínica',                     key='4', size=(40, 1))],
+            [sg.Button('5 - Vincular Profissional à Clínica',      key='5', size=(40, 1))],
+            [sg.Button('6 - Remover Profissional da Clínica',      key='6', size=(40, 1))],
+            [sg.Button('7 - Listar Profissionais da Clínica',      key='7', size=(40, 1))],
+            [sg.HSeparator()],
+            [sg.Button('0 - Retornar ao Menu Principal', key='0', size=(40, 1))],
+        ]
+        window = sg.Window('Clínicas', layout)
         while True:
-            try:
-                opcao = int(input("Escolha a opção: "))
-                if opcao in [0, 1, 2, 3, 4, 5, 6, 7]:
-                    return opcao
-                print("Opção inválida! Digite um número entre 0 e 7.")
-            except ValueError:
-                print("Por favor, digite um número inteiro válido.")
+            event, _ = window.read()
+            if event == sg.WIN_CLOSED or event == '0':
+                window.close()
+                return 0
+            if event in ('1', '2', '3', '4', '5', '6', '7'):
+                window.close()
+                return int(event)
 
-    def pega_dados_clinica(self):
-        print("\n----- INSERIR DADOS DA CLÍNICA -----")
+    def pega_dados_clinica(self) -> dict:
+        """Abre formulário para inserir ou alterar os dados de uma clínica.
+        Retorna dict com as chaves esperadas pelo controlador.
+        Em caso de cancelamento, retorna dict com valores vazios.
+        """
+        layout = [
+            [sg.Text('Dados da Clínica', font=('Helvetica', 12))],
+            [sg.Text('Nome Fantasia:',          size=(28, 1)), sg.Input(key='nome',               size=(30, 1))],
+            [sg.Text('CNPJ (14 dígitos):',      size=(28, 1)), sg.Input(key='cnpj',               size=(30, 1))],
+            [sg.Text('Cidade:',                 size=(28, 1)), sg.Input(key='cidade',             size=(30, 1))],
+            [sg.Text('Descrição:',              size=(28, 1)), sg.Input(key='descricao',          size=(30, 1))],
+            [sg.Text('Horário de Abertura (HH:MM):', size=(28, 1)), sg.Input(key='horario_abertura',   size=(10, 1))],
+            [sg.Text('Horário de Fechamento (HH:MM):', size=(28, 1)), sg.Input(key='horario_fechamento', size=(10, 1))],
+            [sg.HSeparator()],
+            [sg.Button('Confirmar'), sg.Button('Cancelar')],
+        ]
+        window = sg.Window('Inserir / Alterar Clínica', layout)
         while True:
-            nome = input("Nome Fantasia: ").strip()
-            if nome:
-                break
-            print("[Erro]: O nome não pode ficar em branco.")
-        while True:
-            cnpj = input("CNPJ (somente números, 14 dígitos): ").strip()
-            if cnpj:
-                break
-            print("[Erro]: O CNPJ não pode ficar em branco.")
-        while True:
-            cidade = input("Cidade: ").strip()
-            if cidade:
-                break
-            print("[Erro]: A cidade não pode ficar em branco.")
-        while True:
-            descricao = input("Descrição: ").strip()
-            if descricao:
-                break
-            print("[Erro]: A descrição não pode ficar em branco.")
-        while True:
-            horario_abertura = input("Horário de Abertura (HH): ").strip()
-            if horario_abertura:
-                break
-            print("[Erro]: O horário de abertura não pode ficar em branco.")
-        while True:
-            horario_fechamento = input("Horário de Fechamento (HH): ").strip()
-            if horario_fechamento:
-                break
-            print("[Erro]: O horário de fechamento não pode ficar em branco.")
-
-        return {
-            "nome": nome,
-            "cnpj": cnpj,
-            "cidade": cidade,
-            "descricao": descricao,
-            "horario_abertura": horario_abertura,
-            "horario_fechamento": horario_fechamento
-        }
+            event, values = window.read()
+            if event == sg.WIN_CLOSED or event == 'Cancelar':
+                window.close()
+                return {
+                    'nome': '', 'cnpj': '', 'cidade': '', 'descricao': '',
+                    'horario_abertura': '', 'horario_fechamento': ''
+                }
+            if event == 'Confirmar':
+                window.close()
+                return {
+                    'nome':               values['nome'].strip(),
+                    'cnpj':               values['cnpj'].strip(),
+                    'cidade':             values['cidade'].strip(),
+                    'descricao':          values['descricao'].strip(),
+                    'horario_abertura':   values['horario_abertura'].strip(),
+                    'horario_fechamento': values['horario_fechamento'].strip(),
+                }
 
     def mostra_clinica(self, clinica):
-        print(f"CNPJ: {clinica.cnpj}")
-        print(f"Nome: {clinica.nome}")
-        print(f"Cidade: {clinica.cidade}")
-        print(f"Descrição: {clinica.descricao}")
-        print(f"Horário de Abertura: {clinica.horario_abertura.strftime('%H:%M')}")
-        print(f"Horário de Fechamento: {clinica.horario_fechamento.strftime('%H:%M')}")
-        print("-" * 40)
+        """Exibe os dados de uma clínica em uma janela popup."""
+        texto = (
+            f"CNPJ:               {clinica.cnpj}\n"
+            f"Nome:               {clinica.nome}\n"
+            f"Cidade:             {clinica.cidade}\n"
+            f"Descrição:          {clinica.descricao}\n"
+            f"Horário de Abertura:    {clinica.horario_abertura.strftime('%H:%M')}\n"
+            f"Horário de Fechamento:  {clinica.horario_fechamento.strftime('%H:%M')}\n"
+        )
+        sg.popup_scrolled(texto, title='Clínica')
 
     def seleciona_clinica(self) -> str:
-        print("\n----- SELECIONAR CLÍNICA -----")
-        cnpj = input("Digite o CNPJ da clínica: ").strip()
-        return cnpj
-
-    def mostra_mensagem(self, mensagem: str):
-        print(f"\n[Clínica]: {mensagem}")
+        """Abre janela para o usuário digitar o CNPJ da clínica desejada.
+        Retorna a string digitada, ou '' se cancelar.
+        """
+        layout = [
+            [sg.Text('Digite o CNPJ da clínica:')],
+            [sg.Input(key='cnpj', size=(20, 1))],
+            [sg.Button('OK'), sg.Button('Cancelar')],
+        ]
+        window = sg.Window('Selecionar Clínica', layout)
+        while True:
+            event, values = window.read()
+            if event == sg.WIN_CLOSED or event == 'Cancelar':
+                window.close()
+                return ''
+            if event == 'OK':
+                window.close()
+                return values['cnpj'].strip()
 
     def seleciona_profissional(self) -> str:
-        print("\n----- SELECIONAR PROFISSIONAL -----")
-        cpf = input("Digite o CPF do profissional: ").strip()
-        return cpf
+        """Abre janela para o usuário digitar o CPF do profissional desejado.
+        Retorna a string digitada, ou '' se cancelar.
+        """
+        layout = [
+            [sg.Text('Digite o CPF do profissional (11 dígitos):')],
+            [sg.Input(key='cpf', size=(15, 1))],
+            [sg.Button('OK'), sg.Button('Cancelar')],
+        ]
+        window = sg.Window('Selecionar Profissional', layout)
+        while True:
+            event, values = window.read()
+            if event == sg.WIN_CLOSED or event == 'Cancelar':
+                window.close()
+                return ''
+            if event == 'OK':
+                window.close()
+                return values['cpf'].strip()
 
     def mostra_profissionais_da_clinica(self, clinica):
-        print(f"\nProfissionais vinculados à clínica {clinica.nome}:")
+        """Exibe a lista de profissionais vinculados à clínica em um popup."""
         profissionais = clinica.profissionais
         if not profissionais:
-            print("Nenhum profissional vinculado a esta clínica.")
+            sg.popup(f'Nenhum profissional vinculado à clínica "{clinica.nome}".', title='Profissionais da Clínica')
             return
+        linhas = [f'Profissionais da clínica: {clinica.nome}\n']
+        for prof in profissionais:
+            linhas.append(
+                f"CPF: {prof.cpf}\n"
+                f"Nome: {prof.nome}\n"
+                f"Especialidade: {prof.especialidade}\n"
+                f"{'─' * 40}"
+            )
+        sg.popup_scrolled('\n'.join(linhas), title='Profissionais da Clínica')
 
-        for profissional in profissionais:
-            print(f"CPF: {profissional.cpf}")
-            # CORRIGIDO: profissional.nome (correto) em vez de
-            # profissional.nome_exibicao (atributo inexistente).
-            print(f"Nome: {profissional.nome}")
-            print(f"Especialidade: {profissional.especialidade}")
-            print("-" * 40)
+    def mostra_mensagem(self, mensagem: str):
+        """Exibe uma mensagem ao usuário em uma janela popup."""
+        sg.popup(mensagem, title='Clínicas')
 
