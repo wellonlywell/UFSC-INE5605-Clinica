@@ -22,6 +22,8 @@ class ControladorAtendimento:
         """
         ctrl_clinica = self.__controlador_sistema.controlador_clinica
         ctrl_tipo = self.__controlador_sistema.controlador_tipo_atendimento
+        ctrl_paciente = self.__controlador_sistema.controlador_paciente
+        ctrl_profissional = self.__controlador_sistema.controlador_profissional
 
         for atendimento in self.__atendimentos:
             clinica_oficial = ctrl_clinica.buscar_por_cnpj(atendimento.clinica.cnpj)
@@ -31,6 +33,14 @@ class ControladorAtendimento:
             tipo_oficial = ctrl_tipo.buscar_por_id(atendimento.tipo.id)
             if tipo_oficial is not None:
                 atendimento.tipo = tipo_oficial
+
+            paciente_oficial = ctrl_paciente.buscar_por_cpf(atendimento.paciente.cpf)
+            if paciente_oficial is not None:
+                atendimento.paciente = paciente_oficial
+
+            profissional_oficial = ctrl_profissional.buscar_por_cpf(atendimento.profissional.cpf)
+            if profissional_oficial is not None:
+                atendimento.profissional = profissional_oficial
 
     def __persistir(self):
         """Grava o estado atual da lista de atendimentos em disco. (Tarefa 2)"""

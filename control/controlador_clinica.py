@@ -12,6 +12,17 @@ class ControladorClinica:
         self.__clinicas = self.__dao.get_all()  # ALTERADO: antes era [] (Tarefa 2)
         self.__tela_clinica = TelaClinica()
         self.__controlador_sistema = controlador_sistema
+        self.__revincular_referencias()
+
+    def __revincular_referencias(self):
+        for clinica in self.__clinicas:
+            for profissional_antigo in clinica.profissionais:
+                profissional_oficial = self.__controlador_sistema.controlador_profissional.buscar_por_cpf(
+                    profissional_antigo.cpf
+                )
+                if profissional_oficial is not None and profissional_oficial is not profissional_antigo:
+                    clinica.remover_profissional(profissional_antigo)
+                    clinica.adicionar_profissional(profissional_oficial)
 
     def __persistir(self):
         """Grava o estado atual da lista de clínicas em disco. (Tarefa 2)"""
@@ -96,7 +107,7 @@ class ControladorClinica:
         # bloqueia exclusão se clínica tem atendimento
         atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
         for atendimento in atendimentos:
-            if atendimento.clinica == clinica:
+            if atendimento.clinica.cnpj == clinica.cnpj:
                 self.__tela_clinica.mostra_mensagem(
                 "Não é possível excluir esta clínica pois ela possui atendimentos registrados."
                 )

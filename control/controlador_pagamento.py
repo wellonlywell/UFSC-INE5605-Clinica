@@ -22,6 +22,7 @@ class ControladorPagamento:
         Ver explicação completa no cabeçalho do arquivo. (Tarefa 2)
         """
         ctrl_atendimento = self.__controlador_sistema.controlador_atendimento
+        ctrl_paciente = self.__controlador_sistema.controlador_paciente
         atendimentos_oficiais = ctrl_atendimento.get_atendimentos()
 
         for pagamento in self.__pagamentos:
@@ -30,6 +31,10 @@ class ControladorPagamento:
             )
             if atendimento_oficial is not None:
                 pagamento.atendimento = atendimento_oficial
+
+            paciente_oficial = ctrl_paciente.buscar_por_cpf(pagamento.paciente.cpf)
+            if paciente_oficial is not None:
+                pagamento.paciente = paciente_oficial
 
     def __buscar_atendimento_equivalente(self, referencia, atendimentos: list):
         """Localiza, dentro de uma lista de atendimentos, aquele que
