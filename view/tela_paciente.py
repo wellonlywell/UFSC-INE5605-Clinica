@@ -2,9 +2,18 @@
 import time
 
 import FreeSimpleGUI as sg
+sg.set_options(font=("Arial", 11))
 
 
 class TelaPaciente:
+    __OPCOES_COR_RACA = {
+        "Branca": "1",
+        "Preta": "2",
+        "Parda": "3",
+        "Amarela": "4",
+        "Indígena": "5",
+        "Não informar": "6",
+    }
 
     def __init__(self):
         self.__janela_lista = None
@@ -14,11 +23,11 @@ class TelaPaciente:
     def tela_opcoes(self):
         layout = [
             [sg.Text("MENU PACIENTES", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
-            [sg.Button("1 - Incluir", key="1", size=(30, 1))],
-            [sg.Button("2 - Alterar", key="2", size=(30, 1))],
-            [sg.Button("3 - Listar", key="3", size=(30, 1))],
-            [sg.Button("4 - Excluir", key="4", size=(30, 1))],
-            [sg.Button("0 - Voltar", key="0", size=(30, 1))],
+            [sg.Button("1 - Incluir", key="1", size=(30, 1), tooltip="Cadastrar novo paciente")],
+            [sg.Button("2 - Alterar", key="2", size=(30, 1), tooltip="Editar paciente já cadastrado")],
+            [sg.Button("3 - Listar", key="3", size=(30, 1), tooltip="Exibir lista de todos os pacientes cadastrados")],
+            [sg.Button("4 - Excluir", key="4", size=(30, 1), tooltip="Remover um paciente do sistema")],
+            [sg.Button("0 - Voltar", key="0", size=(30, 1), tooltip="Retornar ao Menu Principal")],
         ]
         window = sg.Window("Menu Pacientes", layout, modal=True)
         opcao = 0
@@ -37,7 +46,7 @@ class TelaPaciente:
 
     def pega_dados_paciente(self):
         layout = [
-            [sg.Text("CPF (11 digitos):")],
+            [sg.Text("CPF (11 dígitos):")],
             [sg.Input(key="-CPF-", size=(40, 1))],
             [sg.Text("Nome Civil:")],
             [sg.Input(key="-NOME-CIVIL-", size=(40, 1))],
@@ -50,24 +59,17 @@ class TelaPaciente:
             [sg.Text("PCD?")],
             [
                 sg.Radio("Sim", "PCD", key="-PCD-S-", default=False),
-                sg.Radio("Nao", "PCD", key="-PCD-N-", default=True),
+                sg.Radio("Não", "PCD", key="-PCD-N-", default=True),
             ],
-            [sg.Text("Cor/Raca (IBGE):")],
+            [sg.Text("Cor/Raça (IBGE):")],
             [sg.Combo(
-                [
-                    ("1", "Branca"),
-                    ("2", "Preta"),
-                    ("3", "Parda"),
-                    ("4", "Amarela"),
-                    ("5", "Indigena"),
-                    ("6", "Nao informar"),
-                ],
-                default_value=("6", "Nao informar"),
+                list(self.__OPCOES_COR_RACA.keys()),
+                default_value="Não informar",
                 key="-COR-RACA-",
                 readonly=True,
                 size=(30, 1),
             )],
-            [sg.Text("Identidade de Genero (opcional):")],
+            [sg.Text("Identidade de Gênero (opcional):")],
             [sg.Input(key="-IDENTIDADE-GENERO-", size=(40, 1))],
             [sg.Button("Confirmar", key="-CONFIRMAR-"), sg.Button("Cancelar", key="-CANCELAR-")],
         ]
@@ -80,7 +82,7 @@ class TelaPaciente:
             "data_nascimento": "",
             "pcd": False,
             "cor_raca_opcao": "6",
-            "identidade_genero": "Prefiro nao responder",
+            "identidade_genero": "Prefiro não responder",
         }
 
         while True:
@@ -88,9 +90,7 @@ class TelaPaciente:
             if event in (sg.WIN_CLOSED, "-CANCELAR-"):
                 break
             if event == "-CONFIRMAR-":
-                cor_raca = values["-COR-RACA-"]
-                if isinstance(cor_raca, tuple):
-                    cor_raca = cor_raca[0]
+                cor_raca = self.__OPCOES_COR_RACA.get(values["-COR-RACA-"], "6")
                 dados = {
                     "cpf": values["-CPF-"].strip(),
                     "nome_civil": values["-NOME-CIVIL-"].strip(),
@@ -99,7 +99,7 @@ class TelaPaciente:
                     "data_nascimento": values["-DATA-NASCIMENTO-"].strip(),
                     "pcd": values["-PCD-S-"],
                     "cor_raca_opcao": str(cor_raca),
-                    "identidade_genero": values["-IDENTIDADE-GENERO-"].strip() or "Prefiro nao responder",
+                    "identidade_genero": values["-IDENTIDADE-GENERO-"].strip() or "Prefiro não responder",
                 }
                 break
 
@@ -131,14 +131,14 @@ class TelaPaciente:
             f"Nome: {paciente.nome}",
             f"Celular: {paciente.celular}",
             f"Idade: {paciente.idade} anos (Nascimento: {data_str})",
-            f"PCD: {'Sim' if paciente.pcd else 'Nao'}",
+            f"PCD: {'Sim' if paciente.pcd else 'Não'}",
         ]
         if paciente.cor_raca:
-            linhas.append(f"Cor/Raca: {paciente.cor_raca.value}")
+            linhas.append(f"Cor/Raça: {paciente.cor_raca.value}")
         if paciente.identidade_genero:
-            linhas.append(f"Genero: {paciente.identidade_genero}")
+            linhas.append(f"Gênero: {paciente.identidade_genero}")
         if paciente.responsavel:
-            linhas.append(f"Responsavel Legal: {paciente.responsavel.nome}")
+            linhas.append(f"Responsável Legal: {paciente.responsavel.nome}")
         linhas.append("-" * 40)
 
         self.__conteudo_lista += "\n".join(linhas) + "\n"
@@ -166,7 +166,7 @@ class TelaPaciente:
         return cpf
 
     def mostra_mensagem(self, mensagem: str):
-        sg.popup(mensagem, title="SisClinica - Pacientes")
+        sg.popup(mensagem, title="SisClínica - Pacientes")
 
     def __processa_janela_lista(self):
         if self.__janela_lista is None:

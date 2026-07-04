@@ -2,6 +2,7 @@
 import time
 
 import FreeSimpleGUI as sg
+sg.set_options(font=("Arial", 11))
 
 
 class TelaCatalogoProcedimento:
@@ -13,14 +14,14 @@ class TelaCatalogoProcedimento:
 
     def tela_opcoes(self):
         layout = [
-            [sg.Text("CATALOGO DE PROCEDIMENTOS", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
-            [sg.Button("1 - Incluir", key="1", size=(30, 1))],
-            [sg.Button("2 - Alterar", key="2", size=(30, 1))],
-            [sg.Button("3 - Listar", key="3", size=(30, 1))],
-            [sg.Button("4 - Excluir", key="4", size=(30, 1))],
-            [sg.Button("0 - Voltar", key="0", size=(30, 1))],
+            [sg.Text("CATÁLOGO DE PROCEDIMENTOS", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
+            [sg.Button("1 - Incluir", key="1", size=(30, 1), tooltip="Cadastrar novo procedimento no catálogo")],
+            [sg.Button("2 - Alterar", key="2", size=(30, 1), tooltip="Editar procedimento já cadastrado")],
+            [sg.Button("3 - Listar", key="3", size=(30, 1), tooltip="Exibir lista de todos os procedimentos cadastrados")],
+            [sg.Button("4 - Excluir", key="4", size=(30, 1), tooltip="Remover um procedimento do catálogo")],
+            [sg.Button("0 - Voltar", key="0", size=(30, 1), tooltip="Retornar ao Menu Principal")],
         ]
-        window = sg.Window("Menu Catalogo de Procedimentos", layout, modal=True)
+        window = sg.Window("Menu Catálogo de Procedimentos", layout, modal=True)
         opcao = 0
 
         while True:
@@ -37,7 +38,7 @@ class TelaCatalogoProcedimento:
 
     def pega_dados_procedimento(self):
         layout = [
-            [sg.Text("Descricao (Ex: Hemograma, Curativo):")],
+            [sg.Text("Descrição (Ex: Hemograma, Curativo):")],
             [sg.Input(key="-DESCRICAO-", size=(40, 1))],
             [sg.Text("Custo em R$ (Ex: 150.50):")],
             [sg.Input(key="-CUSTO-", size=(40, 1))],
@@ -54,12 +55,12 @@ class TelaCatalogoProcedimento:
             if event == "-CONFIRMAR-":
                 descricao = values["-DESCRICAO-"].strip()
                 if not descricao:
-                    window["-ERRO-"].update("A descricao nao pode ficar em branco.")
+                    window["-ERRO-"].update("A descrição não pode ficar em branco.")
                     continue
                 try:
                     custo = float(values["-CUSTO-"].strip().replace(",", "."))
                 except ValueError:
-                    window["-ERRO-"].update("Digite um valor numerico valido para o custo.")
+                    window["-ERRO-"].update("Digite um valor numérico válido para o custo.")
                     continue
                 if custo <= 0:
                     window["-ERRO-"].update("O custo deve ser maior que zero.")
@@ -88,7 +89,7 @@ class TelaCatalogoProcedimento:
 
         linhas = [
             f"ID: {procedimento.id}",
-            f"Descricao: {procedimento.descricao}",
+            f"Descrição: {procedimento.descricao}",
             f"Custo: R$ {procedimento.custo:.2f}",
             "-" * 40,
         ]
@@ -120,7 +121,7 @@ class TelaCatalogoProcedimento:
         return id_procedimento
 
     def mostra_mensagem(self, mensagem: str):
-        sg.popup(mensagem, title="SisClinica - Catalogo de Procedimentos")
+        sg.popup(mensagem, title="SisClínica - Catálogo de Procedimentos")
 
     def __processa_janela_lista(self):
         if self.__janela_lista is None:

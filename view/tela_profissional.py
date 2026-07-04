@@ -2,9 +2,18 @@
 import time
 
 import FreeSimpleGUI as sg
+sg.set_options(font=("Arial", 11))
 
 
 class TelaProfissional:
+    __OPCOES_COR_RACA = {
+        "Branca": "1",
+        "Preta": "2",
+        "Parda": "3",
+        "Amarela": "4",
+        "Indígena": "5",
+        "Não informar": "6",
+    }
 
     def __init__(self):
         self.__janela_lista = None
@@ -14,11 +23,11 @@ class TelaProfissional:
     def tela_opcoes(self):
         layout = [
             [sg.Text("MENU PROFISSIONAIS", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
-            [sg.Button("1 - Incluir", key="1", size=(30, 1))],
-            [sg.Button("2 - Alterar", key="2", size=(30, 1))],
-            [sg.Button("3 - Listar", key="3", size=(30, 1))],
-            [sg.Button("4 - Excluir", key="4", size=(30, 1))],
-            [sg.Button("0 - Voltar", key="0", size=(30, 1))],
+            [sg.Button("1 - Incluir", key="1", size=(30, 1), tooltip="Cadastrar novo profissional")],
+            [sg.Button("2 - Alterar", key="2", size=(30, 1), tooltip="Editar profissional já cadastrado")],
+            [sg.Button("3 - Listar", key="3", size=(30, 1), tooltip="Exibir lista de todos os profissionais cadastrados")],
+            [sg.Button("4 - Excluir", key="4", size=(30, 1), tooltip="Remover um profissional do sistema")],
+            [sg.Button("0 - Voltar", key="0", size=(30, 1), tooltip="Retornar ao Menu Principal")],
         ]
         window = sg.Window("Menu Profissionais", layout, modal=True)
         opcao = 0
@@ -37,7 +46,7 @@ class TelaProfissional:
 
     def pega_dados_profissional(self):
         layout = [
-            [sg.Text("CPF (11 digitos):")],
+            [sg.Text("CPF (11 dígitos):")],
             [sg.Input(key="-CPF-", size=(40, 1))],
             [sg.Text("Nome Civil:")],
             [sg.Input(key="-NOME-CIVIL-", size=(40, 1))],
@@ -47,29 +56,22 @@ class TelaProfissional:
             [sg.Input(key="-CELULAR-", size=(40, 1))],
             [sg.Text("Registro Profissional (Ex: CRM/SC 12345, COREN 6789):")],
             [sg.Input(key="-REGISTRO-", size=(40, 1))],
-            [sg.Text("Especialidade Medica/Area (Ex: Clinico Geral, Pediatra):")],
+            [sg.Text("Especialidade Médica/Área (Ex: Clínico Geral, Pediatra):")],
             [sg.Input(key="-ESPECIALIDADE-", size=(40, 1))],
             [sg.Text("PCD?")],
             [
                 sg.Radio("Sim", "PCD", key="-PCD-S-", default=False),
-                sg.Radio("Nao", "PCD", key="-PCD-N-", default=True),
+                sg.Radio("Não", "PCD", key="-PCD-N-", default=True),
             ],
-            [sg.Text("Cor/Raca (IBGE):")],
+            [sg.Text("Cor/Raça (IBGE):")],
             [sg.Combo(
-                [
-                    ("1", "Branca"),
-                    ("2", "Preta"),
-                    ("3", "Parda"),
-                    ("4", "Amarela"),
-                    ("5", "Indigena"),
-                    ("6", "Nao informar"),
-                ],
-                default_value=("6", "Nao informar"),
+                list(self.__OPCOES_COR_RACA.keys()),
+                default_value="Não informar",
                 key="-COR-RACA-",
                 readonly=True,
                 size=(30, 1),
             )],
-            [sg.Text("Identidade de Genero (opcional):")],
+            [sg.Text("Identidade de Gênero (opcional):")],
             [sg.Input(key="-IDENTIDADE-GENERO-", size=(40, 1))],
             [sg.Button("Confirmar", key="-CONFIRMAR-"), sg.Button("Cancelar", key="-CANCELAR-")],
         ]
@@ -83,7 +85,7 @@ class TelaProfissional:
             "especialidade": "",
             "pcd": False,
             "cor_raca_opcao": "6",
-            "identidade_genero": "Prefiro nao responder",
+            "identidade_genero": "Prefiro não responder",
         }
 
         while True:
@@ -91,9 +93,7 @@ class TelaProfissional:
             if event in (sg.WIN_CLOSED, "-CANCELAR-"):
                 break
             if event == "-CONFIRMAR-":
-                cor_raca = values["-COR-RACA-"]
-                if isinstance(cor_raca, tuple):
-                    cor_raca = cor_raca[0]
+                cor_raca = self.__OPCOES_COR_RACA.get(values["-COR-RACA-"], "6")
                 dados = {
                     "cpf": values["-CPF-"].strip(),
                     "nome_civil": values["-NOME-CIVIL-"].strip(),
@@ -103,7 +103,7 @@ class TelaProfissional:
                     "especialidade": values["-ESPECIALIDADE-"].strip(),
                     "pcd": values["-PCD-S-"],
                     "cor_raca_opcao": str(cor_raca),
-                    "identidade_genero": values["-IDENTIDADE-GENERO-"].strip() or "Prefiro nao responder",
+                    "identidade_genero": values["-IDENTIDADE-GENERO-"].strip() or "Prefiro não responder",
                 }
                 break
 
@@ -132,12 +132,12 @@ class TelaProfissional:
             f"Nome: {profissional.nome}",
             f"CPF: {profissional.cpf}",
             f"Celular: {profissional.celular}",
-            f"PCD: {'Sim' if profissional.pcd else 'Nao'}",
+            f"PCD: {'Sim' if profissional.pcd else 'Não'}",
         ]
         if profissional.cor_raca:
-            linhas.append(f"Cor/Raca: {profissional.cor_raca.value}")
+            linhas.append(f"Cor/Raça: {profissional.cor_raca.value}")
         if profissional.identidade_genero:
-            linhas.append(f"Genero: {profissional.identidade_genero}")
+            linhas.append(f"Gênero: {profissional.identidade_genero}")
         linhas.append("-" * 40)
 
         self.__conteudo_lista += "\n".join(linhas) + "\n"
@@ -165,7 +165,7 @@ class TelaProfissional:
         return cpf
 
     def mostra_mensagem(self, mensagem: str):
-        sg.popup(mensagem, title="SisClinica - Profissionais")
+        sg.popup(mensagem, title="SisClínica - Profissionais")
 
     def __processa_janela_lista(self):
         if self.__janela_lista is None:
