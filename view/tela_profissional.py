@@ -1,116 +1,127 @@
-import tkinter as tk
-from tkinter import messagebox
 import time
 
-_ROOT = None  # T2: raiz tkinter escondida, compartilhada pelas janelas
-
-
-def _get_root():
-    global _ROOT
-    if _ROOT is None:
-        _ROOT = tk.Tk()
-        _ROOT.withdraw()
-    return _ROOT
+import FreeSimpleGUI as sg
 
 
 class TelaProfissional:
 
     def __init__(self):
         self.__janela_lista = None
-        self.__texto_lista = None
+        self.__conteudo_lista = ""
         self.__ultima_chamada = 0
 
     def tela_opcoes(self):
-        janela = tk.Toplevel(_get_root())
-        janela.title("Menu Profissionais")
-        janela.grab_set()
-        resultado = {"opcao": 0}
+        layout = [
+            [sg.Text("MENU PROFISSIONAIS", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
+            [sg.Button("1 - Incluir", key="1", size=(30, 1))],
+            [sg.Button("2 - Alterar", key="2", size=(30, 1))],
+            [sg.Button("3 - Listar", key="3", size=(30, 1))],
+            [sg.Button("4 - Excluir", key="4", size=(30, 1))],
+            [sg.Button("0 - Voltar", key="0", size=(30, 1))],
+        ]
+        window = sg.Window("Menu Profissionais", layout, modal=True)
+        opcao = 0
 
-        def escolher(opcao):
-            resultado["opcao"] = opcao
-            janela.destroy()
+        while True:
+            event, _ = window.read()
+            if event in (sg.WIN_CLOSED, "0"):
+                opcao = 0
+                break
+            if event in ("1", "2", "3", "4"):
+                opcao = int(event)
+                break
 
-        tk.Label(janela, text="MENU PROFISSIONAIS", font=("Arial", 12, "bold")).pack(pady=8)
-        tk.Button(janela, text="1 - Incluir", width=30, command=lambda: escolher(1)).pack(pady=2)
-        tk.Button(janela, text="2 - Alterar", width=30, command=lambda: escolher(2)).pack(pady=2)
-        tk.Button(janela, text="3 - Listar", width=30, command=lambda: escolher(3)).pack(pady=2)
-        tk.Button(janela, text="4 - Excluir", width=30, command=lambda: escolher(4)).pack(pady=2)
-        tk.Button(janela, text="0 - Voltar", width=30, command=lambda: escolher(0)).pack(pady=(2, 8))
-
-        janela.protocol("WM_DELETE_WINDOW", lambda: escolher(0))
-        janela.wait_window()
-        return resultado["opcao"]
+        window.close()
+        return opcao
 
     def pega_dados_profissional(self):
-        janela = tk.Toplevel(_get_root())
-        janela.title("Dados do Profissional")
-        janela.grab_set()
+        layout = [
+            [sg.Text("CPF (11 digitos):")],
+            [sg.Input(key="-CPF-", size=(40, 1))],
+            [sg.Text("Nome Civil:")],
+            [sg.Input(key="-NOME-CIVIL-", size=(40, 1))],
+            [sg.Text("Nome Social (opcional):")],
+            [sg.Input(key="-NOME-SOCIAL-", size=(40, 1))],
+            [sg.Text("Celular:")],
+            [sg.Input(key="-CELULAR-", size=(40, 1))],
+            [sg.Text("Registro Profissional (Ex: CRM/SC 12345, COREN 6789):")],
+            [sg.Input(key="-REGISTRO-", size=(40, 1))],
+            [sg.Text("Especialidade Medica/Area (Ex: Clinico Geral, Pediatra):")],
+            [sg.Input(key="-ESPECIALIDADE-", size=(40, 1))],
+            [sg.Text("PCD?")],
+            [
+                sg.Radio("Sim", "PCD", key="-PCD-S-", default=False),
+                sg.Radio("Nao", "PCD", key="-PCD-N-", default=True),
+            ],
+            [sg.Text("Cor/Raca (IBGE):")],
+            [sg.Combo(
+                [
+                    ("1", "Branca"),
+                    ("2", "Preta"),
+                    ("3", "Parda"),
+                    ("4", "Amarela"),
+                    ("5", "Indigena"),
+                    ("6", "Nao informar"),
+                ],
+                default_value=("6", "Nao informar"),
+                key="-COR-RACA-",
+                readonly=True,
+                size=(30, 1),
+            )],
+            [sg.Text("Identidade de Genero (opcional):")],
+            [sg.Input(key="-IDENTIDADE-GENERO-", size=(40, 1))],
+            [sg.Button("Confirmar", key="-CONFIRMAR-"), sg.Button("Cancelar", key="-CANCELAR-")],
+        ]
+        window = sg.Window("Dados do Profissional", layout, modal=True)
+        dados = {
+            "cpf": "",
+            "nome_civil": "",
+            "nome_social": None,
+            "celular": "",
+            "registro": "",
+            "especialidade": "",
+            "pcd": False,
+            "cor_raca_opcao": "6",
+            "identidade_genero": "Prefiro nao responder",
+        }
 
-        campos = {}
+        while True:
+            event, values = window.read()
+            if event in (sg.WIN_CLOSED, "-CANCELAR-"):
+                break
+            if event == "-CONFIRMAR-":
+                cor_raca = values["-COR-RACA-"]
+                if isinstance(cor_raca, tuple):
+                    cor_raca = cor_raca[0]
+                dados = {
+                    "cpf": values["-CPF-"].strip(),
+                    "nome_civil": values["-NOME-CIVIL-"].strip(),
+                    "nome_social": values["-NOME-SOCIAL-"].strip() or None,
+                    "celular": values["-CELULAR-"].strip(),
+                    "registro": values["-REGISTRO-"].strip(),
+                    "especialidade": values["-ESPECIALIDADE-"].strip(),
+                    "pcd": values["-PCD-S-"],
+                    "cor_raca_opcao": str(cor_raca),
+                    "identidade_genero": values["-IDENTIDADE-GENERO-"].strip() or "Prefiro nao responder",
+                }
+                break
 
-        def linha(label):
-            tk.Label(janela, text=label).pack(anchor="w", padx=10)
-            entrada = tk.Entry(janela, width=40)
-            entrada.pack(padx=10, pady=2)
-            return entrada
-
-        campos["cpf"] = linha("CPF (11 dígitos):")
-        campos["nome_civil"] = linha("Nome Civil:")
-        campos["nome_social"] = linha("Nome Social (opcional):")
-        campos["celular"] = linha("Celular:")
-        campos["registro"] = linha("Registro Profissional (Ex: CRM/SC 12345, COREN 6789):")
-        campos["especialidade"] = linha("Especialidade Médica/Área (Ex: Clínico Geral, Pediatra):")
-
-        pcd_var = tk.StringVar(value="N")
-        tk.Label(janela, text="PCD?").pack(anchor="w", padx=10)
-        frame_pcd = tk.Frame(janela)
-        frame_pcd.pack(anchor="w", padx=10)
-        tk.Radiobutton(frame_pcd, text="Sim", variable=pcd_var, value="S").pack(side="left")
-        tk.Radiobutton(frame_pcd, text="Não", variable=pcd_var, value="N").pack(side="left")
-
-        cor_var = tk.StringVar(value="6")
-        tk.Label(janela, text="Cor/Raça (IBGE):").pack(anchor="w", padx=10)
-        opcoes_cor = [("Branca", "1"), ("Preta", "2"), ("Parda", "3"),
-                      ("Amarela", "4"), ("Indígena", "5"), ("Não informar", "6")]
-        frame_cor = tk.Frame(janela)
-        frame_cor.pack(anchor="w", padx=10)
-        for texto, valor in opcoes_cor:
-            tk.Radiobutton(frame_cor, text=texto, variable=cor_var, value=valor).pack(anchor="w")
-
-        campos["identidade_genero"] = linha("Identidade de Gênero (opcional):")
-
-        resultado = {}
-
-        def confirmar():
-            resultado["dados"] = {
-                "cpf": campos["cpf"].get().strip(),
-                "nome_civil": campos["nome_civil"].get().strip(),
-                "nome_social": campos["nome_social"].get().strip() or None,
-                "celular": campos["celular"].get().strip(),
-                "registro": campos["registro"].get().strip(),
-                "especialidade": campos["especialidade"].get().strip(),
-                "pcd": pcd_var.get() == "S",
-                "cor_raca_opcao": cor_var.get(),
-                "identidade_genero": campos["identidade_genero"].get().strip() or "Prefiro não responder",
-            }
-            janela.destroy()
-
-        tk.Button(janela, text="Confirmar", command=confirmar).pack(pady=10)
-        janela.protocol("WM_DELETE_WINDOW", confirmar)
-        janela.wait_window()
-        return resultado.get("dados", {
-            "cpf": "", "nome_civil": "", "nome_social": None, "celular": "",
-            "registro": "", "especialidade": "", "pcd": False, "cor_raca_opcao": "6",
-            "identidade_genero": "Prefiro não responder"
-        })
+        window.close()
+        return dados
 
     def mostra_profissional(self, profissional):
         agora = time.time()
+        self.__processa_janela_lista()
         if self.__janela_lista is None or (agora - self.__ultima_chamada) > 0.5:
-            self.__janela_lista = tk.Toplevel(_get_root())
-            self.__janela_lista.title("Lista de Profissionais")
-            self.__texto_lista = tk.Text(self.__janela_lista, width=60, height=20)
-            self.__texto_lista.pack(padx=10, pady=10)
+            self.__conteudo_lista = ""
+            layout = [[sg.Multiline(
+                key="-LISTA-",
+                size=(60, 20),
+                disabled=True,
+                autoscroll=True,
+                font=("Courier New", 10),
+            )]]
+            self.__janela_lista = sg.Window("Lista de Profissionais", layout, finalize=True)
         self.__ultima_chamada = agora
 
         linhas = [
@@ -119,36 +130,45 @@ class TelaProfissional:
             f"Nome: {profissional.nome}",
             f"CPF: {profissional.cpf}",
             f"Celular: {profissional.celular}",
-            f"PCD: {'Sim' if profissional.pcd else 'Não'}",
+            f"PCD: {'Sim' if profissional.pcd else 'Nao'}",
         ]
         if profissional.cor_raca:
-            linhas.append(f"Cor/Raça: {profissional.cor_raca.value}")
+            linhas.append(f"Cor/Raca: {profissional.cor_raca.value}")
         if profissional.identidade_genero:
-            linhas.append(f"Gênero: {profissional.identidade_genero}")
+            linhas.append(f"Genero: {profissional.identidade_genero}")
         linhas.append("-" * 40)
 
-        self.__texto_lista.insert(tk.END, "\n".join(linhas) + "\n")
+        self.__conteudo_lista += "\n".join(linhas) + "\n"
+        self.__janela_lista["-LISTA-"].update(self.__conteudo_lista)
+        self.__janela_lista.refresh()
 
     def seleciona_profissional(self) -> str:
-        janela = tk.Toplevel(_get_root())
-        janela.title("Selecionar Profissional")
-        janela.grab_set()
+        layout = [
+            [sg.Text("CPF do profissional:")],
+            [sg.Input(key="-CPF-", size=(30, 1), focus=True)],
+            [sg.Button("Confirmar", key="-CONFIRMAR-"), sg.Button("Cancelar", key="-CANCELAR-")],
+        ]
+        window = sg.Window("Selecionar Profissional", layout, modal=True)
+        cpf = ""
 
-        tk.Label(janela, text="CPF do profissional:").pack(padx=10, pady=5)
-        entrada = tk.Entry(janela, width=30)
-        entrada.pack(padx=10, pady=5)
+        while True:
+            event, values = window.read()
+            if event in (sg.WIN_CLOSED, "-CANCELAR-"):
+                break
+            if event == "-CONFIRMAR-":
+                cpf = values["-CPF-"].strip()
+                break
 
-        resultado = {"cpf": ""}
-
-        def confirmar():
-            resultado["cpf"] = entrada.get().strip()
-            janela.destroy()
-
-        tk.Button(janela, text="Confirmar", command=confirmar).pack(pady=10)
-        janela.protocol("WM_DELETE_WINDOW", confirmar)
-        entrada.focus()
-        janela.wait_window()
-        return resultado["cpf"]
+        window.close()
+        return cpf
 
     def mostra_mensagem(self, mensagem: str):
-        messagebox.showinfo("SisClínica - Profissionais", mensagem)
+        sg.popup(mensagem, title="SisClinica - Profissionais")
+
+    def __processa_janela_lista(self):
+        if self.__janela_lista is None:
+            return
+        event, _ = self.__janela_lista.read(timeout=0)
+        if event == sg.WIN_CLOSED:
+            self.__janela_lista.close()
+            self.__janela_lista = None

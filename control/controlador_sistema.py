@@ -13,15 +13,15 @@ from view.tela_sistema import TelaSistema
 class ControladorSistema:
 
     def __init__(self):
-        self.__controlador_clinica = ControladorClinica(self)
         self.__controlador_profissional = ControladorProfissional(self)
+        self.__controlador_clinica = ControladorClinica(self)
         self.__controlador_tipo_atendimento = ControladorTipoAtendimento(self)
         self.__controlador_catalogo_procedimento = ControladorCatalogoProcedimento(self)
+        self.__controlador_responsavel = ControladorResponsavel(self)
         self.__controlador_paciente = ControladorPaciente(self)
         self.__controlador_atendimento = ControladorAtendimento(self)
         self.__controlador_pagamento = ControladorPagamento(self)
         self.__controlador_relatorios = ControladorRelatorios(self)
-        self.__controlador_responsavel = ControladorResponsavel(self)
         self.__tela_sistema = TelaSistema()
 
     @property

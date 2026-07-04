@@ -15,6 +15,16 @@ class ControladorPaciente:
         self.__tela_paciente = TelaPaciente()
         self.__tela_responsavel = TelaResponsavel()
         self.__controlador_sistema = controlador_sistema
+        self.__revincular_referencias()
+
+    def __revincular_referencias(self):
+        for paciente in self.__pacientes:
+            if paciente.responsavel is not None:
+                responsavel_oficial = self.__controlador_sistema.controlador_responsavel.buscar_por_cpf(
+                    paciente.responsavel.cpf
+                )
+                if responsavel_oficial is not None:
+                    paciente.responsavel = responsavel_oficial
 
     def __persistir(self): # T2: salva a lista em disco        
         self.__dao.save_all(self.__pacientes)
@@ -148,7 +158,7 @@ class ControladorPaciente:
         atendimentos = self.__controlador_sistema.controlador_atendimento.get_atendimentos()
 
         for atendimento in atendimentos:
-            if atendimento.paciente == paciente:
+            if atendimento.paciente.cpf == paciente.cpf:
                 self.__tela_paciente.mostra_mensagem(
                     "Não é possível excluir este paciente, pois ele já possui atendimento registrado."
                 )
