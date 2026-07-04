@@ -1,3 +1,4 @@
+# T2: FreeSimpleGUI — biblioteca leve, sem dependência externa
 import time
 
 import FreeSimpleGUI as sg
@@ -31,7 +32,7 @@ class TelaPaciente:
                 opcao = int(event)
                 break
 
-        window.close()
+        window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return opcao
 
     def pega_dados_paciente(self):
@@ -102,12 +103,13 @@ class TelaPaciente:
                 }
                 break
 
-        window.close()
+        window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return dados
 
     def mostra_paciente(self, paciente):
         agora = time.time()
         self.__processa_janela_lista()
+        # T2: separa chamadas de listagem diferentes sem abrir uma janela por item.
         if self.__janela_lista is None or (agora - self.__ultima_chamada) > 0.5:
             self.__conteudo_lista = ""
             layout = [[sg.Multiline(
@@ -160,7 +162,7 @@ class TelaPaciente:
                 cpf = values["-CPF-"].strip()
                 break
 
-        window.close()
+        window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return cpf
 
     def mostra_mensagem(self, mensagem: str):

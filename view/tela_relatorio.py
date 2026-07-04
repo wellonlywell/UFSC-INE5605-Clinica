@@ -1,3 +1,4 @@
+# T2: FreeSimpleGUI — biblioteca leve, sem dependência externa
 import FreeSimpleGUI as sg
 
 
@@ -24,7 +25,7 @@ class TelaRelatorios:
                 opcao = int(event)
                 break
 
-        window.close()
+        window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return opcao
 
     def exibe_dados_relatorio(self, dados_formatados: str):
