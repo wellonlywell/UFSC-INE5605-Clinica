@@ -81,7 +81,7 @@ class ControladorClinica:
         if clinica is None:
             self.__tela_clinica.mostra_mensagem("Clínica não encontrada.")
             return
-        dados = self.__tela_clinica.pega_dados_clinica()
+        dados = self.__tela_clinica.pega_dados_clinica(clinica)
         try:
             clinica.nome = dados["nome"]
             clinica.cidade = dados["cidade"]

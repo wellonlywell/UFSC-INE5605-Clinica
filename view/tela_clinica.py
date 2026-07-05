@@ -28,19 +28,26 @@ class TelaClinica:
                 window.close()
                 return int(event)
 
-    def pega_dados_clinica(self) -> dict:
+    def pega_dados_clinica(self, clinica=None) -> dict:
         """Abre formulário para inserir ou alterar os dados de uma clínica.
         Retorna dict com as chaves esperadas pelo controlador.
         Em caso de cancelamento, retorna dict com valores vazios.
         """
+        nome = clinica.nome if clinica is not None else ''
+        cnpj = clinica.cnpj if clinica is not None else ''
+        cidade = clinica.cidade if clinica is not None else ''
+        descricao = clinica.descricao if clinica is not None else ''
+        horario_abertura = clinica.horario_abertura.strftime('%H:%M') if clinica is not None else ''
+        horario_fechamento = clinica.horario_fechamento.strftime('%H:%M') if clinica is not None else ''
+
         layout = [
             [sg.Text('Dados da Clínica', font=('Helvetica', 12))],
-            [sg.Text('Nome Fantasia:',          size=(28, 1)), sg.Input(key='nome',               size=(30, 1))],
-            [sg.Text('CNPJ (14 dígitos):',      size=(28, 1)), sg.Input(key='cnpj',               size=(30, 1))],
-            [sg.Text('Cidade:',                 size=(28, 1)), sg.Input(key='cidade',             size=(30, 1))],
-            [sg.Text('Descrição:',              size=(28, 1)), sg.Input(key='descricao',          size=(30, 1))],
-            [sg.Text('Horário de Abertura (HH:MM):', size=(28, 1)), sg.Input(key='horario_abertura',   size=(10, 1))],
-            [sg.Text('Horário de Fechamento (HH:MM):', size=(28, 1)), sg.Input(key='horario_fechamento', size=(10, 1))],
+            [sg.Text('Nome Fantasia:',          size=(28, 1)), sg.Input(default_text=nome,               key='nome',               size=(30, 1))],
+            [sg.Text('CNPJ (14 dígitos):',      size=(28, 1)), sg.Input(default_text=cnpj,               key='cnpj',               size=(30, 1))],
+            [sg.Text('Cidade:',                 size=(28, 1)), sg.Input(default_text=cidade,             key='cidade',             size=(30, 1))],
+            [sg.Text('Descrição:',              size=(28, 1)), sg.Input(default_text=descricao,          key='descricao',          size=(30, 1))],
+            [sg.Text('Horário de Abertura (HH:MM):', size=(28, 1)), sg.Input(default_text=horario_abertura,   key='horario_abertura',   size=(10, 1))],
+            [sg.Text('Horário de Fechamento (HH:MM):', size=(28, 1)), sg.Input(default_text=horario_fechamento, key='horario_fechamento', size=(10, 1))],
             [sg.HSeparator()],
             [sg.Button('Confirmar'), sg.Button('Cancelar')],
         ]
