@@ -99,6 +99,7 @@ class ControladorProfissional:
             
         self.__profissionais.remove(profissional)
         self.__persistir()  # T2: grava no disco
+        self.__controlador_sistema.controlador_clinica.remover_profissional_de_todas_clinicas(profissional)
         self.__tela_profissional.mostra_mensagem("Profissional removido com sucesso!")
 
     def listar_profissionais(self):

@@ -208,6 +208,14 @@ class ControladorClinica:
         except DadoInvalidoException as e:
             self.__tela_clinica.mostra_mensagem(f"Erro ao remover profissional: {e}")
 
+    def remover_profissional_de_todas_clinicas(self, profissional):
+        for clinica in self.__clinicas:
+            try:
+                clinica.remover_profissional(profissional)
+            except DadoInvalidoException:
+                pass
+        self.__persistir()
+
     def listar_profissionais_clinica(self):
         if not self.__clinicas:
             self.__tela_clinica.mostra_mensagem("Nenhuma clínica cadastrada.")
