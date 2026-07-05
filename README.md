@@ -153,6 +153,7 @@ SisClinica/
 ´´´
 
 
+
 ### Relações UML implementadas
 
 | Tipo | Relação |
