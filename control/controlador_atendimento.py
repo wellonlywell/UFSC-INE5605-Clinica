@@ -67,18 +67,23 @@ class ControladorAtendimento:
 
     def __verifica_regra2(self, clinica, hora_inicio_str: str, hora_fim_str: str):
 
-        h_i, m_i = map(int, hora_inicio_str.split(":"))
-        h_f, m_f = map(int, hora_fim_str.split(":"))
-        inicio = Time(h_i, m_i)
-        fim    = Time(h_f, m_f)
-
-        if not clinica.esta_aberta(inicio) or not clinica.esta_aberta(fim):
-            abertura   = clinica.horario_abertura.strftime("%H:%M")
-            fechamento = clinica.horario_fechamento.strftime("%H:%M")
-            raise RegraNegocioException(
-                f"REGRA 2 VIOLADA: O atendimento ({hora_inicio_str} - {hora_fim_str}) "
-                f"deve ocorrer inteiramente dentro do horário da clínica ({abertura} - {fechamento})."
+        try:
+            h_i, m_i = map(int, hora_inicio_str.split(":"))
+            h_f, m_f = map(int, hora_fim_str.split(":"))
+            inicio = Time(h_i, m_i)
+            fim    = Time(h_f, m_f)
+        except ValueError:
+            raise DadoInvalidoException(
+                "Hora inválida. Use o formato HH:MM (ex: 14:30)."
             )
+
+            if not clinica.esta_aberta(inicio) or not clinica.esta_aberta(fim):
+                abertura   = clinica.horario_abertura.strftime("%H:%M")
+                fechamento = clinica.horario_fechamento.strftime("%H:%M")
+                raise RegraNegocioException(
+                    f"REGRA 2 VIOLADA: O atendimento ({hora_inicio_str} - {hora_fim_str}) "
+                    f"deve ocorrer inteiramente dentro do horário da clínica ({abertura} - {fechamento})."
+                )
 
     def incluir_atendimento(self):
         dados = self.__tela.pega_dados_atendimento()
@@ -209,6 +214,10 @@ class ControladorAtendimento:
             return
 
         ctrl_catalogo = self.__controlador_sistema.controlador_catalogo_procedimento
+
+        if not ctrl_catalogo.get_procedimentos():
+            self.__tela.mostra_mensagem("Nenhum procedimento cadastrado no catálogo. Cadastre um procedimento antes.")
+            return
 
         self.listar_atendimentos()
         indice = self.__tela.seleciona_atendimento()
