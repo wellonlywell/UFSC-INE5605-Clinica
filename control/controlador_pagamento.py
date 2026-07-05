@@ -179,7 +179,7 @@ class ControladorPagamento:
             return
 
         pagamento_selecionado = self.__pagamentos[indice]
-        nova_data = self.__tela.pega_nova_data()
+        nova_data = self.__tela.pega_nova_data(pagamento_selecionado)
 
         try:
             pagamento_selecionado.data = nova_data

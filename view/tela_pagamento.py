@@ -198,13 +198,15 @@ class TelaPagamento:
                 except ValueError:
                     sg.popup('Digite um número inteiro válido.', title='Erro')
 
-    def pega_nova_data(self) -> str:
+    def pega_nova_data(self, pagamento) -> str:
         """Abre janela para o usuário digitar uma nova data de pagamento.
+        Abre pré-preenchido com a data atual do pagamento.
         Retorna a string DD/MM/AAAA digitada, ou '' se cancelar.
         """
+        data_atual = pagamento.data.strftime('%d/%m/%Y')
         layout = [
             [sg.Text('Nova data do pagamento (DD/MM/AAAA):')],
-            [sg.Input(key='data', size=(15, 1))],
+            [sg.Input(default_text=data_atual, key='data', size=(15, 1))],
             [sg.Button('OK'), sg.Button('Cancelar')],
         ]
         window = sg.Window('Nova Data de Pagamento', layout)
@@ -216,6 +218,7 @@ class TelaPagamento:
             if event == 'OK':
                 window.close()
                 return values['data'].strip()
+
 
     def seleciona_pagamento(self) -> int:
         """Exibe o buffer de comprovantes acumulado e pede o índice do pagamento desejado.
