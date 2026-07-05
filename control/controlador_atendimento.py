@@ -77,13 +77,13 @@ class ControladorAtendimento:
                 "Hora inválida. Use o formato HH:MM (ex: 14:30)."
             )
 
-            if not clinica.esta_aberta(inicio) or not clinica.esta_aberta(fim):
-                abertura   = clinica.horario_abertura.strftime("%H:%M")
-                fechamento = clinica.horario_fechamento.strftime("%H:%M")
-                raise RegraNegocioException(
-                    f"REGRA 2 VIOLADA: O atendimento ({hora_inicio_str} - {hora_fim_str}) "
-                    f"deve ocorrer inteiramente dentro do horário da clínica ({abertura} - {fechamento})."
-                )
+        if not clinica.esta_aberta(inicio) or not clinica.esta_aberta(fim):
+            abertura   = clinica.horario_abertura.strftime("%H:%M")
+            fechamento = clinica.horario_fechamento.strftime("%H:%M")
+            raise RegraNegocioException(
+                f"REGRA 2 VIOLADA: O atendimento ({hora_inicio_str} - {hora_fim_str}) "
+                f"deve ocorrer inteiramente dentro do horário da clínica ({abertura} - {fechamento})."
+            )
 
     def incluir_atendimento(self):
         dados = self.__tela.pega_dados_atendimento()
