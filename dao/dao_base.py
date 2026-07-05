@@ -12,8 +12,8 @@ class DAOBase:
             if os.path.exists(self.__arquivo):
                 with open(self.__arquivo, 'rb') as f:
                     return pickle.load(f)
-        except Exception:
-            pass
+        except (OSError, EOFError, pickle.UnpicklingError):
+            return []
         return []
 
     def save_all(self, lista: list):
