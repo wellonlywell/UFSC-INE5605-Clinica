@@ -7,12 +7,14 @@ class TelaRelatorios:
 
     def tela_opcoes(self):
         layout = [
-            [sg.Text("RELATÓRIOS E INDICADORES", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
-            [sg.Button("1 - Clínicas com mais atendimentos", key="1", size=(40, 1), tooltip="Clínicas com maior número de atendimentos")],
-            [sg.Button("2 - Atendimentos mais caros/baratos", key="2", size=(40, 1), tooltip="Atendimentos mais caros e mais baratos")],
-            [sg.Button("3 - Procedimentos mais realizados", key="3", size=(40, 1), tooltip="Procedimentos mais realizados (populares)")],
-            [sg.Button("4 - Procedimentos mais caros/baratos", key="4", size=(40, 1), tooltip="Procedimentos mais caros e mais baratos")],
-            [sg.Button("0 - Voltar", key="0", size=(40, 1), tooltip="Retornar ao Menu Principal")],
+            [sg.Text("Relatórios e Indicadores", font=("Helvetica", 14))],
+            [sg.HSeparator()],
+            [sg.Button("1 - Clínicas com mais atendimentos", key="1", size=(55, 1))],
+            [sg.Button("2 - Atendimentos mais caros/baratos", key="2", size=(55, 1))],
+            [sg.Button("3 - Procedimentos mais realizados", key="3", size=(55, 1))],
+            [sg.Button("4 - Procedimentos mais caros/baratos", key="4", size=(55, 1))],
+            [sg.HSeparator()],
+            [sg.Button("0 - Retornar ao Menu Principal", key="0", size=(55, 1))],
         ]
         window = sg.Window("Relatórios e Indicadores", layout, modal=True)
         opcao = 0
