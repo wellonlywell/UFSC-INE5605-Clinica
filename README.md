@@ -89,7 +89,7 @@ A classe abstrata `Pessoa` foi desenvolvida além do mínimo exigido pelo enunci
 ---
 
 ## 🏗️ Arquitetura
-´´´text
+´´´
 SisClinica/
  ├── main.py # Ponto de entrada
  ├── requirements.txt # Dependências (FreeSimpleGUI)
