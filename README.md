@@ -89,9 +89,6 @@ A classe abstrata `Pessoa` foi desenvolvida além do mínimo exigido pelo enunci
 ---
 
 ## 🏗️ Arquitetura
-
-
-## 🏗️ Arquitetura
 SisClinica/
  ├── main.py # Ponto de entrada
  ├── requirements.txt # Dependências (FreeSimpleGUI)
@@ -140,14 +137,14 @@ SisClinica/
  │ └── controlador_tipo_atendimento.py
  ├── dao/ # Persistência (pickle) — ver seção própria abaixo
  │ ├── dao_base.py # Classe genérica: get_all() / save_all()
- │ ├── clinica_dao.py
- │ ├── tipo_atendimento_dao.py
- │ ├── atendimento_dao.py
- │ ├── pagamento_dao.py
- │ ├── paciente_dao.py
- │ ├── profissional_dao.py
- │ ├── responsavel_dao.py
- │ └── catalogo_procedimento_dao.py
+ │ ├── dao_clinica.py
+ │ ├── dao_tipo_atendimento.py
+ │ ├── dao_atendimento.py
+ │ ├── dao_pagamento.py
+ │ ├── dao_paciente.py
+ │ ├── dao_profissional.py
+ │ ├── dao_responsavel.py
+ │ └── dao_catalogo_procedimento.py
  ├── dados/ # Gerado automaticamente — arquivos .pkl
  └── exceptions/ # Exceções customizadas
  ├── dado_invalido_exception.py
@@ -177,14 +174,14 @@ O sistema usa o padrão **DAO (Data Access Object)** para gravar os cadastros em
 
 | Entidade | DAO | Status |
 |---|---|---|
-| Clínica | `clinica_dao.py` | ✅ Implementado |
-| Tipo de Atendimento | `tipo_atendimento_dao.py` | ✅ Implementado |
-| Atendimento | `atendimento_dao.py` | ✅ Implementado |
-| Pagamento | `pagamento_dao.py` | ✅ Implementado |
-| Paciente | `paciente_dao.py` | ✅ Implementado |
-| Profissional | `profissional_dao.py` | ✅ Implementado |
-| Responsável | `responsavel_dao.py` | ✅ Implementado |
-| Catálogo de Procedimentos | `catalogo_procedimento_dao.py` | ✅ Implementado |
+| Clínica | `dao_clinica.py` | ✅ Implementado |
+| Tipo de Atendimento | `dao_tipo_atendimento.py` | ✅ Implementado |
+| Atendimento | `dao_atendimento_.py` | ✅ Implementado |
+| Pagamento | `dao_pagamento.py` | ✅ Implementado |
+| Paciente | `dao_paciente.py` | ✅ Implementado |
+| Profissional | `dao_profissional.py` | ✅ Implementado |
+| Responsável | `dao_responsavel.py` | ✅ Implementado |
+| Catálogo de Procedimentos | `dao_catalogo_procedimento.py` | ✅ Implementado |
 
 Os arquivos `.pkl` ficam em `dados/`, criada automaticamente na primeira execução. Cada operação de cadastro (incluir, alterar, excluir, vincular) já salva no disco imediatamente — não existe um passo separado de "salvar antes de sair", o que também protege contra perda de dados em caso de fechamento abrupto do programa.
 
