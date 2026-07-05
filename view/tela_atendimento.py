@@ -46,6 +46,13 @@ class TelaAtendimento:
             if event in ('1', '2', '3', '4', '5'):
                 window.close()
                 return int(event)
+    def exibir_buffer_atendimentos(self):
+        """Exibe e limpa o buffer quando a listagem é standalone (sem seleção)."""
+        if not self.__lista_buffer:
+            return
+        texto = '\n'.join(self.__lista_buffer)
+        self.__lista_buffer.clear()
+        sg.popup_scrolled(texto, title='Atendimentos Cadastrados')
 
     def pega_dados_atendimento(self) -> dict:
         """Abre formulário para cadastrar um novo atendimento.
@@ -92,17 +99,21 @@ class TelaAtendimento:
                     'valor':           valor,
                 }
 
-    def pega_dados_alteracao(self) -> dict:
+    def pega_dados_alteracao(self, atendimento) -> dict:
         """Abre formulário para alterar data, hora e valor de um atendimento já cadastrado.
-        Retorna dict com as chaves: data, hora_inicio, hora_fim, valor.
-        Em caso de cancelamento, retorna dict com valores vazios/zero.
+        Pré-preenche os campos com os valores atuais do atendimento.
         """
+        data_atual        = atendimento.data.strftime('%d/%m/%Y')
+        hora_inicio_atual = atendimento.hora_inicio.strftime('%H:%M')
+        hora_fim_atual    = atendimento.hora_fim.strftime('%H:%M')
+        valor_atual       = str(atendimento.valor)
+
         layout = [
             [sg.Text('Alterar Atendimento', font=('Helvetica', 12))],
-            [sg.Text('Nova Data (DD/MM/AAAA):',  size=(25, 1)), sg.Input(key='data',        size=(15, 1))],
-            [sg.Text('Nova Hora Início (HH:MM):', size=(25, 1)), sg.Input(key='hora_inicio', size=(10, 1))],
-            [sg.Text('Nova Hora Fim (HH:MM):',   size=(25, 1)), sg.Input(key='hora_fim',    size=(10, 1))],
-            [sg.Text('Novo Valor Base (R$):',     size=(25, 1)), sg.Input(key='valor',       size=(12, 1))],
+            [sg.Text('Nova Data (DD/MM/AAAA):',  size=(25, 1)), sg.Input(data_atual,        key='data',        size=(15, 1))],
+            [sg.Text('Nova Hora Início (HH:MM):', size=(25, 1)), sg.Input(hora_inicio_atual, key='hora_inicio', size=(10, 1))],
+            [sg.Text('Nova Hora Fim (HH:MM):',   size=(25, 1)), sg.Input(hora_fim_atual,    key='hora_fim',    size=(10, 1))],
+            [sg.Text('Novo Valor Base (R$):',     size=(25, 1)), sg.Input(valor_atual,       key='valor',       size=(12, 1))],
             [sg.HSeparator()],
             [sg.Button('Confirmar'), sg.Button('Cancelar')],
         ]
@@ -124,7 +135,6 @@ class TelaAtendimento:
                     'hora_fim':    values['hora_fim'].strip(),
                     'valor':       valor,
                 }
-
     def mostra_atendimento(self, atendimento):
         """Exibe todos os dados de um atendimento em uma janela popup."""
         procs = atendimento.procedimentos

@@ -165,8 +165,7 @@ class ControladorAtendimento:
                 )
                 return
 
-        dados = self.__tela.pega_dados_alteracao()
-
+        dados = self.__tela.pega_dados_alteracao(atendimento)
         try:
             self.__verifica_regra2(atendimento.clinica, dados["hora_inicio"], dados["hora_fim"])
         except RegraNegocioException as e:
