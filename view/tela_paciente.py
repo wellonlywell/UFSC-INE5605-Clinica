@@ -22,12 +22,14 @@ class TelaPaciente:
 
     def tela_opcoes(self):
         layout = [
-            [sg.Text("MENU PACIENTES", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
-            [sg.Button("1 - Incluir", key="1", size=(30, 1), tooltip="Cadastrar novo paciente")],
-            [sg.Button("2 - Alterar", key="2", size=(30, 1), tooltip="Editar paciente já cadastrado")],
-            [sg.Button("3 - Listar", key="3", size=(30, 1), tooltip="Exibir lista de todos os pacientes cadastrados")],
-            [sg.Button("4 - Excluir", key="4", size=(30, 1), tooltip="Remover um paciente do sistema")],
-            [sg.Button("0 - Voltar", key="0", size=(30, 1), tooltip="Retornar ao Menu Principal")],
+            [sg.Text("Gerenciar Pacientes", font=("Helvetica", 14))],
+            [sg.HSeparator()],
+            [sg.Button("1 - Incluir: cadastrar novo paciente", key="1", size=(40, 1))],
+            [sg.Button("2 - Alterar: editar paciente já cadastrado", key="2", size=(40, 1))],
+            [sg.Button("3 - Listar: exibir pacientes cadastrados", key="3", size=(40, 1))],
+            [sg.Button("4 - Excluir: remover paciente do sistema", key="4", size=(40, 1))],
+            [sg.HSeparator()],
+            [sg.Button("0 - Retornar ao Menu Principal", key="0", size=(40, 1))],
         ]
         window = sg.Window("Menu Pacientes", layout, modal=True)
         opcao = 0
@@ -44,36 +46,63 @@ class TelaPaciente:
         window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return opcao
 
-    def pega_dados_paciente(self):
+    def pega_dados_paciente(self, operacao: str = "INCLUIR", paciente=None):
+        cpf = paciente.cpf if paciente is not None else ""
+        nome_civil = paciente.nome_civil if paciente is not None else ""
+        nome_social = (paciente.nome_social or "") if paciente is not None else ""
+        celular = paciente.celular if paciente is not None else ""
+        data_nascimento = (
+            paciente.data_nascimento.strftime("%d/%m/%Y")
+            if paciente is not None
+            else ""
+        )
+        pcd = paciente.pcd if paciente is not None else False
+        identidade_genero = (paciente.identidade_genero or "") if paciente is not None else ""
+
+        cor_raca_atual = "Não informar"
+        if paciente is not None and paciente.cor_raca is not None:
+            mapa_cor_raca = {
+                "Branca": "Branca",
+                "Preta": "Preta",
+                "Parda": "Parda",
+                "Amarela": "Amarela",
+                "Indígena": "Indígena",
+                "Não Informado": "Não informar",
+            }
+            cor_raca_atual = mapa_cor_raca.get(paciente.cor_raca.value, "Não informar")
+
+        titulo = f"{operacao} PACIENTE"
         layout = [
+            [sg.Text(titulo, font=("Arial", 12, "bold"), justification="center", expand_x=True)],
             [sg.Text("CPF (11 dígitos):")],
-            [sg.Input(key="-CPF-", size=(40, 1))],
+            [sg.Input(default_text=cpf, key="-CPF-", size=(40, 1))],
             [sg.Text("Nome Civil:")],
-            [sg.Input(key="-NOME-CIVIL-", size=(40, 1))],
-            [sg.Text("Nome Social (opcional):")],
-            [sg.Input(key="-NOME-SOCIAL-", size=(40, 1))],
+            [sg.Input(default_text=nome_civil, key="-NOME-CIVIL-", size=(40, 1))],
+            [sg.Text("Nome Social (opcional):", font=("Helvetica", 10, "bold"))],
+            [sg.Input(default_text=nome_social, key="-NOME-SOCIAL-", size=(40, 1))],
+            [sg.Text("Se preenchido, este nome substitui o nome civil em todas as telas e relatórios do sistema.", font=("Helvetica", 8), text_color="#CFCFCF")],
             [sg.Text("Celular:")],
-            [sg.Input(key="-CELULAR-", size=(40, 1))],
+            [sg.Input(default_text=celular, key="-CELULAR-", size=(40, 1))],
             [sg.Text("Data de Nascimento (DD/MM/AAAA):")],
-            [sg.Input(key="-DATA-NASCIMENTO-", size=(40, 1))],
+            [sg.Input(default_text=data_nascimento, key="-DATA-NASCIMENTO-", size=(40, 1))],
             [sg.Text("PCD?")],
             [
-                sg.Radio("Sim", "PCD", key="-PCD-S-", default=False),
-                sg.Radio("Não", "PCD", key="-PCD-N-", default=True),
+                sg.Radio("Sim", "PCD", key="-PCD-S-", default=pcd),
+                sg.Radio("Não", "PCD", key="-PCD-N-", default=not pcd),
             ],
             [sg.Text("Cor/Raça (IBGE):")],
             [sg.Combo(
                 list(self.__OPCOES_COR_RACA.keys()),
-                default_value="Não informar",
+                default_value=cor_raca_atual,
                 key="-COR-RACA-",
                 readonly=True,
                 size=(30, 1),
             )],
             [sg.Text("Identidade de Gênero (opcional):")],
-            [sg.Input(key="-IDENTIDADE-GENERO-", size=(40, 1))],
+            [sg.Input(default_text=identidade_genero, key="-IDENTIDADE-GENERO-", size=(40, 1))],
             [sg.Button("Confirmar", key="-CONFIRMAR-"), sg.Button("Cancelar", key="-CANCELAR-")],
         ]
-        window = sg.Window("Dados do Paciente", layout, modal=True)
+        window = sg.Window(titulo, layout, modal=True)
         dados = {
             "cpf": "",
             "nome_civil": "",
@@ -128,7 +157,6 @@ class TelaPaciente:
 
         linhas = [
             f"CPF: {paciente.cpf}",
-            f"Nome: {paciente.nome}",
             f"Celular: {paciente.celular}",
             f"Idade: {paciente.idade} anos (Nascimento: {data_str})",
             f"PCD: {'Sim' if paciente.pcd else 'Não'}",
@@ -141,8 +169,11 @@ class TelaPaciente:
             linhas.append(f"Responsável Legal: {paciente.responsavel.nome}")
         linhas.append("-" * 40)
 
-        self.__conteudo_lista += "\n".join(linhas) + "\n"
-        self.__janela_lista["-LISTA-"].update(self.__conteudo_lista)
+        lista = self.__janela_lista["-LISTA-"]
+        lista.print(linhas[0])
+        lista.print(f"Nome: {paciente.nome}", font=("Courier New", 10, "bold"))
+        for linha in linhas[1:]:
+            lista.print(linha)
         self.__janela_lista.refresh()
 
     def seleciona_paciente(self) -> str:
@@ -164,6 +195,22 @@ class TelaPaciente:
 
         window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return cpf
+
+    def confirma_atualizar_responsavel(self, nome_responsavel: str, nome_paciente: str) -> bool:
+        layout = [
+            [sg.Text(f"Deseja também atualizar os dados do responsável {nome_responsavel} (responsável de {nome_paciente})?")],
+            [sg.Button("Sim", key="-SIM-"), sg.Button("Não", key="-NAO-")],
+        ]
+        window = sg.Window("SisClínica - Pacientes", layout, modal=True)
+
+        while True:
+            event, _ = window.read()
+            if event in (sg.WIN_CLOSED, "-NAO-"):
+                window.close()
+                return False
+            if event == "-SIM-":
+                window.close()
+                return True
 
     def mostra_mensagem(self, mensagem: str):
         sg.popup(mensagem, title="SisClínica - Pacientes")

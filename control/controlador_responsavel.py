@@ -35,7 +35,7 @@ class ControladorResponsavel:
 
     def incluir_responsavel(self):
         """Método chamado pelo menu (TelaResponsavel) para cadastrar manualmente."""
-        dados = self.__tela_responsavel.pega_dados_responsavel()
+        dados = self.__tela_responsavel.pega_dados_responsavel("INCLUIR")
         
         if self.buscar_por_cpf(dados["cpf"]) is not None:
             raise RegraNegocioException("Já existe um responsável cadastrado com este CPF.")
@@ -65,9 +65,20 @@ class ControladorResponsavel:
         if responsavel is None:
             self.__tela_responsavel.mostra_mensagem("Responsável não encontrado.")
             return
-            
-        dados = self.__tela_responsavel.pega_dados_responsavel()
-        
+
+        self.__alterar_responsavel(responsavel)
+
+    def alterar_responsavel_por_cpf(self, cpf: str):
+        responsavel = self.buscar_por_cpf(cpf)
+        if responsavel is None:
+            self.__tela_responsavel.mostra_mensagem("Responsável não encontrado.")
+            return
+
+        self.__alterar_responsavel(responsavel)
+
+    def __alterar_responsavel(self, responsavel):
+        dados = self.__tela_responsavel.pega_dados_responsavel("ALTERAR", responsavel)
+
         cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
         responsavel.nome_civil = dados["nome_civil"]
         responsavel.nome_social = dados["nome_social"]
@@ -76,7 +87,7 @@ class ControladorResponsavel:
         responsavel.pcd = dados["pcd"]
         responsavel.cor_raca = cor_raca
         responsavel.identidade_genero = dados["identidade_genero"]
-        
+
         self.__persistir()  # T2: grava no disco
         self.__tela_responsavel.mostra_mensagem("Responsável alterado com sucesso!")
 
@@ -90,9 +101,29 @@ class ControladorResponsavel:
         if responsavel is None:
             self.__tela_responsavel.mostra_mensagem("Responsável não encontrado.")
             return
+
+        pacientes = self.__controlador_sistema.controlador_paciente.get_pacientes()
+        for paciente in pacientes:
+            if paciente.responsavel is responsavel or (
+                paciente.responsavel is not None and paciente.responsavel.cpf == responsavel.cpf
+            ):
+                self.__tela_responsavel.mostra_mensagem(
+                    "Não é possível excluir: responsável vinculado a um ou mais pacientes."
+                )
+                return
+
         self.__responsaveis.remove(responsavel)
         self.__persistir()  # T2: grava no disco
         self.__tela_responsavel.mostra_mensagem("Responsável removido com sucesso!")
+
+    def remover_responsavel_por_cpf(self, cpf: str) -> bool:
+        responsavel = self.buscar_por_cpf(cpf)
+        if responsavel is None:
+            return False
+
+        self.__responsaveis.remove(responsavel)
+        self.__persistir()
+        return True
 
     def listar_responsaveis(self):
         if not self.__responsaveis:

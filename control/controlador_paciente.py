@@ -48,7 +48,7 @@ class ControladorPaciente:
 
     def incluir_paciente(self):
         
-        dados = self.__tela_paciente.pega_dados_paciente()
+        dados = self.__tela_paciente.pega_dados_paciente("INCLUIR")
 
         if self.buscar_por_cpf(dados["cpf"]) is not None:
             self.__tela_paciente.mostra_mensagem("Já existe um paciente com este CPF.")
@@ -92,7 +92,7 @@ class ControladorPaciente:
     def __cadastrar_responsavel(self):
         
         try:
-            dados = self.__tela_responsavel.pega_dados_responsavel()
+            dados = self.__tela_responsavel.pega_dados_responsavel("INCLUIR")
             cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
             responsavel = Responsavel(
                 nome_civil=dados["nome_civil"],
@@ -120,7 +120,7 @@ class ControladorPaciente:
         if paciente is None:
             self.__tela_paciente.mostra_mensagem("Paciente não encontrado.")
             return
-        dados = self.__tela_paciente.pega_dados_paciente()
+        dados = self.__tela_paciente.pega_dados_paciente("ALTERAR", paciente)
         try:
             cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
             data_anterior = paciente.data_nascimento
@@ -141,6 +141,16 @@ class ControladorPaciente:
                 return # T2: não persiste, nada mudou
             self.__persistir() # T2: grava no disco
             self.__tela_paciente.mostra_mensagem("Paciente alterado com sucesso!")
+
+            if not paciente.maior_de_idade and paciente.responsavel is not None:
+                atualizar_responsavel = self.__tela_paciente.confirma_atualizar_responsavel(
+                    paciente.responsavel.nome,
+                    paciente.nome
+                )
+                if atualizar_responsavel:
+                    self.__controlador_sistema.controlador_responsavel.alterar_responsavel_por_cpf(
+                        paciente.responsavel.cpf
+                    )
         except DadoInvalidoException as e:
             self.__tela_paciente.mostra_mensagem(f"Erro nos dados: {e}")
 
@@ -163,9 +173,17 @@ class ControladorPaciente:
                     "Não é possível excluir este paciente, pois ele já possui atendimento registrado."
                 )
                 return
-            
+
+        responsavel = paciente.responsavel
+
         self.__pacientes.remove(paciente)
         self.__persistir() # T2: grava no disco
+
+        if responsavel is not None:
+            self.__controlador_sistema.controlador_responsavel.remover_responsavel_por_cpf(
+                responsavel.cpf
+            )
+
         self.__tela_paciente.mostra_mensagem("Paciente removido com sucesso!")
 
     def listar_pacientes(self):

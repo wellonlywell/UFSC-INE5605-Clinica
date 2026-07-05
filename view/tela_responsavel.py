@@ -22,12 +22,14 @@ class TelaResponsavel:
 
     def tela_opcoes(self):
         layout = [
-            [sg.Text("MENU RESPONSÁVEIS", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
-            [sg.Button("1 - Incluir", key="1", size=(30, 1), tooltip="Cadastrar novo responsável")],
-            [sg.Button("2 - Alterar", key="2", size=(30, 1), tooltip="Editar responsável já cadastrado")],
-            [sg.Button("3 - Listar", key="3", size=(30, 1), tooltip="Exibir lista de todos os responsáveis cadastrados")],
-            [sg.Button("4 - Excluir", key="4", size=(30, 1), tooltip="Remover um responsável do sistema")],
-            [sg.Button("0 - Voltar", key="0", size=(30, 1), tooltip="Retornar ao Menu Principal")],
+            [sg.Text("Gerenciar Responsáveis", font=("Helvetica", 14))],
+            [sg.HSeparator()],
+            [sg.Button("1 - Incluir: cadastrar novo responsável", key="1", size=(40, 1))],
+            [sg.Button("2 - Alterar: editar responsável já cadastrado", key="2", size=(40, 1))],
+            [sg.Button("3 - Listar: exibir responsáveis cadastrados", key="3", size=(40, 1))],
+            [sg.Button("4 - Excluir: remover responsável do sistema", key="4", size=(40, 1))],
+            [sg.HSeparator()],
+            [sg.Button("0 - Retornar ao Menu Principal", key="0", size=(40, 1))],
         ]
         window = sg.Window("Menu Responsáveis", layout, modal=True)
         opcao = 0
@@ -44,36 +46,59 @@ class TelaResponsavel:
         window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return opcao
 
-    def pega_dados_responsavel(self):
+    def pega_dados_responsavel(self, operacao: str = "INCLUIR", responsavel=None):
+        cpf = responsavel.cpf if responsavel is not None else ""
+        nome_civil = responsavel.nome_civil if responsavel is not None else ""
+        nome_social = (responsavel.nome_social or "") if responsavel is not None else ""
+        celular = responsavel.celular if responsavel is not None else ""
+        parentesco = responsavel.parentesco if responsavel is not None else ""
+        pcd = responsavel.pcd if responsavel is not None else False
+        identidade_genero = (responsavel.identidade_genero or "") if responsavel is not None else ""
+
+        cor_raca_atual = "Não informar"
+        if responsavel is not None and responsavel.cor_raca is not None:
+            mapa_cor_raca = {
+                "Branca": "Branca",
+                "Preta": "Preta",
+                "Parda": "Parda",
+                "Amarela": "Amarela",
+                "Indígena": "Indígena",
+                "Não Informado": "Não informar",
+            }
+            cor_raca_atual = mapa_cor_raca.get(responsavel.cor_raca.value, "Não informar")
+
+        titulo = f"{operacao} RESPONSÁVEL"
         layout = [
+            [sg.Text(titulo, font=("Arial", 12, "bold"), justification="center", expand_x=True)],
             [sg.Text("CPF (apenas números):")],
-            [sg.Input(key="-CPF-", size=(40, 1))],
+            [sg.Input(default_text=cpf, key="-CPF-", size=(40, 1))],
             [sg.Text("Nome Civil:")],
-            [sg.Input(key="-NOME-CIVIL-", size=(40, 1))],
-            [sg.Text("Nome Social (opcional):")],
-            [sg.Input(key="-NOME-SOCIAL-", size=(40, 1))],
+            [sg.Input(default_text=nome_civil, key="-NOME-CIVIL-", size=(40, 1))],
+            [sg.Text("Nome Social (opcional):", font=("Helvetica", 10, "bold"))],
+            [sg.Input(default_text=nome_social, key="-NOME-SOCIAL-", size=(40, 1))],
+            [sg.Text("Se preenchido, este nome substitui o nome civil em todas as telas e relatórios do sistema.", font=("Helvetica", 8), text_color="#CFCFCF")],
             [sg.Text("Celular:")],
-            [sg.Input(key="-CELULAR-", size=(40, 1))],
+            [sg.Input(default_text=celular, key="-CELULAR-", size=(40, 1))],
             [sg.Text("Grau de Parentesco/Vínculo (Ex: Mãe, Pai, Tutor):")],
-            [sg.Input(key="-PARENTESCO-", size=(40, 1))],
+            [sg.Input(default_text=parentesco, key="-PARENTESCO-", size=(40, 1))],
             [sg.Text("PCD?")],
             [
-                sg.Radio("Sim", "PCD", key="-PCD-S-", default=False),
-                sg.Radio("Não", "PCD", key="-PCD-N-", default=True),
+                sg.Radio("Sim", "PCD", key="-PCD-S-", default=pcd),
+                sg.Radio("Não", "PCD", key="-PCD-N-", default=not pcd),
             ],
             [sg.Text("Cor/Raça (IBGE):")],
             [sg.Combo(
                 list(self.__OPCOES_COR_RACA.keys()),
-                default_value="Não informar",
+                default_value=cor_raca_atual,
                 key="-COR-RACA-",
                 readonly=True,
                 size=(30, 1),
             )],
             [sg.Text("Identidade de Gênero (opcional):")],
-            [sg.Input(key="-IDENTIDADE-GENERO-", size=(40, 1))],
+            [sg.Input(default_text=identidade_genero, key="-IDENTIDADE-GENERO-", size=(40, 1))],
             [sg.Button("Confirmar", key="-CONFIRMAR-"), sg.Button("Cancelar", key="-CANCELAR-")],
         ]
-        window = sg.Window("Dados do Responsável", layout, modal=True)
+        window = sg.Window(titulo, layout, modal=True)
         dados = {
             "cpf": "",
             "nome_civil": "",
