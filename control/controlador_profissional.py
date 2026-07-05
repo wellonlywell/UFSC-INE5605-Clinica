@@ -29,7 +29,7 @@ class ControladorProfissional:
                 self.__tela_profissional.mostra_mensagem(str(e))
 
     def incluir_profissional(self):
-        dados = self.__tela_profissional.pega_dados_profissional()
+        dados = self.__tela_profissional.pega_dados_profissional()        
         if self.buscar_por_cpf(dados["cpf"]) is not None:
             raise RegraNegocioException("Já existe um profissional cadastrado com este CPF.")
             
@@ -62,7 +62,7 @@ class ControladorProfissional:
             self.__tela_profissional.mostra_mensagem("Profissional não encontrado.")
             return
             
-        dados = self.__tela_profissional.pega_dados_profissional()        
+        dados = self.__tela_profissional.pega_dados_profissional(profissional)        
         
         cor_raca = self.__converter_cor_raca(dados["cor_raca_opcao"])
         profissional.nome_civil = dados["nome_civil"]

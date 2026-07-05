@@ -22,12 +22,14 @@ class TelaProfissional:
 
     def tela_opcoes(self):
         layout = [
-            [sg.Text("MENU PROFISSIONAIS", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
-            [sg.Button("1 - Incluir", key="1", size=(30, 1), tooltip="Cadastrar novo profissional")],
-            [sg.Button("2 - Alterar", key="2", size=(30, 1), tooltip="Editar profissional já cadastrado")],
-            [sg.Button("3 - Listar", key="3", size=(30, 1), tooltip="Exibir lista de todos os profissionais cadastrados")],
-            [sg.Button("4 - Excluir", key="4", size=(30, 1), tooltip="Remover um profissional do sistema")],
-            [sg.Button("0 - Voltar", key="0", size=(30, 1), tooltip="Retornar ao Menu Principal")],
+            [sg.Text("Gerenciar Profissionais", font=("Helvetica", 14))],
+            [sg.HSeparator()],
+            [sg.Button("1 - Incluir: cadastrar novo profissional", key="1", size=(40, 1))],
+            [sg.Button("2 - Alterar: editar profissional já cadastrado", key="2", size=(40, 1))],
+            [sg.Button("3 - Listar: exibir profissionais cadastrados", key="3", size=(40, 1))],
+            [sg.Button("4 - Excluir: remover profissional do sistema", key="4", size=(40, 1))],
+            [sg.HSeparator()],
+            [sg.Button("0 - Retornar ao Menu Principal", key="0", size=(40, 1))],
         ]
         window = sg.Window("Menu Profissionais", layout, modal=True)
         opcao = 0
@@ -44,35 +46,57 @@ class TelaProfissional:
         window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return opcao
 
-    def pega_dados_profissional(self):
+    def pega_dados_profissional(self, profissional=None):
+        cpf = profissional.cpf if profissional is not None else ""
+        nome_civil = profissional.nome_civil if profissional is not None else ""
+        nome_social = (profissional.nome_social or "") if profissional is not None else ""
+        celular = profissional.celular if profissional is not None else ""
+        registro = profissional.registro if profissional is not None else ""
+        especialidade = profissional.especialidade if profissional is not None else ""
+        pcd = profissional.pcd if profissional is not None else False
+        identidade_genero = (profissional.identidade_genero or "") if profissional is not None else ""
+
+        cor_raca_atual = "Não informar"
+        if profissional is not None and profissional.cor_raca is not None:
+            mapa_cor_raca = {
+                "Branca": "Branca",
+                "Preta": "Preta",
+                "Parda": "Parda",
+                "Amarela": "Amarela",
+                "Indígena": "Indígena",
+                "Não Informado": "Não informar",
+            }
+            cor_raca_atual = mapa_cor_raca.get(profissional.cor_raca.value, "Não informar")
+
         layout = [
             [sg.Text("CPF (11 dígitos):")],
-            [sg.Input(key="-CPF-", size=(40, 1))],
+            [sg.Input(default_text=cpf, key="-CPF-", size=(40, 1))],
             [sg.Text("Nome Civil:")],
-            [sg.Input(key="-NOME-CIVIL-", size=(40, 1))],
-            [sg.Text("Nome Social (opcional):")],
-            [sg.Input(key="-NOME-SOCIAL-", size=(40, 1))],
+            [sg.Input(default_text=nome_civil, key="-NOME-CIVIL-", size=(40, 1))],
+            [sg.Text("Nome Social (opcional):", font=("Helvetica", 10, "bold"))],
+            [sg.Input(default_text=nome_social, key="-NOME-SOCIAL-", size=(40, 1))],
+            [sg.Text("Se preenchido, este nome substitui o nome civil em todas as telas e relatórios do sistema.", font=("Helvetica", 8), text_color="#CFCFCF")],
             [sg.Text("Celular:")],
-            [sg.Input(key="-CELULAR-", size=(40, 1))],
+            [sg.Input(default_text=celular, key="-CELULAR-", size=(40, 1))],
             [sg.Text("Registro Profissional (Ex: CRM/SC 12345, COREN 6789):")],
-            [sg.Input(key="-REGISTRO-", size=(40, 1))],
+            [sg.Input(default_text=registro, key="-REGISTRO-", size=(40, 1))],
             [sg.Text("Especialidade Médica/Área (Ex: Clínico Geral, Pediatra):")],
-            [sg.Input(key="-ESPECIALIDADE-", size=(40, 1))],
+            [sg.Input(default_text=especialidade, key="-ESPECIALIDADE-", size=(40, 1))],
             [sg.Text("PCD?")],
             [
-                sg.Radio("Sim", "PCD", key="-PCD-S-", default=False),
-                sg.Radio("Não", "PCD", key="-PCD-N-", default=True),
+                sg.Radio("Sim", "PCD", key="-PCD-S-", default=pcd),
+                sg.Radio("Não", "PCD", key="-PCD-N-", default=not pcd),
             ],
             [sg.Text("Cor/Raça (IBGE):")],
             [sg.Combo(
                 list(self.__OPCOES_COR_RACA.keys()),
-                default_value="Não informar",
+                default_value=cor_raca_atual,
                 key="-COR-RACA-",
                 readonly=True,
                 size=(30, 1),
             )],
             [sg.Text("Identidade de Gênero (opcional):")],
-            [sg.Input(key="-IDENTIDADE-GENERO-", size=(40, 1))],
+            [sg.Input(default_text=identidade_genero, key="-IDENTIDADE-GENERO-", size=(40, 1))],
             [sg.Button("Confirmar", key="-CONFIRMAR-"), sg.Button("Cancelar", key="-CANCELAR-")],
         ]
         window = sg.Window("Dados do Profissional", layout, modal=True)
@@ -129,7 +153,6 @@ class TelaProfissional:
         linhas = [
             f"Registro Profissional: {profissional.registro}",
             f"Especialidade: {profissional.especialidade}",
-            f"Nome: {profissional.nome}",
             f"CPF: {profissional.cpf}",
             f"Celular: {profissional.celular}",
             f"PCD: {'Sim' if profissional.pcd else 'Não'}",
@@ -140,8 +163,12 @@ class TelaProfissional:
             linhas.append(f"Gênero: {profissional.identidade_genero}")
         linhas.append("-" * 40)
 
-        self.__conteudo_lista += "\n".join(linhas) + "\n"
-        self.__janela_lista["-LISTA-"].update(self.__conteudo_lista)
+        lista = self.__janela_lista["-LISTA-"]
+        lista.print(linhas[0])
+        lista.print(linhas[1])
+        lista.print(f"Nome: {profissional.nome}", font=("Courier New", 10, "bold"))
+        for linha in linhas[2:]:
+            lista.print(linha)
         self.__janela_lista.refresh()
 
     def seleciona_profissional(self) -> str:
