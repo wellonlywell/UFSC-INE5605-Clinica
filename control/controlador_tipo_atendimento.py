@@ -69,7 +69,7 @@ class ControladorTipoAtendimento:
         if tipo is None:
             self.__tela_tipo_atendimento.mostra_mensagem(f"O ID {id_buscado} não foi encontrado no sistema.")
             return
-        dados = self.__tela_tipo_atendimento.pega_dados_tipo_atendimento("ALTERAR")
+        dados = self.__tela_tipo_atendimento.pega_dados_tipo_atendimento("ALTERAR", tipo)
         if dados["descricao"].isdigit():
             self.__tela_tipo_atendimento.mostra_mensagem("Descrição inválida: não pode ser apenas números.")
             return

@@ -25,17 +25,18 @@ class TelaTipoAtendimento:
                 window.close()
                 return int(event)
 
-    def pega_dados_tipo_atendimento(self, operacao: str = 'INSERIR') -> dict:
+    def pega_dados_tipo_atendimento(self, operacao: str = 'INSERIR', tipo_atendimento=None) -> dict:
         """Abre formulário para inserir ou alterar a descrição de um tipo de atendimento.
         operacao: 'INSERIR' (padrão) ou 'ALTERAR' — afeta apenas o título da janela.
         Retorna dict com a chave 'descricao'.
         Em caso de cancelamento, retorna {'descricao': ''}.
         """
         titulo = f'{operacao} TIPO DE ATENDIMENTO'
+        descricao = tipo_atendimento.descricao if tipo_atendimento is not None else ''
         layout = [
             [sg.Text(titulo, font=('Helvetica', 12))],
             [sg.Text('Descrição (ex: Consulta, Retorno):')],
-            [sg.Input(key='descricao', size=(35, 1))],
+            [sg.Input(default_text=descricao, key='descricao', size=(35, 1))],
             [sg.HSeparator()],
             [sg.Button('Confirmar'), sg.Button('Cancelar')],
         ]
