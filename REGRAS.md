@@ -17,6 +17,21 @@ Os critérios abaixo correspondem aos itens utilizados na avaliação da Tarefa 
 | MVC correto | 1,0 |
 | **Total** | **10,0** |
 
+## Critérios de Avaliação da Tarefa 2 (INE5605)
+
+Os critérios abaixo correspondem aos itens utilizados na avaliação da Tarefa 2 da disciplina INE5605 — Desenvolvimento de Sistemas Orientados a Objetos I.
+
+| Critério | Peso |
+|-----------|:----:|
+| Cadastro de Pessoas, Clínicas e Tipos de Atendimento (CRUD) | 1,0 |
+| Registro de Atendimentos, Procedimentos e Pagamentos | 1,0 |
+| Geração de relatório(s) | 1,0 |
+| Qualidade da notação UML e consistência com o código | 2,0 |
+| Interface gráfica funcional | 2,0 |
+| Persistência em arquivo (padrão DAO) | 2,0 |
+| MVC e separação em camadas | 1,0 |
+| **Total** | **10,0** |
+
 ---
 
 ## Regras do Enunciado
@@ -88,3 +103,13 @@ Os procedimentos não pertencem a um profissional específico e podem ser solici
 
 O `ItemProcedimento` registra o profissional responsável pela solicitação do procedimento durante o atendimento.
 Essa informação preserva o histórico do procedimento dentro do atendimento e reflete a prática utilizada em clínicas e laboratórios, nos quais o profissional solicitante acompanha pedidos de exames, procedimentos e encaminhamentos.
+
+---
+
+## Regras específicas da Tarefa 2
+
+### Regra G — Persistência de dados
+Os dados cadastrados devem sobreviver ao fechamento do sistema. Cada operação de cadastro (incluir, alterar, excluir, vincular) é salva em disco imediatamente via padrão DAO com pickle, sem exigir um passo separado de "salvar antes de sair".
+
+### Regra H — Interface gráfica
+Nenhuma tela (`view/`) pode usar `input()` ou `print()` diretamente. Toda entrada e saída de dados deve ocorrer via componentes gráficos (FreeSimpleGUI).
