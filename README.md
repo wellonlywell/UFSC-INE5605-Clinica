@@ -89,7 +89,7 @@ A classe abstrata `Pessoa` foi desenvolvida além do mínimo exigido pelo enunci
 ---
 
 ## 🏗️ Arquitetura
-´´´
+```
 SisClinica/
 ├── main.py # Ponto de entrada
 ├── requirements.txt # Dependências (FreeSimpleGUI)
@@ -150,7 +150,7 @@ SisClinica/
 └── exceptions/ # Exceções customizadas
 ├── dado_invalido_exception.py
 └── regra_negocio_exception.py
-´´´
+```
 
 
 
@@ -179,7 +179,7 @@ O sistema usa o padrão **DAO (Data Access Object)** para gravar os cadastros em
 |---|---|---|
 | Clínica | `dao_clinica.py` | ✅ Implementado |
 | Tipo de Atendimento | `dao_tipo_atendimento.py` | ✅ Implementado |
-| Atendimento | `dao_atendimento_.py` | ✅ Implementado |
+| Atendimento | `dao_atendimento.py` | ✅ Implementado |
 | Pagamento | `dao_pagamento.py` | ✅ Implementado |
 | Paciente | `dao_paciente.py` | ✅ Implementado |
 | Profissional | `dao_profissional.py` | ✅ Implementado |
