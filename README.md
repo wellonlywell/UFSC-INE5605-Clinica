@@ -2,14 +2,14 @@
 
 # 🏥 SisClínica
 
-**Sistema de Gestão de Clínicas — Terminal**
+**Sistema de Gestão de Clínicas — Interface Gráfica**
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Arquitetura](https://img.shields.io/badge/Arquitetura-MVC-6B4FBB?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Concluído-28a745?style=for-the-badge)
 ![UFSC](https://img.shields.io/badge/UFSC-INE5605-003da5?style=for-the-badge)
 
-*Trabalho prático da disciplina INE5605 — Desenvolvimento de Sistemas Orientados a Objetos I*  
+*Trabalho prático da disciplina INE5605 — Desenvolvimento de Sistemas Orientados a Objetos I*
 *Universidade Federal de Santa Catarina — Semestre 2026/1*
 
 </div>
@@ -18,7 +18,7 @@
 
 ## 👩‍💻 Dupla
 
-**Estudantes:** Marcos Garcia Labadie e Well Christina Costa Sousa 
+**Estudantes:** Marcos Garcia Labadie e Well Christina Costa Sousa
 
 **Professores:** Lucas Machado da Palma e Vinícius Zanandrea
 
@@ -26,7 +26,7 @@
 
 ## 📋 Sobre o sistema
 
-O **SisClínica** é um sistema de gerenciamento de clínicas desenvolvido em **Python puro**, utilizando arquitetura **MVC** e execução totalmente via terminal.
+O **SisClínica** é um sistema de gerenciamento de clínicas desenvolvido em **Python**, utilizando arquitetura **MVC**, persistência em arquivo com padrão **DAO** e **interface gráfica** construída com **FreeSimpleGUI**.
 
 O sistema permite o gerenciamento de clínicas, pacientes, profissionais, tipos de atendimento, catálogo de procedimentos, atendimentos, pagamentos e emissão de relatórios gerenciais.
 
@@ -82,52 +82,77 @@ A classe abstrata `Pessoa` foi desenvolvida além do mínimo exigido pelo enunci
 
 ---
 
-## 📏 Principais regras de negócio
+## 📏 Regras de negócio
 
-| # | Regra |
-|---|---|
-| Regra 1 | Pacientes menores de 18 anos exigem responsável legal cadastrado. |
-| Regra 2 | Atendimentos devem ocorrer dentro do horário de funcionamento da clínica. |
-| Regra 3 | O pagamento deve ocorrer até a data do atendimento. |
-| Regra 4 | O sistema permite pagamentos parciais para um mesmo atendimento. |
-
-> **Observação:** A documentação completa das regras de negócio, critérios de avaliação e decisões de modelagem adotadas pela equipe encontra-se em [`REGRAS.md`](./REGRAS.md).
+> Para a lista completa de regras de negócio e critérios de avaliação, consulte [REGRAS.md](./REGRAS.md).
 
 ---
 
 ## 🏗️ Arquitetura
 
-```
+
+## 🏗️ Arquitetura
 SisClinica/
-├── main.py                          # Ponto de entrada
-├── model/                           # Entidades e regras de validação
-│   ├── Pessoa.py                    # Classe abstrata 
-│   ├── Paciente.py
-│   ├── Profissional.py
-│   ├── Responsavel.py               
-│   ├── Clinica.py
-│   ├── TipoAtendimento.py
-│   ├── Atendimento.py
-│   ├── ItemProcedimento.py          # Composição com Atendimento
-│   ├── CatalogoProcedimento.py
-│   ├── Pagamento.py                 # Classe abstrata 
-│   ├── PagamentoDinheiro.py
-│   ├── PagamentoPix.py
-│   ├── PagamentoCartao.py
-│   └── CorRaca.py                   # Enum com categorias IBGE
-├── view/                            # Telas (apenas input/print)
-├── control/                         # Controladores (lógica e ponte MVC)
-├── dao/                             # Persistência (pickle) — ver seção própria abaixo
-│   ├── dao_base.py                  # Classe genérica: get_all() / save_all()
-│   ├── clinica_dao.py
-│   ├── tipo_atendimento_dao.py
-│   ├── atendimento_dao.py
-│   └── pagamento_dao.py
-├── dados/                           # Gerado automaticamente — arquivos .pkl
-└── exceptions/                      # Exceções customizadas
-    ├── dado_invalido_exception.py
-    └── regra_negocio_exception.py
-```
+ ├── main.py # Ponto de entrada
+ ├── requirements.txt # Dependências (FreeSimpleGUI)
+ ├── README.md
+ ├── REGRAS.md
+ ├── diagrama_SisClinica.png # Diagrama UML
+ ├── diagrama_SisClinica.svg # Diagrama UML (vetorial)
+ ├── assets/ # Ícone da aplicação
+ │ └── icone_cruz_arcoiris.ico
+ ├── model/ # Entidades e regras de validação
+ │ ├── Pessoa.py # Classe abstrata
+ │ ├── Paciente.py
+ │ ├── Profissional.py
+ │ ├── Responsavel.py
+ │ ├── Clinica.py
+ │ ├── TipoAtendimento.py
+ │ ├── Atendimento.py
+ │ ├── ItemProcedimento.py # Composição com Atendimento
+ │ ├── CatalogoProcedimento.py
+ │ ├── Pagamento.py # Classe abstrata
+ │ ├── PagamentoDinheiro.py
+ │ ├── PagamentoPix.py
+ │ ├── PagamentoCartao.py
+ │ └── CorRaca.py # Enum com categorias IBGE
+ ├── view/ # Telas gráficas (FreeSimpleGUI)
+ │ ├── tela_atendimento.py
+ │ ├── tela_catalogo_procedimento.py
+ │ ├── tela_clinica.py
+ │ ├── tela_paciente.py
+ │ ├── tela_pagamento.py
+ │ ├── tela_profissional.py
+ │ ├── tela_relatorio.py
+ │ ├── tela_responsavel.py
+ │ ├── tela_sistema.py
+ │ └── tela_tipo_atendimento.py
+ ├── control/ # Controladores (lógica e ponte MVC)
+ │ ├── controlador_atendimento.py
+ │ ├── controlador_catalogo_procedimento.py
+ │ ├── controlador_clinica.py
+ │ ├── controlador_paciente.py
+ │ ├── controlador_pagamento.py
+ │ ├── controlador_profissional.py
+ │ ├── controlador_relatorios.py
+ │ ├── controlador_responsavel.py
+ │ ├── controlador_sistema.py
+ │ └── controlador_tipo_atendimento.py
+ ├── dao/ # Persistência (pickle) — ver seção própria abaixo
+ │ ├── dao_base.py # Classe genérica: get_all() / save_all()
+ │ ├── clinica_dao.py
+ │ ├── tipo_atendimento_dao.py
+ │ ├── atendimento_dao.py
+ │ ├── pagamento_dao.py
+ │ ├── paciente_dao.py
+ │ ├── profissional_dao.py
+ │ ├── responsavel_dao.py
+ │ └── catalogo_procedimento_dao.py
+ ├── dados/ # Gerado automaticamente — arquivos .pkl
+ └── exceptions/ # Exceções customizadas
+ ├── dado_invalido_exception.py
+ └── regra_negocio_exception.py
+
 
 ### Relações UML implementadas
 
@@ -156,20 +181,28 @@ O sistema usa o padrão **DAO (Data Access Object)** para gravar os cadastros em
 | Tipo de Atendimento | `tipo_atendimento_dao.py` | ✅ Implementado |
 | Atendimento | `atendimento_dao.py` | ✅ Implementado |
 | Pagamento | `pagamento_dao.py` | ✅ Implementado |
-| Paciente / Profissional / Responsável / Catálogo de Procedimentos | — | ⏳ Ainda não implementado nesta etapa |
+| Paciente | `paciente_dao.py` | ✅ Implementado |
+| Profissional | `profissional_dao.py` | ✅ Implementado |
+| Responsável | `responsavel_dao.py` | ✅ Implementado |
+| Catálogo de Procedimentos | `catalogo_procedimento_dao.py` | ✅ Implementado |
 
 Os arquivos `.pkl` ficam em `dados/`, criada automaticamente na primeira execução. Cada operação de cadastro (incluir, alterar, excluir, vincular) já salva no disco imediatamente — não existe um passo separado de "salvar antes de sair", o que também protege contra perda de dados em caso de fechamento abrupto do programa.
 
-**Detalhe de implementação:** como cada entidade é salva em um arquivo próprio, mas `Atendimento` referencia objetos `Clinica`/`TipoAtendimento` e `Pagamento` referencia `Atendimento`, o sistema reconecta essas referências aos objetos oficiais logo após carregar os dados (em `__revincular_referencias()`, dentro de `controlador_atendimento.py` e `controlador_pagamento.py`). Sem isso, comparações como "este atendimento já tem pagamento?" voltariam a falhar depois de reabrir o programa, mesmo com os dados corretos salvos em disco. Paciente e Profissional ainda não entram nessa reconexão, pois seus DAOs estão fora do escopo desta etapa — quando forem implementados, basta seguir o mesmo padrão.
+**Detalhe de implementação:** como cada entidade é salva em um arquivo próprio, mas há objetos que referenciam outros (ex: `Atendimento` referencia `Clinica`/`TipoAtendimento`, `Pagamento` referencia `Atendimento`), o sistema reconecta essas referências aos objetos oficiais logo após carregar os dados, via `__revincular_referencias()` nos controladores correspondentes. Sem isso, comparações de identidade (ex: "este atendimento já tem pagamento?") voltariam a falhar depois de reabrir o programa, mesmo com os dados corretos salvos em disco.
 
 ---
 
 ## 🚀 Como executar
 
-**Pré-requisitos:** Python 3.10 ou superior — sem dependências externas.
+**Pré-requisitos:** Python 3.10 ou superior
 
+1. Instale as dependências:
 ```bash
-python main.py
+   pip install -r requirements.txt
+```
+2. Execute o sistema:
+```bash
+   python main.py
 ```
 
 ---
@@ -182,10 +215,3 @@ O diagrama de classes do projeto está disponível em dois formatos:
 - [`diagrama_SisClinica.svg`](./diagrama_SisClinica.svg) — versão vetorial para ampliação sem perda de qualidade.
 
 <div align="center">
-
-**SisClínica**
-
-Projeto desenvolvido para a disciplina **INE5605 — Desenvolvimento de Sistemas Orientados a Objetos I**  
-Universidade Federal de Santa Catarina (UFSC)
-
-</div>
