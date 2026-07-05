@@ -166,6 +166,9 @@ class ControladorAtendimento:
                 return
 
         dados = self.__tela.pega_dados_alteracao(atendimento)
+        if dados["data"] == '':
+            self.__tela.mostra_mensagem("Operação cancelada.")
+            return
         try:
             self.__verifica_regra2(atendimento.clinica, dados["hora_inicio"], dados["hora_fim"])
         except RegraNegocioException as e:
@@ -247,14 +250,6 @@ class ControladorAtendimento:
         for i, atendimento in enumerate(self.__atendimentos):
             self.__tela.mostra_lista_atendimento(i, atendimento)
         self.__tela.exibir_buffer_atendimentos()  # NOVO
-
-    def exibir_buffer_atendimentos(self):
-        """Exibe e limpa o buffer quando a listagem é standalone (sem seleção)."""
-        if not self.__lista_buffer:
-            return
-        texto = '\n\n'.join(self.__lista_buffer)
-        self.__lista_buffer.clear()
-        sg.popup_scrolled(texto, title='Atendimentos Cadastrados')
 
     def __buscar_por_indice(self, indice: int):
         """Retorna o atendimento na posição informada, ou None."""
