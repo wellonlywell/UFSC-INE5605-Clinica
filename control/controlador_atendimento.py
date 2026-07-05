@@ -247,6 +247,15 @@ class ControladorAtendimento:
             return
         for i, atendimento in enumerate(self.__atendimentos):
             self.__tela.mostra_lista_atendimento(i, atendimento)
+        self.__tela.exibir_buffer_atendimentos()  # NOVO
+
+    def exibir_buffer_atendimentos(self):
+        """Exibe e limpa o buffer quando a listagem é standalone (sem seleção)."""
+        if not self.__lista_buffer:
+            return
+        texto = '\n\n'.join(self.__lista_buffer)
+        self.__lista_buffer.clear()
+        sg.popup_scrolled(texto, title='Atendimentos Cadastrados')
 
     def __buscar_por_indice(self, indice: int):
         """Retorna o atendimento na posição informada, ou None."""
