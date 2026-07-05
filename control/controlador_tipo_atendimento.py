@@ -1,6 +1,7 @@
 from model.TipoAtendimento import TipoAtendimento
 from view.tela_tipo_atendimento import TelaTipoAtendimento
 from exceptions.dado_invalido_exception import DadoInvalidoException
+from exceptions.regra_negocio_exception import RegraNegocioException
 from dao.dao_tipo_atendimento import TipoAtendimentoDAO  # NOVO (Tarefa 2)
 
 
@@ -28,17 +29,20 @@ class ControladorTipoAtendimento:
 
     def abre_tela(self):
         while True:
-            opcao = self.__tela_tipo_atendimento.tela_opcoes()
-            if opcao == 1:
-                self.incluir_tipo_atendimento()
-            elif opcao == 2:
-                self.alterar_tipo_atendimento()
-            elif opcao == 3:
-                self.listar_tipos_atendimento()
-            elif opcao == 4:
-                self.excluir_tipo_atendimento()
-            elif opcao == 0:
-                break
+            try:
+                opcao = self.__tela_tipo_atendimento.tela_opcoes()
+                if opcao == 1:
+                    self.incluir_tipo_atendimento()
+                elif opcao == 2:
+                    self.alterar_tipo_atendimento()
+                elif opcao == 3:
+                    self.listar_tipos_atendimento()
+                elif opcao == 4:
+                    self.excluir_tipo_atendimento()
+                elif opcao == 0:
+                    break
+            except (DadoInvalidoException, RegraNegocioException) as e:
+                self.__tela_tipo_atendimento.mostra_mensagem(str(e))
 
     def incluir_tipo_atendimento(self):
         dados = self.__tela_tipo_atendimento.pega_dados_tipo_atendimento()
