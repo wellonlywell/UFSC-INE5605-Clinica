@@ -14,12 +14,14 @@ class TelaCatalogoProcedimento:
 
     def tela_opcoes(self):
         layout = [
-            [sg.Text("CATÁLOGO DE PROCEDIMENTOS", font=("Arial", 12, "bold"), justification="center", expand_x=True)],
-            [sg.Button("1 - Incluir", key="1", size=(30, 1), tooltip="Cadastrar novo procedimento no catálogo")],
-            [sg.Button("2 - Alterar", key="2", size=(30, 1), tooltip="Editar procedimento já cadastrado")],
-            [sg.Button("3 - Listar", key="3", size=(30, 1), tooltip="Exibir lista de todos os procedimentos cadastrados")],
-            [sg.Button("4 - Excluir", key="4", size=(30, 1), tooltip="Remover um procedimento do catálogo")],
-            [sg.Button("0 - Voltar", key="0", size=(30, 1), tooltip="Retornar ao Menu Principal")],
+            [sg.Text("Catálogo de Procedimentos", font=("Helvetica", 14))],
+            [sg.HSeparator()],
+            [sg.Button("1 - Incluir: cadastrar novo procedimento", key="1", size=(40, 1))],
+            [sg.Button("2 - Alterar: editar procedimento já cadastrado", key="2", size=(40, 1))],
+            [sg.Button("3 - Listar: exibir procedimentos cadastrados", key="3", size=(40, 1))],
+            [sg.Button("4 - Excluir: remover procedimento do catálogo", key="4", size=(40, 1))],
+            [sg.HSeparator()],
+            [sg.Button("0 - Retornar ao Menu Principal", key="0", size=(40, 1))],
         ]
         window = sg.Window("Menu Catálogo de Procedimentos", layout, modal=True)
         opcao = 0
@@ -36,16 +38,20 @@ class TelaCatalogoProcedimento:
         window.close()  # T2: fecha antes de retornar, mesmo papel do wait_window() do tkinter
         return opcao
 
-    def pega_dados_procedimento(self):
+    def pega_dados_procedimento(self, operacao: str = "INCLUIR", procedimento=None):
+        titulo = f"{operacao} PROCEDIMENTO"
+        descricao_default = procedimento.descricao if procedimento is not None else ""
+        custo_default = str(procedimento.custo) if procedimento is not None else ""
         layout = [
+            [sg.Text(titulo, font=("Helvetica", 12, "bold"), justification="center", expand_x=True)],
             [sg.Text("Descrição (Ex: Hemograma, Curativo):")],
-            [sg.Input(key="-DESCRICAO-", size=(40, 1))],
+            [sg.Input(default_text=descricao_default, key="-DESCRICAO-", size=(40, 1))],
             [sg.Text("Custo em R$ (Ex: 150.50):")],
-            [sg.Input(key="-CUSTO-", size=(40, 1))],
+            [sg.Input(default_text=custo_default, key="-CUSTO-", size=(40, 1))],
             [sg.Text("", key="-ERRO-", text_color="red", size=(45, 2))],
             [sg.Button("Confirmar", key="-CONFIRMAR-"), sg.Button("Cancelar", key="-CANCELAR-")],
         ]
-        window = sg.Window("Dados do Procedimento", layout, modal=True)
+        window = sg.Window(titulo, layout, modal=True)
         dados = {"descricao": "", "custo": 0}
 
         while True:

@@ -31,7 +31,7 @@ class ControladorCatalogoProcedimento:
                 self.__tela_procedimento.mostra_mensagem(str(e))
 
     def incluir_procedimento(self):
-        dados = self.__tela_procedimento.pega_dados_procedimento()
+        dados = self.__tela_procedimento.pega_dados_procedimento("INCLUIR")
 
         if self.buscar_por_descricao(dados["descricao"]):
             raise RegraNegocioException("Já existe um procedimento com esta descrição.")
@@ -60,7 +60,7 @@ class ControladorCatalogoProcedimento:
             self.__tela_procedimento.mostra_mensagem(f"Erro: Não existe procedimento com o ID {id_buscado}.")
             return
         
-        dados = self.__tela_procedimento.pega_dados_procedimento()
+        dados = self.__tela_procedimento.pega_dados_procedimento("ALTERAR", procedimento)
 
         procedimento_existente = self.buscar_por_descricao(dados["descricao"])
         if procedimento_existente and procedimento_existente.id != procedimento.id:
