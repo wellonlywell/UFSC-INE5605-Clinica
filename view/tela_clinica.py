@@ -1,7 +1,13 @@
+import time
 import FreeSimpleGUI as sg
 
 
 class TelaClinica:
+
+    def __init__(self):
+        self.__janela_lista = None
+        self.__conteudo_lista = ""
+        self.__ultima_chamada = 0
 
     def tela_opcoes(self) -> int:
         """Exibe o menu de clínicas e retorna a opção escolhida (0–7)."""
@@ -72,16 +78,45 @@ class TelaClinica:
                 }
 
     def mostra_clinica(self, clinica):
-        """Exibe os dados de uma clínica em uma janela popup."""
-        texto = (
-            f"CNPJ:               {clinica.cnpj}\n"
-            f"Nome:               {clinica.nome}\n"
-            f"Cidade:             {clinica.cidade}\n"
-            f"Descrição:          {clinica.descricao}\n"
-            f"Horário de Abertura:    {clinica.horario_abertura.strftime('%H:%M')}\n"
-            f"Horário de Fechamento:  {clinica.horario_fechamento.strftime('%H:%M')}\n"
-        )
-        sg.popup_scrolled(texto, title='Clínica')
+        """Acumula os dados da clínica numa janela de lista única.
+        Segue o mesmo padrão de tela_catalogo_procedimento.mostra_procedimento:
+        uma janela só permanece aberta e vai recebendo cada clínica empilhada,
+        em vez de abrir um popup separado por item.
+        """
+        agora = time.time()
+        self.__processa_janela_lista()
+        if self.__janela_lista is None or (agora - self.__ultima_chamada) > 0.5:
+            self.__conteudo_lista = ""
+            layout = [[sg.Multiline(
+                key="-LISTA-",
+                size=(60, 20),
+                disabled=True,
+                autoscroll=True,
+                font=("Courier New", 10),
+            )]]
+            self.__janela_lista = sg.Window("Lista de Clínicas", layout, finalize=True)
+        self.__ultima_chamada = agora
+
+        linhas = [
+            f"CNPJ:                {clinica.cnpj}",
+            f"Nome:                {clinica.nome}",
+            f"Cidade:              {clinica.cidade}",
+            f"Descrição:           {clinica.descricao}",
+            f"Horário de Abertura:    {clinica.horario_abertura.strftime('%H:%M')}",
+            f"Horário de Fechamento:  {clinica.horario_fechamento.strftime('%H:%M')}",
+            "-" * 40,
+        ]
+        self.__conteudo_lista += "\n".join(linhas) + "\n"
+        self.__janela_lista["-LISTA-"].update(self.__conteudo_lista)
+        self.__janela_lista.refresh()
+
+    def __processa_janela_lista(self):
+        if self.__janela_lista is None:
+            return
+        event, _ = self.__janela_lista.read(timeout=0)
+        if event == sg.WIN_CLOSED:
+            self.__janela_lista.close()
+            self.__janela_lista = None
 
     def seleciona_clinica(self) -> str:
         """Abre janela para o usuário digitar o CNPJ da clínica desejada.
@@ -140,4 +175,3 @@ class TelaClinica:
     def mostra_mensagem(self, mensagem: str):
         """Exibe uma mensagem ao usuário em uma janela popup."""
         sg.popup(mensagem, title='Clínicas')
-

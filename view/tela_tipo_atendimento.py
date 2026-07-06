@@ -1,7 +1,13 @@
+import time
 import FreeSimpleGUI as sg
 
 
 class TelaTipoAtendimento:
+
+    def __init__(self):
+        self.__janela_lista = None
+        self.__conteudo_lista = ""
+        self.__ultima_chamada = 0
 
     def tela_opcoes(self) -> int:
         """Exibe o menu de tipos de atendimento e retorna a opção escolhida (0–4)."""
@@ -51,12 +57,39 @@ class TelaTipoAtendimento:
                 return {'descricao': values['descricao'].strip()}
 
     def mostra_tipo_atendimento(self, tipo_atendimento):
-        """Exibe os dados de um tipo de atendimento em uma janela popup."""
-        texto = (
-            f"ID:         {tipo_atendimento.id}\n"
-            f"Descrição:  {tipo_atendimento.descricao}\n"
-        )
-        sg.popup_scrolled(texto, title='Tipo de Atendimento')
+        """Acumula os dados do tipo de atendimento numa janela de lista única.
+        Segue o mesmo padrão de tela_catalogo_procedimento.mostra_procedimento.
+        """
+        agora = time.time()
+        self.__processa_janela_lista()
+        if self.__janela_lista is None or (agora - self.__ultima_chamada) > 0.5:
+            self.__conteudo_lista = ""
+            layout = [[sg.Multiline(
+                key="-LISTA-",
+                size=(60, 20),
+                disabled=True,
+                autoscroll=True,
+                font=("Courier New", 10),
+            )]]
+            self.__janela_lista = sg.Window("Lista de Tipos de Atendimento", layout, finalize=True)
+        self.__ultima_chamada = agora
+
+        linhas = [
+            f"ID:         {tipo_atendimento.id}",
+            f"Descrição:  {tipo_atendimento.descricao}",
+            "-" * 40,
+        ]
+        self.__conteudo_lista += "\n".join(linhas) + "\n"
+        self.__janela_lista["-LISTA-"].update(self.__conteudo_lista)
+        self.__janela_lista.refresh()
+
+    def __processa_janela_lista(self):
+        if self.__janela_lista is None:
+            return
+        event, _ = self.__janela_lista.read(timeout=0)
+        if event == sg.WIN_CLOSED:
+            self.__janela_lista.close()
+            self.__janela_lista = None
 
     def seleciona_tipo_atendimento(self) -> int:
         """Abre janela para o usuário digitar o ID do tipo de atendimento desejado.
@@ -84,4 +117,3 @@ class TelaTipoAtendimento:
     def mostra_mensagem(self, mensagem: str):
         """Exibe uma mensagem ao usuário em uma janela popup."""
         sg.popup(mensagem, title='Tipos de Atendimento')
-
