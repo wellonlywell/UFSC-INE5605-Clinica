@@ -180,6 +180,9 @@ class ControladorPagamento:
 
         pagamento_selecionado = self.__pagamentos[indice]
         nova_data = self.__tela.pega_nova_data(pagamento_selecionado)
+        if nova_data == '':
+            self.__tela.mostra_mensagem("Operação cancelada.")
+            return
 
         try:
             pagamento_selecionado.data = nova_data
