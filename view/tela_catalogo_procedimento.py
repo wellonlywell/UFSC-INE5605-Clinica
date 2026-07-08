@@ -1,4 +1,3 @@
-# T2: FreeSimpleGUI — biblioteca leve, sem dependência externa
 import time
 
 import FreeSimpleGUI as sg

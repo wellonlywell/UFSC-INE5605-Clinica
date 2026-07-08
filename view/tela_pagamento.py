@@ -1,15 +1,3 @@
-# view/tela_pagamento.py
-# Converted to FreeSimpleGUI — maintains the same public interface.
-#
-# NOTA sobre mostra_comprovante / seleciona_pagamento:
-# mostra_comprovante é chamado tanto standalone (após registrar um pagamento, para
-# confirmação imediata) quanto em loop (em listar_pagamentos, antes de selecionar).
-# Para cobrir os dois casos:
-#   - mostra_comprovante sempre exibe um popup imediato (o usuário vê o recibo).
-#   - mostra_comprovante também acumula o texto em __comprovantes_buffer.
-#   - seleciona_pagamento exibe o buffer em um campo rolável + input de índice.
-# O buffer é limpo no início de tela_opcoes() para não misturar entre operações.
-
 import FreeSimpleGUI as sg
 
 

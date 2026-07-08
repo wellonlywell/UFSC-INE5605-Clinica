@@ -1,4 +1,3 @@
-# T2: FreeSimpleGUI — biblioteca leve, sem dependência externa
 import FreeSimpleGUI as sg
 sg.set_options(font=("Arial", 11))
 

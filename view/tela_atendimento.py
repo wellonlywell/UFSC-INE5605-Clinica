@@ -1,17 +1,3 @@
-# view/tela_atendimento.py
-# Converted to FreeSimpleGUI — maintains the same public interface.
-#
-# NOTA sobre mostra_lista_atendimento / seleciona_atendimento:
-# Os controladores chamam mostra_lista_atendimento(i, at) em um for-loop e, logo
-# em seguida, chamam seleciona_atendimento() para o usuário escolher um índice.
-# Para evitar abrir N janelas sequenciais (uma por item da lista), usamos um
-# buffer de instância (__lista_buffer): mostra_lista_atendimento acumula texto no
-# buffer e seleciona_atendimento exibe tudo em uma única janela com campo de entrada.
-# Quando o menu chama "3 - Listar" (sem selecionar depois), o buffer fica
-# acumulado mas inofensivo — é limpo na próxima chamada a seleciona_atendimento.
-# Para o caso "3 - Listar" puro, o texto aparece como popup_scrolled ao final do loop,
-# pois ao retornar ao menu nada mais é chamado — ver comentário em mostra_lista_atendimento.
-
 import FreeSimpleGUI as sg
 
 
