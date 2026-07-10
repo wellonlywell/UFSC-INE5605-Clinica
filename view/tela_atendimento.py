@@ -38,7 +38,7 @@ class TelaAtendimento:
             return
         texto = '\n'.join(self.__lista_buffer)
         self.__lista_buffer.clear()
-        sg.popup_scrolled(texto, title='Atendimentos Cadastrados')
+        sg.popup_scrolled(texto, title='Atendimentos Cadastrados', size=(90, 25))
 
     def pega_dados_atendimento(self) -> dict:
         """Abre formulário para cadastrar um novo atendimento.
@@ -158,10 +158,12 @@ class TelaAtendimento:
         total = atendimento.valor + atendimento.calcular_total_procedimentos()
         linha = (
             f"[{indice}] {atendimento.data.strftime('%d/%m/%Y')} "
-            f"{atendimento.hora_inicio.strftime('%H:%M')}–{atendimento.hora_fim.strftime('%H:%M')}  |  "
-            f"Clínica: {atendimento.clinica.nome}  |  "
-            f"Paciente: {atendimento.paciente.nome}  |  "
-            f"Total: R$ {total:.2f}  |  Procs: {lista_procs}"
+            f"{atendimento.hora_inicio.strftime('%H:%M')}–{atendimento.hora_fim.strftime('%H:%M')}\n"
+            f"Clínica:   {atendimento.clinica.nome}\n"
+            f"Paciente:  {atendimento.paciente.nome}\n"
+            f"Total:     R$ {total:.2f}\n"
+            f"Procs:     {lista_procs}\n"
+            + "-" * 50
         )
         self.__lista_buffer.append(linha)
 
@@ -221,4 +223,3 @@ class TelaAtendimento:
     def mostra_mensagem(self, mensagem: str):
         """Exibe uma mensagem ao usuário em uma janela popup."""
         sg.popup(mensagem, title='Atendimentos')
-

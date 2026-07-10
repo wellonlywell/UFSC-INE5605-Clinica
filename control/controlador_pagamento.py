@@ -163,7 +163,8 @@ class ControladorPagamento:
             indice_atual = pagamentos_do_atendimento.index(pag)
             total_pago_ate_aqui = sum(p.valor_pago for p in pagamentos_do_atendimento[:indice_atual + 1])
             saldo = total_at - total_pago_ate_aqui
-            self.__tela.mostra_comprovante(f"[{i}] {pag.emitir_comprovante(saldo)}")
+            self.__tela.acumula_comprovante(f"[{i}] {pag.emitir_comprovante(saldo)}")
+        self.__tela.exibir_buffer_pagamentos()
 
 
     def alterar_pagamento(self):
@@ -208,4 +209,3 @@ class ControladorPagamento:
 
     def get_pagamentos(self) -> list:
         return list(self.__pagamentos)
-

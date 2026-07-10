@@ -236,6 +236,23 @@ class TelaPagamento:
                 except ValueError:
                     sg.popup('Digite um número inteiro válido.', title='Erro')
 
+    def acumula_comprovante(self, texto: str):
+        """Acumula o comprovante no buffer interno SEM abrir popup.
+        Usado pela listagem (listar_pagamentos), que exibe tudo de uma vez
+        no final via exibir_buffer_pagamentos(), em vez de um popup por item.
+        """
+        self.__comprovantes_buffer.append(texto)
+
+    def exibir_buffer_pagamentos(self):
+        """Exibe todos os comprovantes acumulados em UMA ÚNICA janela e limpa o buffer.
+        Evita abrir um popup por pagamento durante a listagem standalone.
+        """
+        if not self.__comprovantes_buffer:
+            return
+        texto = '\n\n'.join(self.__comprovantes_buffer)
+        self.__comprovantes_buffer.clear()
+        sg.popup_scrolled(texto, title='Pagamentos Cadastrados', size=(90, 25))
+
     def mostra_comprovante(self, texto: str):
         """Exibe o comprovante em um popup scrolled E o acumula no buffer interno
         para uso posterior em seleciona_pagamento().
@@ -246,4 +263,3 @@ class TelaPagamento:
     def mostra_mensagem(self, mensagem: str):
         """Exibe uma mensagem ao usuário em uma janela popup."""
         sg.popup(mensagem, title='Pagamentos')
-
